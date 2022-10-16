@@ -16,15 +16,26 @@
                 <version>1.1.1</version>
                 <executions>
                     <execution>
+                        <id>compile</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>${basedir}/makeMulval.sh</executable>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/cleanMulval.sh</executable>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <executable>${basedir}/makeMulval.sh</executable>
-                </configuration>
             </plugin>
         </plugins>
     </build>

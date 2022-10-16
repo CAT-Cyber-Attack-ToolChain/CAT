@@ -15,3 +15,4 @@ clean:
 	(cd src/attack_graph; make clean)
 	(cd src/adapter; make clean)
 	(cd src/metrics; make clean)
+	rm -rf bin
