@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 import java.sql.*;
 
 import javax.sql.*;
@@ -133,10 +132,39 @@ String path = f.getPath();
 
 		
 
-		setupDB(Integer.parseInt(args[0]));
-
+//		setupDB(Integer.parseInt(args[0]));
+			setupDbWithJSON(Integer.parseInt(args[0]));
 		
 
+	}
+
+	public static void setupDbWithJSON(int year) {
+		try {
+			Connection con = getConnection();
+
+			Statement sql = con.createStatement();
+			sql.execute("drop table if exists nvd");                                                                                                                                                                                                        //,primary key(id)
+			sql.execute("create table nvd(id varchar(20) not null,soft varchar(160) not null default 'ndefined',rng varchar(100) not null default 'undefined',lose_types varchar(100) not null default 'undefind',severity varchar(20) not null default 'unefined',access varchar(20) not null default 'unefined');");
+
+			List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse("/home/anand011/cyber-attack-tool-chain/mulval/src/adapter/vulnerabilities.json");
+
+			for(VulnerabilityParser.Vulnerability vul : vuls) {
+				String insert = "insert nvd values('" + vul.id + "','"
+						+ "TODO: name" + "','" + vul.rge + "','" + vul.lose_types + "','" + vul.sev
+						+ "','" + vul.access+"')";
+				sql.execute(insert);
+			}
+
+			sql.close();
+			con.close();
+
+		} catch (java.lang.ClassNotFoundException e) {
+				System.err.println("ClassNotFoundException:" + e.getMessage());
+		} catch (SQLException ex) {
+				System.err.println("SQLException:" + ex.getMessage());
+		} catch (IOException e) {
+				e.printStackTrace();
+		}
 	}
 
 
