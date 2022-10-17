@@ -37,6 +37,10 @@ fun getRandomNode(): org.neo4j.driver.Record {
     return result
 }
 
+fun randomAttackAgent() {
+    val startNode: org.neo4j.driver.Record = getRandomNode()
+}
+
 fun main(args: Array<String>) {
     getRandomNode()
     close()
