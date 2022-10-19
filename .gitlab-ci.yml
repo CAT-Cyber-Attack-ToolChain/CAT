@@ -1,0 +1,24 @@
+image: louisaldous/cyber-attack-tool-chain:latest
+
+variables:
+    MULVALROOT:"/mulval"
+
+stages: 
+    - compile
+
+mulvalCompile:
+    stage: compile
+    script:
+        - cd mulval/
+        - mvn install
+        - export PATH="$MULVALROOT/bin:$MULVALROOT/utils:$PATH"
+
+clientCompile:
+    stage: compile
+    script:
+        - cd kotlinClient
+        - mvn install
+    artifacts:
+        paths:
+            - /mulval
+            - /kotlinClient
