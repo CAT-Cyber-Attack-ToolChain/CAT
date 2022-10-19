@@ -19,8 +19,8 @@ RUN ./configure
 RUN ./makexsb
 WORKDIR /
 
-ENV M2_HOME="apache-maven-3.8.6"
+ENV M2_HOME="/apache-maven-3.8.6"
 ENV MAVEN_HOME=${M2_HOME}
 
-ENV PATH="${M2_HOME}/bin:XSB/bin:kotlin-native-linux-x86_64-1.7.20/bin:$PATH"
+ENV PATH="${M2_HOME}/bin:/XSB/bin:/kotlin-native-linux-x86_64-1.7.20/bin:$PATH"
 
