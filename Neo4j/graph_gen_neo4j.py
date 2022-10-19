@@ -86,8 +86,8 @@ if __name__ == "__main__":
     uri = "neo4j+s://42ce3f9a.databases.neo4j.io"
     user = "neo4j"
     password = "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38"
-    arcs_path = 'ARCS.CSV'
-    vertices_path = 'VERTICES.CSV'
+    arcs_path = 'mulval_output/ARCS.CSV'
+    vertices_path = 'mulval_output/VERTICES.CSV'
     app = App(uri, user, password, arcs_path, vertices_path)
     app.create_attack_graph()
     app.close()
