@@ -51,7 +51,7 @@ open class Main {
         }
 
         fun runNeo4j() {
-            print("Sending attack graph to Neo4j...")
+            print("Sending attack graph to Neo4j AuraDB...")
             val neo4jDir = File(System.getProperty("user.dir") + "/../Neo4j")
             shellRun("python3", listOf("graph_gen_neo4j.py"), neo4jDir)
             println("Done!")
