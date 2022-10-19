@@ -17,7 +17,7 @@ mulvalCompile:
 clientCompile:
     stage: compile
     script:
-        - cd kotlinClient
+        - cd KotlinClient
         - mvn install
     artifacts:
         paths:
