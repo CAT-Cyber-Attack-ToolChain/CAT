@@ -24,4 +24,4 @@ compileClient:
         - mvn install
     artifacts:
         paths:
-            - kotlinClient
+            - KotlinClient/target
