@@ -146,6 +146,14 @@ String path = f.getPath();
 
 	public static InputStream getYearStream(int year, int startIndex) throws MalformedURLException, IOException {
 
+		if (year == Year.now().getValue()) {
+			HttpURLConnection connection = (HttpURLConnection)
+				
+				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-23971")
+						.openConnection();
+		return connection.getInputStream();
+		}
+
 		HttpURLConnection connection = (HttpURLConnection)
 				// TODO: 3 month increments for api
 				// TODO: figure out pagination using startIndex
@@ -163,7 +171,7 @@ String path = f.getPath();
 			sql.execute("drop table if exists nvd");                                                                                                                                                                                                        //,primary key(id)
 			sql.execute("create table nvd(id varchar(20) not null,soft varchar(256) not null default 'ndefined',rng varchar(100) not null default 'undefined',lose_types varchar(100) not null default 'undefind',severity varchar(20) not null default 'unefined',access varchar(20) not null default 'unefined');");
 
-			for (int y = year; y < Year.now().getValue(); y++) {
+			for (int y = year; y <= Year.now().getValue(); y++) {
 
 				InputStreamReader in  = new InputStreamReader(getYearStream(y, 0));
 				List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse(in);
