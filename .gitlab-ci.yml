@@ -1,7 +1,7 @@
 image: louisaldous/cyber-attack-tool-chain:latest
 
 variables:
-    MULVALROOT:"/mulval"
+  MULVALROOT: "/mulval"
 
 stages: 
     - compile
@@ -9,6 +9,7 @@ stages:
 mulvalCompile:
     stage: compile
     script:
+        - export
         - cd mulval/
         - mvn install
         - export PATH="$MULVALROOT/bin:$MULVALROOT/utils:$PATH"
