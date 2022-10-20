@@ -9,6 +9,7 @@ import kotlin.random.Random
 class randomAttackAgent {
 
     private val driver: Driver = GraphDatabase.driver("neo4j+s://42ce3f9a.databases.neo4j.io", AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38"))
+    private val path: MutableList<Int> = mutableListOf()
 
     private fun getRandomNode(): Int {
         val session: Session = driver.session()
@@ -34,6 +35,7 @@ class randomAttackAgent {
 
     fun attack() {
         val startNodeId: Int = getRandomNode()
+        path.add(startNodeId)
     }
 
 }
