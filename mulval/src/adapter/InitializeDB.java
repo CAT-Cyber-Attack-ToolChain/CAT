@@ -169,7 +169,14 @@ String path = f.getPath();
 
 			Statement sql = con.createStatement();
 			sql.execute("drop table if exists nvd");                                                                                                                                                                                                        //,primary key(id)
-			sql.execute("create table nvd(id varchar(20) not null,soft varchar(256) not null default 'ndefined',rng varchar(100) not null default 'undefined',lose_types varchar(100) not null default 'undefind',severity varchar(20) not null default 'unefined',access varchar(20) not null default 'unefined');");
+			sql.execute("create table nvd(id varchar(20) not null," + 
+			"soft varchar(256) not null default 'ndefined'," + 
+			"rng varchar(100) not null default 'undefined'," + 
+			"lose_types varchar(100) not null default 'undefind'," + 
+			"severity varchar(20) not null default 'unefined'," + 
+			"access varchar(20) not null default 'unefined'," + 
+			"exploit float(0) not null default -1.0," + 
+			"impact float(0) not null default -1.0);");
 
 			for (int y = year; y <= Year.now().getValue(); y++) {
 
@@ -180,7 +187,7 @@ String path = f.getPath();
 					if (!vul.id.equals("NULL")) {
 						String insert = "insert nvd values('" + vul.id + "','"
 								+ vul.software + "','" + vul.rge + "','" + vul.lose_types + "','" + vul.sev
-								+ "','" + vul.access+"')";
+								+ "','" + vul.access +"'," + vul.exploitabilityScore + "," + vul.impactScore + ")";
 						sql.execute(insert);
 					}
 				}
