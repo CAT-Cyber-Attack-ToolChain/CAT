@@ -34,8 +34,17 @@ class randomAttackAgent {
     }
 
     fun attack() {
-        val startNodeId: Int = getRandomNode()
-        path.add(startNodeId)
+        var currentNode: Int = getRandomNode()
+        var connectedNodes = getConnectedNodes(currentNode)
+        path.add(currentNode)
+
+        while (connectedNodes.isNotEmpty()) {
+            currentNode = connectedNodes.random()
+            connectedNodes = getConnectedNodes(currentNode)
+            path.add(currentNode)
+        }
+
+        println(path.toString())
     }
 
 }
