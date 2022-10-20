@@ -65,6 +65,8 @@ import org.dom4j.io.XMLWriter;
 
 public class InitializeDB {
 
+	private static int MONTH_INCREMENT = 3;
+
 	/*public static Connection getConnection() throws SQLException,
 
 			java.lang.ClassNotFoundException {
@@ -144,21 +146,21 @@ String path = f.getPath();
 
 	}
 
-	public static InputStream getYearStream(int year, int startIndex) throws MalformedURLException, IOException {
+	private static String padNumber(int n) {
+		if (n > 9)
+			return "" + n;
+		return "0" + n;
+	}
 
-		if (year == Year.now().getValue()) {
-			HttpURLConnection connection = (HttpURLConnection)
-				
-				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2021-23971")
-						.openConnection();
-		return connection.getInputStream();
-		}
+	public static InputStream getYearStream(int year, int month) throws MalformedURLException, IOException {
+
+		String monthStr = padNumber(month);
+		String nextMonthStr = padNumber(month + MONTH_INCREMENT);
+		
 
 		HttpURLConnection connection = (HttpURLConnection)
-				// TODO: 3 month increments for api
 				// TODO: figure out pagination using startIndex
-				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0/?pubStartDate=2020-01-01T00:00:00.000-05:00&pubEndDate=2020-01-14T23:59:59.999-05:00")
-//				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0/?pubStartDate=" + year + "-01-01T00:00:00.000-05:00&pubEndDate=" + (year + 1) + "-01-01T00::00.000-05:00&startIndex=" + startIndex)
+				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0/?pubStartDate=" + year + "-" + monthStr + "-01T00:00:00.000-05:00&pubEndDate=" + year + "-" + nextMonthStr + "-14T23:59:59.999-05:00")
 						.openConnection();
 		return connection.getInputStream();
 	}
@@ -179,18 +181,23 @@ String path = f.getPath();
 			"impact float(0) not null default -1.0);");
 
 			for (int y = year; y <= Year.now().getValue(); y++) {
+				int SEP = 9;
+				int JAN = 1;
+				System.out.print("Getting vulnerabilities for " + y + "...");
+				for (int m = JAN; m <= SEP; m += MONTH_INCREMENT) {
+					InputStreamReader in  = new InputStreamReader(getYearStream(y, m));
+					List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse(in);
 
-				InputStreamReader in  = new InputStreamReader(getYearStream(y, 0));
-				List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse(in);
-
-				for(VulnerabilityParser.Vulnerability vul : vuls) {
-					if (!vul.id.equals("NULL")) {
-						String insert = "insert nvd values('" + vul.id + "','"
-								+ vul.software + "','" + vul.rge + "','" + vul.lose_types + "','" + vul.sev
-								+ "','" + vul.access +"'," + vul.exploitabilityScore + "," + vul.impactScore + ")";
-						sql.execute(insert);
+					for(VulnerabilityParser.Vulnerability vul : vuls) {
+						if (!vul.id.equals("NULL")) {
+							String insert = "insert nvd values('" + vul.id + "','"
+									+ vul.software + "','" + vul.rge + "','" + vul.lose_types + "','" + vul.sev
+									+ "','" + vul.access +"'," + vul.exploitabilityScore + "," + vul.impactScore + ")";
+							sql.execute(insert);
+						}
 					}
 				}
+				System.out.println("Done!");
 			}
 
 			sql.close();
