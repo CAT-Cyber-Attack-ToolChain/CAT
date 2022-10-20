@@ -1,2 +1,5 @@
 /.idea/
 /KotlinClient/.idea/
+mulval/mulval.iml
+KotlinClient/target
+KotlinClient/client.iml

@@ -6,7 +6,6 @@ import org.neo4j.driver.Values.parameters;
 
 import com.lordcodes.turtle.shellRun;
 
-import com.lordcodes.turtle.*;
 import java.io.File
 
 open class Main {
