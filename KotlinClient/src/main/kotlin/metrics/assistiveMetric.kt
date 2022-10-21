@@ -1,5 +1,5 @@
-import metrics.metric
+package metrics
 
-open class AssistiveMetric : metric {
-    override fun calculate() {}
+abstract class AssistiveMetric : Metric {
+    abstract override fun calculate(): Int
 }

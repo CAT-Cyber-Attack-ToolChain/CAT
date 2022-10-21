@@ -6,8 +6,9 @@ import org.neo4j.driver.Values.parameters;
 
 import com.lordcodes.turtle.shellRun;
 
-import com.lordcodes.turtle.*;
 import java.io.File
+
+import metrics.decision.ShortestPath
 
 open class Main {
     companion object {
@@ -31,8 +32,10 @@ open class Main {
             val cur = System.getProperty("user.dir")
             val inputFile = cur + "/../mulval/testcases/3host/input.P"
 
-            generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
-            runNeo4j()
+            //generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
+            //runNeo4j()
+            val pathMetric = ShortestPath()
+            println(pathMetric.calculate())
         }
 
         fun generateGraphFromDatalog(inputFile : String, workingDirPath : String) {

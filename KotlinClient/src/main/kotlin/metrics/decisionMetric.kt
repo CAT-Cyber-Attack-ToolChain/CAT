@@ -1,4 +1,4 @@
-import metrics.metric
-open class DecisionMetric : metric {
-    override fun calculate() {}
+package metrics
+abstract class DecisionMetric : Metric {
+    abstract override fun calculate(): Int
 }
