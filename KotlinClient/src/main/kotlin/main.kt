@@ -5,6 +5,10 @@ import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters;
 
 import com.lordcodes.turtle.shellRun;
+import contoller.MulvalController
+import model.AttackGraphOutput
+import model.MulvalInput
+import view.Neo4JObserver
 
 import java.io.File
 
@@ -28,10 +32,14 @@ open class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             val cur = System.getProperty("user.dir")
-            val inputFile = cur + "/../mulval/testcases/3host/input.P"
+            val inputFile = MulvalInput("$cur/../mulval/testcases/3host/input.P")
+            val output = AttackGraphOutput("$cur/../mulval/testcases/3host/3host_output")
+            val mulval = MulvalController(inputFile, output)
+            val neo4JObserver = Neo4JObserver(output)
+            mulval.addObserver(neo4JObserver)
 
-            generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
-            runNeo4j()
+            mulval.generateGraph()
+            //runNeo4j()
         }
 
         fun generateGraphFromDatalog(inputFile : String, workingDirPath : String) {
