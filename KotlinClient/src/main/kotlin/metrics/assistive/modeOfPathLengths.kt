@@ -1,3 +1,6 @@
-class modeOfPathLengths : assistiveMetric {
-    override fun calculate()
+package metrics.assistive
+
+import AssistiveMetric;
+class modeOfPathLengths : AssistiveMetric() {
+    override fun calculate() {}
 }

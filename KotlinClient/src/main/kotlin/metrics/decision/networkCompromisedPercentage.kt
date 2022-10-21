@@ -1,3 +1,6 @@
-class networkCompromisedPercentage : decisionMetric {
-    override fun calculate()
+package metrics.decision
+
+import DecisionMetric
+class NetworkCompromisedPercentage : DecisionMetric() {
+    override fun calculate() {};
 }

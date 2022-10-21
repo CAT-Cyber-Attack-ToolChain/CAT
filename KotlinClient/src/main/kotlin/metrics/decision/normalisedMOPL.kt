@@ -1,3 +1,7 @@
-class normalisedMOPL : decisionMetric {
-    override fun calculate()
+package metrics.decision
+
+import DecisionMetric
+
+class normalisedMOPL : DecisionMetric() {
+    override fun calculate() {}
 }

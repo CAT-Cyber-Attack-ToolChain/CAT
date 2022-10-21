@@ -1,3 +1,6 @@
-class weakestAdversary : decisionMetric {
-    override fun calculate()
+package metrics.decision
+
+import DecisionMetric
+class weakestAdversary : DecisionMetric() {
+    override fun calculate() {}
 }
