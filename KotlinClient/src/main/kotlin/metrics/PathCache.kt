@@ -13,7 +13,7 @@ class PathCache {
             pathLengths = session.writeTransaction { tx ->
                 val result: Result = tx.run("MATCH(a: Permission {node_id: 18}), (b: Permission {node_id: 1}), p=(a)-[*]->(b) RETURN p", Values.parameters())
                 result.list {r -> r.get(0).size()}
-            }
+            }.sorted()
         }
     }
 }
