@@ -1,0 +1,3 @@
+interface metric {
+    fun calculate() 
+}
