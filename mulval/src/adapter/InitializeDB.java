@@ -73,6 +73,8 @@ public class InitializeDB {
 	public static String TOTAL_RESULTS = "totalResults";
 	public static String START_INDEX = "startIndex";
 	public static int PAGE_LIMIT = 2000;
+	public static int OCT = 10;
+	public static int JAN = 1;
 
 	private static int MONTH_INCREMENT = 3;
 	private static int READ_LIMIT = "{\"resultsPerPage\":xxxx,\"startIndex\":xxxx,\"totalResults\":xxxx,".length() + 10;
@@ -216,12 +218,18 @@ String path = f.getPath();
 		// getting months in the MM format
 		String monthStr = padNumber(month);
 		String nextMonthStr = padNumber(month + MONTH_INCREMENT);
-		
+		String nextDayStr = "01";
+		// special case for end of the year
+		if (month == OCT) {
+			nextMonthStr = padNumber(month + MONTH_INCREMENT - 1);
+			nextDayStr = "31";
+		}
+
 		// establishing API connection over HTTP
 		HttpURLConnection connection = (HttpURLConnection)
 				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0/?pubStartDate=" +
 						year + "-" + monthStr + "-01T00:00:00.000-05:00&pubEndDate=" + year + "-" +
-						nextMonthStr + "-14T23:59:59.999-05:00&" + START_INDEX + "=" + startIndex)
+						nextMonthStr + "-"+ nextDayStr + "T23:59:59.999-05:00&" + START_INDEX + "=" + startIndex)
 						.openConnection();
 		return connection.getInputStream();
 	}
@@ -243,8 +251,6 @@ String path = f.getPath();
 			"impact float(0) not null default -1.0);");
 
 			for (int y = year; y <= Year.now().getValue(); y++) {
-				int OCT = 10;
-				int JAN = 1;
 				System.out.println("Getting vulnerabilities for " + y + ":");
 
 				int startIndex = 0;
