@@ -5,6 +5,8 @@ import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters;
 
 import com.lordcodes.turtle.shellRun;
+import metrics.PathCache
+import metrics.decision.NumberOfPaths
 
 import java.io.File
 
@@ -34,8 +36,11 @@ open class Main {
 
             //generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
             //runNeo4j()
+            PathCache.update()
             val pathMetric = ShortestPath()
             println(pathMetric.calculate())
+            val numberOfPaths = NumberOfPaths()
+            println(numberOfPaths.calculate())
         }
 
         fun generateGraphFromDatalog(inputFile : String, workingDirPath : String) {
