@@ -1,9 +1,11 @@
 FROM ubuntu:focal
 ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt update && apt upgrade -y
 RUN apt install wget -y
 RUN apt install build-essential -y
 RUN apt install openjdk-17-jdk-headless -y
+RUN apt install python3 -y
 
 RUN wget https://github.com/JetBrains/kotlin/releases/download/v1.7.20/kotlin-native-linux-x86_64-1.7.20.tar.gz -O kotlin.tar.gz && tar -xzf kotlin.tar.gz && rm kotlin.tar.gz
 RUN wget 'https://sourceforge.net/projects/xsb/files/xsb/5.0%20%28Green%20Tea%29/XSB-5.0.tar.gz/download' -O xsb.tar.gz && tar -xzf xsb.tar.gz && rm xsb.tar.gz
