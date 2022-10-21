@@ -17,8 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.CharBuffer;
 import java.sql.*;
 
+import java.time.Year;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.*;
 
 
@@ -58,6 +69,15 @@ import org.dom4j.io.XMLWriter;
 
 
 public class InitializeDB {
+
+	public static String TOTAL_RESULTS = "totalResults";
+	public static String START_INDEX = "startIndex";
+	public static int PAGE_LIMIT = 2000;
+	public static int OCT = 10;
+	public static int JAN = 1;
+
+	private static int MONTH_INCREMENT = 3;
+	private static int READ_LIMIT = "{\"resultsPerPage\":xxxx,\"startIndex\":xxxx,\"totalResults\":xxxx,".length() + 10;
 
 	/*public static Connection getConnection() throws SQLException,
 
@@ -138,36 +158,153 @@ String path = f.getPath();
 
 	}
 
+	// Prefixing zero for MM format
+	private static String padNumber(int n) {
+		if (n > 9)
+			return "" + n;
+		return "0" + n;
+	}
+
+	// getting the result offset if results more than PAGE_LIMIT
+	// otherwise returns -1
+	public static int moreResultsOffset(InputStream in) {
+
+		try {
+			in.mark(READ_LIMIT); // marking so can be reset later
+			InputStreamReader reader = new InputStreamReader(in);
+			Map<String, Integer> resultsMetaData = getMetaData(reader);
+			in.reset(); // resetting so that JSON parser can work with entire response
+
+			// if results are more than possible on the latest page, return updated start index
+			if (resultsMetaData.get(TOTAL_RESULTS) > resultsMetaData.get(START_INDEX) + PAGE_LIMIT) {
+				return resultsMetaData.get(START_INDEX) + PAGE_LIMIT;
+			}
+			return -1;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	// gets meta data from the api request to check number of results and pages
+	private static Map<String, Integer> getMetaData(InputStreamReader reader) throws IOException {
+		char[] buffer = new char[READ_LIMIT];
+
+		reader.read(buffer, 0, READ_LIMIT);
+		String line = String.valueOf(buffer);
+
+		// storing total results and start index
+		Map<String, Integer> resultsMetaData = new HashMap<>();
+		resultsMetaData.put(TOTAL_RESULTS, 0);
+		resultsMetaData.put(START_INDEX, 0);
+
+		for (String s : resultsMetaData.keySet()) {
+			// find the value:
+			int index = line.indexOf(s);
+			index += (s + "\":").length();
+			String valueStr = line.substring(index);
+			valueStr = valueStr.substring(0, valueStr.indexOf(','));
+			int value = Integer.parseInt(valueStr);
+
+			// store it in the map
+			resultsMetaData.put(s, value);
+		}
+		return resultsMetaData;
+	}
+
+	// makes HTTP connection over API and returns input stream
+	public static InputStream getStream(int year, int month, int startIndex) throws MalformedURLException, IOException {
+
+		// getting months in the MM format
+		String monthStr = padNumber(month);
+		String nextMonthStr = padNumber(month + MONTH_INCREMENT);
+		String nextDayStr = "01";
+		// special case for end of the year
+		if (month == OCT) {
+			nextMonthStr = padNumber(month + MONTH_INCREMENT - 1);
+			nextDayStr = "31";
+		}
+
+		// establishing API connection over HTTP
+		HttpURLConnection connection = (HttpURLConnection)
+				new URL("https://services.nvd.nist.gov/rest/json/cves/2.0/?pubStartDate=" +
+						year + "-" + monthStr + "-01T00:00:00.000-05:00&pubEndDate=" + year + "-" +
+						nextMonthStr + "-"+ nextDayStr + "T23:59:59.999-05:00&" + START_INDEX + "=" + startIndex)
+						.openConnection();
+		return connection.getInputStream();
+	}
+
+	// setting up nvd db with the new NVD API
 	public static void setupDbWithJSON(int year) {
 		try {
 			Connection con = getConnection();
 
 			Statement sql = con.createStatement();
 			sql.execute("drop table if exists nvd");                                                                                                                                                                                                        //,primary key(id)
-			sql.execute("create table nvd(id varchar(20) not null,soft varchar(160) not null default 'ndefined',rng varchar(100) not null default 'undefined',lose_types varchar(100) not null default 'undefind',severity varchar(20) not null default 'unefined',access varchar(20) not null default 'unefined');");
+			sql.execute("create table nvd(id varchar(20) not null," + 
+			"soft varchar(256) not null default 'ndefined'," + 
+			"rng varchar(100) not null default 'undefined'," + 
+			"lose_types varchar(100) not null default 'undefind'," + 
+			"severity varchar(20) not null default 'unefined'," + 
+			"access varchar(20) not null default 'unefined'," + 
+			"exploit float(0) not null default -1.0," + 
+			"impact float(0) not null default -1.0);");
 
-			List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse("/home/anand011/cyber-attack-tool-chain/mulval/src/adapter/vulnerabilities.json");
+			for (int y = year; y <= Year.now().getValue(); y++) {
+				System.out.println("Getting vulnerabilities for " + y + ":");
 
-			for(VulnerabilityParser.Vulnerability vul : vuls) {
-				String insert = "insert nvd values('" + vul.id + "','"
-						+ "TODO: name" + "','" + vul.rge + "','" + vul.lose_types + "','" + vul.sev
-						+ "','" + vul.access+"')";
-				sql.execute(insert);
+				int startIndex = 0;
+				boolean printed = false;
+
+				// only going till OCT since 3 month increments
+				for (int m = JAN; m <= OCT; m += MONTH_INCREMENT) {
+					if (!printed) {
+						System.out.print(" - Months " + m + " to " + (m + MONTH_INCREMENT - 1) + "...");
+						printed = true;
+					}
+
+					// calling NVD API
+					BufferedInputStream bin = new BufferedInputStream(getStream(y, m, startIndex));
+					InputStreamReader reader  = new InputStreamReader(bin);
+
+					// checking if there are more results (>1 pages)
+					int moreResultsOffset = moreResultsOffset(bin);
+
+					List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse(reader);
+
+					// populating the nvd mysql db:
+					for(VulnerabilityParser.Vulnerability vul : vuls) {
+						if (!vul.id.equals("NULL")) {
+							String insert = "insert nvd values('" + vul.id + "','"
+									+ vul.software + "','" + vul.rge + "','" + vul.lose_types + "','" + vul.sev
+									+ "','" + vul.access +"'," + vul.exploitabilityScore + "," + vul.impactScore + ")";
+							sql.execute(insert);
+						}
+					}
+
+					// if there is more than 1 page, call the same link with offset
+					if (moreResultsOffset != -1) {
+						startIndex = moreResultsOffset; // start offset
+						m -= MONTH_INCREMENT; // same month
+						continue;
+					}
+					System.out.println("Done!");
+					startIndex = 0; // reset offset
+					printed = false;
+				}
 			}
 
 			sql.close();
 			con.close();
 
 		} catch (java.lang.ClassNotFoundException e) {
-				System.err.println("ClassNotFoundException:" + e.getMessage());
+			System.err.println("ClassNotFoundException:" + e.getMessage());
 		} catch (SQLException ex) {
-				System.err.println("SQLException:" + ex.getMessage());
+			System.err.println("SQLException:" + ex.getMessage());
 		} catch (IOException e) {
-				e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-
-
 
 	public static void setupDB(int year) {
 
