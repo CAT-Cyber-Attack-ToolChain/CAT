@@ -272,6 +272,8 @@ String path = f.getPath();
 
 					List<VulnerabilityParser.Vulnerability> vuls = VulnerabilityParser.parse(reader);
 
+					reader.close();
+
 					// populating the nvd mysql db:
 					for(VulnerabilityParser.Vulnerability vul : vuls) {
 						if (!vul.id.equals("NULL")) {
