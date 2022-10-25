@@ -1,5 +1,5 @@
 package view
 
-interface Observer {
+interface Updateable {
     fun update()
 }
