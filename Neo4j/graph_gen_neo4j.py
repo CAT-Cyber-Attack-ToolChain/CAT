@@ -90,9 +90,12 @@ class App:
                 raise
         return "Create relations successfully"
 
+    # checks if a node is a vulnerability based on its description
     def _is_vul(self, desc: str):
         return desc.startswith("vulExists")
 
+    # returns the scores encoded in the description of a vulnerability node
+    # otherwise returns (-1,-1)
     def _get_vul_scores(self, desc: str):
         DEFAULT_VUL_PROPS = 5
         desc = desc[desc.index('(') + 1 : desc.index(')')]
