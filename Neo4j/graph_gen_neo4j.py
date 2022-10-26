@@ -44,7 +44,16 @@ class App:
         # The Reference Card is also a good resource for keywords https://neo4j.com/docs/cypher-refcard/current/
         query = ""
         for vertex in self.vertices:
-            query += f'CREATE (:vertex {{node_id: toInteger({vertex[0]}),  text: "{vertex[1]}",type: "{vertex[2]}", bool:toInteger({vertex[3]})}}) '
+            if (self._is_vul(vertex[1])):
+                exp, imp = self._get_vul_scores(vertex[1])
+                query += f'''CREATE (:Vulnerability:vertex {{node_id: toInteger({vertex[0]}),  
+                text: "{vertex[1]}",type: "{vertex[2]}", 
+                bool:toInteger({vertex[3]}), 
+                exploitabilityScore: toFloat({exp}),
+                impactScore: toFloat({imp})}}) '''
+            else:
+                query += f'CREATE (:vertex {{node_id: toInteger({vertex[0]}),  text: "{vertex[1]}",type: "{vertex[2]}", bool:toInteger({vertex[3]})}}) '
+
         try:
             tx.run(query)
         # Capture any errors along with the query and data for traceability
@@ -80,6 +89,18 @@ class App:
                 logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
                 raise
         return "Create relations successfully"
+
+    def _is_vul(self, desc: str):
+        return desc.startswith("vulExists")
+
+    def _get_vul_scores(self, desc: str):
+        DEFAULT_VUL_PROPS = 5
+        desc = desc[desc.index('(') + 1 : desc.index(')')]
+        descArr = desc.split(',')
+        if len(descArr) > DEFAULT_VUL_PROPS:
+            return (descArr[DEFAULT_VUL_PROPS], descArr[DEFAULT_VUL_PROPS + 1])
+        else:
+            return (-1, -1)
 
 if __name__ == "__main__":
     # Aura queries use an encrypted connection using the "neo4j+s" URI scheme
