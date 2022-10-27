@@ -55,11 +55,14 @@ class App:
     # Set rule or permission label to each vertex
     def _set_rule_and_permission_label(self, tx):
         try:
-            query = ('MATCH (n) WHERE n.text STARTS WITH "RULE" '
+            query = ('MATCH (n) WHERE n.type = "AND" '
                     'SET n:Rule ')
             tx.run(query)
-            query = ('MATCH (n) WHERE NOT (n:Rule) '
+            query = ('MATCH (n) WHERE n.type = "OR" '
                     'SET n:Permission ')
+            tx.run(query)
+            query = ('MATCH (n) WHERE n.type = "LEAF" '
+                     'SET n:Fact ')
             tx.run(query)
         # Capture any errors along with the query and data for traceability
         except ServiceUnavailable as exception:

@@ -8,6 +8,8 @@ import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 
+import metrics.decision.ShortestPath
+
 open class Main {
     companion object {
         val driver: Driver = GraphDatabase.driver(
