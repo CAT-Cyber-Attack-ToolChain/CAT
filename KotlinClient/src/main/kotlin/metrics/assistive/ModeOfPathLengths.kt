@@ -1,11 +1,11 @@
 package metrics.assistive
 
 import metrics.AssistiveMetric;
-import metrics.PathCache
+import model.PathCache
 
-class ModeOfPathLengths : AssistiveMetric() {
+class ModeOfPathLengths(private val cache: PathCache) : AssistiveMetric() {
     override fun calculate(): Double {
-        val lst = PathCache.get()
+        val lst = cache.get()
         var mode : Int = lst[0]
         var best = 0
         var start = 0

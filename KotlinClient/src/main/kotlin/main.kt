@@ -1,5 +1,6 @@
 import contoller.MulvalController
 import contoller.Neo4JController
+import model.PathCache
 import model.AttackGraphOutput
 import model.MulvalInput
 import org.neo4j.driver.AuthTokens
@@ -7,8 +8,6 @@ import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
-
-import metrics.decision.ShortestPath
 
 open class Main {
     companion object {
@@ -37,7 +36,7 @@ open class Main {
             val output = AttackGraphOutput("$cur/../mulval/testcases/3host/3host_output")
 
             val mulvalController = MulvalController(inputFile, output)
-            val neo4JController = Neo4JController(output)
+            val neo4JController = Neo4JController(output, PathCache())
 
             mulvalController.generateGraph()
             if (mulvalController.getGenerated()) {
