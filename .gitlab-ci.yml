@@ -9,7 +9,6 @@ stages:
 compileMulval:
     stage: compile
     script:
-        - export
         - cd mulval/
         - mvn install
         - export PATH="$MULVALROOT/bin:$MULVALROOT/utils:$PATH"

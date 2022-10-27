@@ -1,14 +1,19 @@
 default: all
 
-all: adapter attack_graph metrics
+all: dir adapter attack_graph metrics
+
+dir:
+	mkdir bin
 
 adapter:
+	mkdir bin/adapter
 	(cd src/adapter; make; make install)
 
 attack_graph:
 	(cd src/attack_graph; make install)
 
 metrics:
+	mkdir bin/metrics
 	(cd src/metrics; make; make install)
 
 clean:

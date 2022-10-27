@@ -3,3 +3,4 @@
 mulval/mulval.iml
 KotlinClient/client.iml
 /KotlinClient/target/
+/output/

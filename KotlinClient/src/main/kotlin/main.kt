@@ -33,11 +33,11 @@ open class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             val cur = System.getProperty("user.dir")
-            val inputFile = MulvalInput("$cur/../mulval/testcases/3host/input.P")
-            val output = AttackGraphOutput("$cur/../mulval/testcases/3host/3host_output")
+            val mulvalInput = MulvalInput("$cur/../mulval/testcases/3host/input.P")
+            val mulvalOutput = AttackGraphOutput("$cur/../output")
 
-            val mulvalController = MulvalController(inputFile, output)
-            val neo4JController = Neo4JController(output)
+            val mulvalController = MulvalController(mulvalInput, mulvalOutput)
+            val neo4JController = Neo4JController(mulvalOutput)
 
             mulvalController.generateGraph()
             if (mulvalController.getGenerated()) {
