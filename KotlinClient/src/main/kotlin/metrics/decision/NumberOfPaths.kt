@@ -4,5 +4,5 @@ import metrics.DecisionMetric
 import metrics.PathCache
 
 class NumberOfPaths : DecisionMetric() {
-    override fun calculate(): Int  = PathCache.get().size
+    override fun calculate(): Double  = PathCache.get().size.toDouble()
 }
