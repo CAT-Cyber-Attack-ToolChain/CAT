@@ -1,6 +1,6 @@
 package attackAgent
 
-import Main.Companion.driver
+import contoller.Neo4JController.Companion.driver
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values
 
