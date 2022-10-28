@@ -4,3 +4,8 @@ mulval/mulval.iml
 KotlinClient/target/
 KotlinClient/client.iml
 /output/
+
+/FSKotlinClient/.gradle
+/FSKotlinClient/.build
+/FSKotlinClient/build
+/FSKotlinClient/.idea
