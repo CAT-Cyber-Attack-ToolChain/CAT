@@ -3,4 +3,4 @@
 mulval/mulval.iml
 KotlinClient/target/
 KotlinClient/client.iml
-Neo4j/mulval_output/
+/output/
