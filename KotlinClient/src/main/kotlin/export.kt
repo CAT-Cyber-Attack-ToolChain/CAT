@@ -5,11 +5,14 @@ import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
-import org.neo4j.driver.Result
 
-import com.beust.klaxon.Klaxon
 import com.beust.klaxon.JsonReader
 import com.beust.klaxon.JsonObject
+
+import graph.Node
+import graph.Relationship
+import graph.NodeOrRelationship
+import graph.Graph
 
 class Export {
     companion object {
@@ -42,9 +45,9 @@ class Export {
 
         }
 
-        fun translateToCytoscapeJS(json: String) : MutableList<NodeOrRelationship> {
+        fun translateToCytoscapeJS(json: String) : Graph {
             val graph: MutableList<NodeOrRelationship> = mutableListOf()
-            val klaxon = Klaxon()
+
             JsonReader(StringReader(json)).use { reader ->
                 reader.beginArray() {
                     while (reader.hasNext()) {
@@ -59,6 +62,28 @@ class Export {
                             var start: JNode? = null
                             var end: JNode? = null
 
+                            // parse a node within a relationship (start and end)
+                            val nodeInRelationship : () -> JNode? = {
+                                reader.beginObject() {
+                                    var startId: String = ""
+                                    var startLabels: List<String> = arrayListOf<String>()
+                                    var startProperties: JsonObject? = null
+                                    while (reader.hasNext()) {
+                                        val startName = reader.nextName()
+                                        when (startName) {
+                                            "id" -> startId = reader.nextString()
+                                            "labels" -> startLabels =
+                                                reader.nextArray().map { a -> a.toString() }
+                                            "properties" -> startProperties =
+                                                reader.nextObject()
+                                        }
+                                    }
+                                    JNode(startId, startLabels, startProperties)
+                                }
+                            }
+
+
+
                             while (reader.hasNext()) {
                                 val readName = reader.nextName()
                                 when (readName) {
@@ -68,51 +93,23 @@ class Export {
                                         reader.nextArray().map { a -> a.toString() }
                                     "properties" -> properties = reader.nextObject()
                                     "label" -> label = reader.nextString()
-                                    "start" -> reader.beginObject() {
-                                        var startId: String = ""
-                                        var startLabels: List<String> = arrayListOf<String>()
-                                        var startProperties: JsonObject? = null
-                                        while (reader.hasNext()) {
-                                            val startName = reader.nextName()
-                                            when (startName) {
-                                                "id" -> startId = reader.nextString()
-                                                "labels" -> startLabels = reader.nextArray().map {a -> a.toString()}
-                                                "properties" -> startProperties = reader.nextObject()
-                                                else -> println("Miss")
-                                            }
-                                        }
-                                        start = JNode(startId, startLabels, startProperties)
-                                    }
-                                    "end" -> reader.beginObject() {
-                                        var endId: String = ""
-                                        var endLabels: List<String> = arrayListOf<String>()
-                                        var endProperties: JsonObject? = null
-                                        while (reader.hasNext()) {
-                                            val endName = reader.nextName()
-                                            when (endName) {
-                                                "id" -> endId = reader.nextString()
-                                                "labels" -> endLabels = reader.nextArray().map {a -> a.toString()}
-                                                "properties" -> endProperties = reader.nextObject()
-                                                else -> println("Miss")
-                                            }
-                                        }
-                                        end = JNode(endId, endLabels, endProperties)
-                                    }
-                                    else -> println("Miss")
+                                    "start" -> start = nodeInRelationship()
+                                    "end" -> end = nodeInRelationship()
                                 }
                             }
+
                             var nr : NodeOrRelationship =
                             when (type) {
                                 "node" -> Node(id.toInt(), properties as Map<String, Any>, labels)
                                 "relationship" -> Relationship(id.toInt(), properties as Map<String, Any>, label, start!!.id.toInt(), end!!.id.toInt())
-                                else -> throw NoSuchElementException("Only Nodes and Relationships accepted")
+                                else -> throw NoSuchElementException("Only Nodes or Relationships can be parsed")
                             }
                             graph.add(nr)
                         }
                     }
                 }
             }
-            return graph
+            return Graph(graph)
         }
     }
 }

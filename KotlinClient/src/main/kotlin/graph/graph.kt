@@ -1,7 +1,9 @@
+package graph
+
 class Graph(val list : MutableList<NodeOrRelationship>) {
 
     fun getNode(id: Int) : Node {
-        val node = list.first { nr -> nr.id == id && nr is Node}
+        val node = list.first { nr -> nr.id == id && nr is Node }
         node?.let {
             return node as Node
         }
@@ -10,11 +12,15 @@ class Graph(val list : MutableList<NodeOrRelationship>) {
     }
 
     fun getRelationship(id: Int) : Relationship {
-        val relationship = list.first { nr -> nr.id == id && nr is Relationship}
+        val relationship = list.first { nr -> nr.id == id && nr is Relationship }
         relationship?.let {
             return relationship as Relationship
         }
         throw NoSuchElementException("Could not find Relationship with id $id")
+    }
+
+    override fun toString(): String {
+        return list.toString()
     }
 }
 

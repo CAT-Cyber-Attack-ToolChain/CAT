@@ -8,6 +8,8 @@ import com.lordcodes.turtle.shellRun;
 
 import java.io.File
 
+import graph.Graph
+
 open class Main {
     companion object {
         val driver: Driver = GraphDatabase.driver("neo4j+s://42ce3f9a.databases.neo4j.io", AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38"))
@@ -32,7 +34,7 @@ open class Main {
 
 //            generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
 //            runNeo4j()
-            val graph : MutableList<NodeOrRelationship> = Export.translateToCytoscapeJS(Export.exportToJSON())
+            val graph : Graph = Export.translateToCytoscapeJS(Export.exportToJSON())
             println(graph)
         }
 
