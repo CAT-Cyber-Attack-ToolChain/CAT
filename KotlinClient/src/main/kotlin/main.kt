@@ -30,8 +30,10 @@ open class Main {
             val cur = System.getProperty("user.dir")
             val inputFile = cur + "/../mulval/testcases/3host/input.P"
 
-            generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
-            runNeo4j()
+//            generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
+//            runNeo4j()
+            val graph : MutableList<NodeOrRelationship> = Export.translateToCytoscapeJS(Export.exportToJSON())
+            println(graph)
         }
 
         fun generateGraphFromDatalog(inputFile : String, workingDirPath : String) {

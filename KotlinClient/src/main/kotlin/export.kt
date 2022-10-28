@@ -6,15 +6,20 @@ import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 import org.neo4j.driver.Result
-import org.neo4j.driver.Record
 
 import com.beust.klaxon.Klaxon
 import com.beust.klaxon.JsonReader
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.JsonArray
 
 class Export {
     companion object {
+
+        data class JNode(
+            var id: String,
+            var labels: List<String>,
+            var properties: JsonObject?
+        )
+
         val driver: Driver = GraphDatabase.driver("neo4j+s://42ce3f9a.databases.neo4j.io", AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38"))
 
         fun close() {
@@ -37,8 +42,8 @@ class Export {
 
         }
 
-        fun translateToCytoscapeJS(json: String) {
-
+        fun translateToCytoscapeJS(json: String) : MutableList<NodeOrRelationship> {
+            val graph: MutableList<NodeOrRelationship> = mutableListOf()
             val klaxon = Klaxon()
             JsonReader(StringReader(json)).use { reader ->
                 reader.beginArray() {
@@ -51,8 +56,8 @@ class Export {
 
                             // relationship
                             var label: String = "None"
-                            var start: Node? = null
-                            var end: Node? = null
+                            var start: JNode? = null
+                            var end: JNode? = null
 
                             while (reader.hasNext()) {
                                 val readName = reader.nextName()
@@ -76,7 +81,7 @@ class Export {
                                                 else -> println("Miss")
                                             }
                                         }
-                                        start = Node(startId, startLabels, startProperties)
+                                        start = JNode(startId, startLabels, startProperties)
                                     }
                                     "end" -> reader.beginObject() {
                                         var endId: String = ""
@@ -91,33 +96,24 @@ class Export {
                                                 else -> println("Miss")
                                             }
                                         }
-                                        end = Node(endId, endLabels, endProperties)
+                                        end = JNode(endId, endLabels, endProperties)
                                     }
                                     else -> println("Miss")
                                 }
                             }
                             var nr : NodeOrRelationship =
                             when (type) {
-                                "node" -> GraphNode(id.toInt(), properties as Map<String, Any>, labels)
+                                "node" -> Node(id.toInt(), properties as Map<String, Any>, labels)
                                 "relationship" -> Relationship(id.toInt(), properties as Map<String, Any>, label, start!!.id.toInt(), end!!.id.toInt())
                                 else -> throw NoSuchElementException("Only Nodes and Relationships accepted")
                             }
+                            graph.add(nr)
                         }
                     }
                 }
             }
+            return graph
         }
     }
 }
 
-data class Node(
-    var id: String,
-    var labels: List<String>,
-    var properties: JsonObject?
-)
-
-open class NodeOrRelationship(open val id: Int, open val properties: Map<String, Any>)
-
-data class GraphNode(override val id: Int, override val properties: Map<String, Any>, val labels: List<String>) : NodeOrRelationship(id, properties)
-
-data class Relationship(override val id: Int, override val properties: Map<String, Any>, val label: String, val startId: Int, val endId: Int) : NodeOrRelationship(id, properties)
