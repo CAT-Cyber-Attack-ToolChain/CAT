@@ -11,8 +11,6 @@ import kotlin.random.Random
 
 class RandomAttackAgent : AttackAgent() {
 
-    private val adapter : Neo4JAdapter = Neo4JAdapter()
-
     override fun attack() {
         var currentNode: Int = adapter.getStartNode()
         path.add(currentNode)
