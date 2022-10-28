@@ -1,3 +1,5 @@
+package attackAgent
+
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
@@ -6,9 +8,13 @@ import org.neo4j.driver.Values.parameters;
 
 import kotlin.random.Random
 
-class RandomAttackAgent {
+class RandomAttackAgent : AttackAgent {
 
-    private val driver: Driver = GraphDatabase.driver("neo4j+s://42ce3f9a.databases.neo4j.io", AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38"))
+    private val driver: Driver = GraphDatabase.driver(
+        "neo4j+s://42ce3f9a.databases.neo4j.io",
+        AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
+    )
+    override val path = mutableListOf<Int>()
 
     private fun getRandomNode(): Int {
         val session: Session = driver.session()
@@ -25,16 +31,15 @@ class RandomAttackAgent {
         val session: Session = driver.session()
 
         val connectedNodeIds: List<Int> = session.writeTransaction { tx ->
-            val result: org.neo4j.driver.Result = tx.run("MATCH(start {node_id: ${id}})-[:To]->(end) RETURN (end.node_id)", parameters())
+            val result: org.neo4j.driver.Result =
+                tx.run("MATCH(start {node_id: ${id}})-[:To]->(end) RETURN (end.node_id)", parameters())
             result.list().map { e -> e[0].toString().toInt() }
         }
 
         return connectedNodeIds
     }
 
-    fun attack() {
-        val path: MutableList<Int> = mutableListOf()
-
+    override fun attack() {
         var currentNode: Int = getRandomNode()
         path.add(currentNode)
 
@@ -45,25 +50,5 @@ class RandomAttackAgent {
             connectedNodes = getConnectedNodes(currentNode)
             path.add(currentNode)
         }
-
-        printPath(path)
     }
-
-    fun printPath(path: List<Int>) {
-        for (id in path) {
-            val session: Session = driver.session()
-
-            val text: String = session.writeTransaction { tx ->
-                val result: org.neo4j.driver.Result = tx.run("MATCH(n {node_id: ${id}}) RETURN (n.text)", parameters())
-                result.list().toString() }
-            println(text)
-            }
-    }
-}
-
-fun main(args: Array<String>) {
-
-    val randomAttackAgent: RandomAttackAgent = RandomAttackAgent()
-    randomAttackAgent.attack()
-
 }
