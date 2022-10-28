@@ -1,5 +1,11 @@
 import contoller.MulvalController
 import contoller.Neo4JController
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import metrics.PathCache
+import metrics.decision.NormalisedMOPL
+import metrics.decision.NumberOfPaths
+import metrics.decision.ShortestPath
 import model.AttackGraphOutput
 import model.MulvalInput
 
@@ -18,6 +24,20 @@ open class Main {
       mulvalController.generateGraph()
       if (mulvalController.getGenerated()) {
         neo4JController.update()
+      }
+
+      PathCache.update()
+
+      val shortestPath = ShortestPath()
+      val normalisedMOPL = NormalisedMOPL()
+      val numberOfPaths = NumberOfPaths()
+      val metricList = listOf(shortestPath, normalisedMOPL, numberOfPaths)
+
+      println(PathCache.get())
+      runBlocking {
+        metricList.forEach{
+          launch {print(it.calculate())}
+        }
       }
     }
   }
