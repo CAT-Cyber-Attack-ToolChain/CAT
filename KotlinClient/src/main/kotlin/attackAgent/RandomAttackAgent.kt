@@ -8,23 +8,20 @@ import org.neo4j.driver.Values.parameters;
 
 import kotlin.random.Random
 
-class RandomAttackAgent : AttackAgent {
+class RandomAttackAgent : AttackAgent() {
 
     private val driver: Driver = GraphDatabase.driver(
         "neo4j+s://42ce3f9a.databases.neo4j.io",
         AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
     )
-    override val path = mutableListOf<Int>()
 
     private fun getRandomNode(): Int {
         val session: Session = driver.session()
 
-        val maxId: Int = session.writeTransaction { tx ->
-            val result: org.neo4j.driver.Result = tx.run("MATCH(n) RETURN MAX (n.node_id)", parameters())
+        return session.writeTransaction { tx ->
+            val result: org.neo4j.driver.Result = tx.run("MATCH(n) WHERE n.text STARTS WITH \"attackerLocated\" RETURN n.node_id", parameters())
             result.list()[0].get(0).toString().toInt()
         }
-
-        return Random.nextInt(0, maxId) + 1
     }
 
     private fun getConnectedNodes(id: Int): List<Int> {
@@ -39,6 +36,7 @@ class RandomAttackAgent : AttackAgent {
         return connectedNodeIds
     }
 
+
     override fun attack() {
         var currentNode: Int = getRandomNode()
         path.add(currentNode)
@@ -51,4 +49,10 @@ class RandomAttackAgent : AttackAgent {
             path.add(currentNode)
         }
     }
+}
+
+fun main(args : Array<String>) {
+    val random : AttackAgent = RandomAttackAgent()
+    random.attack()
+    random.printPath()
 }
