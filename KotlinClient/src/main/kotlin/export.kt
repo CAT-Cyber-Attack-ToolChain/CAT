@@ -45,7 +45,7 @@ class Export {
 
         }
 
-        fun translateToCytoscapeJS(json: String) : Graph {
+        fun translateToGraph(json: String) : Graph {
             val graph: MutableList<NodeOrRelationship> = mutableListOf()
 
             JsonReader(StringReader(json)).use { reader ->

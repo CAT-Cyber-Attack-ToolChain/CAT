@@ -34,8 +34,8 @@ open class Main {
 
 //            generateGraphFromDatalog(inputFile, cur + "/../mulval/testcases/3host/3host_output")
 //            runNeo4j()
-            val graph : Graph = Export.translateToCytoscapeJS(Export.exportToJSON())
-            println(graph)
+            val graph : Graph = Export.translateToGraph(Export.exportToJSON())
+            println(graph.exportToCytoscapeJSON())
         }
 
         fun generateGraphFromDatalog(inputFile : String, workingDirPath : String) {
