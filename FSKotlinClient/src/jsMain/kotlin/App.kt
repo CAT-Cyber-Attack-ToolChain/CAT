@@ -1,5 +1,6 @@
 import react.*
 import kotlinx.coroutines.*
+import model.ShoppingListItem
 import react.dom.html.ReactHTML.h1
 import react.dom.html.ReactHTML.h6
 import react.dom.html.ReactHTML.li

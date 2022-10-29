@@ -6,6 +6,7 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 
 import kotlinx.browser.window
+import model.ShoppingListItem
 
 val endpoint = window.location.origin // only needed until https://youtrack.jetbrains.com/issue/KTOR-453 is resolved
 
