@@ -10,6 +10,11 @@ To start the server run :
 ````
 The command will get stuck at 95% (atleast on my machine) however it should be running
 
+To view the application use a web browser to navigate to:
+````
+    https://localhost:8080
+````
+
 Here's an image of a sleeping cat :)
 ````
       |\      _,,,---,,_
@@ -17,3 +22,4 @@ ZZZzz /,`.-'`'    -.  ;-;;,_
      |,4-  ) )-,_. ,\ (  `'-'
     '---''(_/--'  `-'\_)  
 ````
+
