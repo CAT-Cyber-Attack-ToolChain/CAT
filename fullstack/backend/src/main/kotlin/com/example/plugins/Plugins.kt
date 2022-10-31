@@ -17,6 +17,7 @@ fun Application.configurePlugins() {
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Delete)
+        allowHeader(HttpHeaders.ContentType)
         anyHost()
     }
     install(Compression) {
