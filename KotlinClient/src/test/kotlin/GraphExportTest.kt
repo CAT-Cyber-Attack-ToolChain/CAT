@@ -25,7 +25,7 @@ internal class GraphExportTest {
         val json: String = graph.exportToCytoscapeJSON()
 
         assertContains(json, "\"data\" : {")
-        assertContains(json, "name")
+        assertContains(json, "label")
         assertContains(json, "source")
         assertContains(json, "target")
     }

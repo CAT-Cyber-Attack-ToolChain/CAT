@@ -100,8 +100,8 @@ class Export {
 
                             var nr : NodeOrRelationship =
                             when (type) {
-                                "node" -> Node(id.toInt(), properties as Map<String, Any>, labels)
-                                "relationship" -> Relationship(id.toInt(), properties as Map<String, Any>, label, start!!.id.toInt(), end!!.id.toInt())
+                                "node" -> Node(id.toInt(), properties as MutableMap<String, Any>, labels)
+                                "relationship" -> Relationship(id.toInt(), properties as MutableMap<String, Any>, label, start!!.id.toInt(), end!!.id.toInt())
                                 else -> throw NoSuchElementException("Only Nodes or Relationships can be parsed")
                             }
                             graph.add(nr)

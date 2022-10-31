@@ -1,8 +1,9 @@
 package graph
 
 import com.beust.klaxon.Klaxon
+import com.beust.klaxon.json
 import cytoscape.CytoDataWrapper
-import cytoscape.CytoObject
+
 import cytoscape.CytoNode
 import cytoscape.CytoEdge
 
@@ -27,12 +28,11 @@ class Graph(val list : MutableList<NodeOrRelationship>) {
     }
 
     fun exportToCytoscapeJSON() : String {
-        val jsonArray: StringBuilder = java.lang.StringBuilder("[")
-        val klaxon = Klaxon()
-        list.forEach { nr -> jsonArray.append(klaxon.toJsonString(nr.toCytoscapeJson()) + ", ") }
 
-        jsonArray.append("]")
-        return jsonArray.toString()
+        val klaxon = Klaxon()
+        val strList: List<String> = list.map { nr -> klaxon.toJsonString(nr.toCytoscapeJson()) }
+        return strList.joinToString(prefix = "[", postfix = "]")
+
     }
 
     override fun toString(): String {
@@ -40,16 +40,18 @@ class Graph(val list : MutableList<NodeOrRelationship>) {
     }
 }
 
-abstract class NodeOrRelationship(open val id: Int, open val properties: Map<String, Any>) {
+abstract class NodeOrRelationship(open val id: Int, open val properties: MutableMap<String, Any>) {
     abstract fun toCytoscapeJson() : CytoDataWrapper
 }
 
 data class Node(override val id: Int,
-                override val properties: Map<String, Any>,
+                override val properties: MutableMap<String, Any>,
                 val labels: List<String>) : NodeOrRelationship(id, properties) {
 
     override fun toCytoscapeJson(): CytoDataWrapper {
-        return CytoDataWrapper(CytoNode(id.toString(), id.toString()))
+        val cytoNode = CytoNode(id.toString(), id.toString())
+        cytoNode.addProperties(properties)
+        return CytoDataWrapper(cytoNode)
     }
 
     override fun toString(): String {
@@ -58,13 +60,15 @@ data class Node(override val id: Int,
 }
 
 data class Relationship(override val id: Int,
-                        override val properties: Map<String, Any>,
+                        override val properties: MutableMap<String, Any>,
                         val label: String,
                         val startId: Int,
                         val endId: Int) : NodeOrRelationship(id, properties) {
 
     override fun toCytoscapeJson(): CytoDataWrapper {
-        return CytoDataWrapper(CytoEdge(id.toString(), startId.toString(), endId.toString()))
+        val cytoEdge = CytoEdge(id.toString(), startId.toString(), endId.toString(), label)
+        cytoEdge.addProperties(properties)
+        return CytoDataWrapper(cytoEdge)
     }
 
     override fun toString(): String {

@@ -1,9 +1,33 @@
 package cytoscape
 
-interface CytoObject {}
+import java.util.HashMap
 
-data class CytoNode(val id: String, val name: String) : CytoObject
+interface CytoObject {
+    fun addProperty(key: String, value : Any)
 
-data class CytoEdge(val id: String, val source: String, val target: String) : CytoObject
+    fun addProperties(properties : MutableMap<String, Any>)
+}
+
+data class CytoNode(val id: String, val label: String) : CytoObject {
+    var properties: MutableMap<String, Any> = HashMap<String, Any>()
+    override fun addProperties(properties: MutableMap<String, Any>) {
+        this.properties = properties
+    }
+
+    override fun addProperty(key: String, value: Any) {
+        properties.put(key, String)
+    }
+}
+
+data class CytoEdge(val id: String, val source: String, val target: String, val label: String) : CytoObject {
+    var properties: MutableMap<String, Any> = HashMap<String, Any>()
+    override fun addProperties(properties: MutableMap<String, Any>) {
+        this.properties = properties
+    }
+
+    override fun addProperty(key: String, value: Any) {
+        properties.put(key, value)
+    }
+}
 
 data class CytoDataWrapper(val data: CytoObject)
