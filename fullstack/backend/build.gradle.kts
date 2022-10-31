@@ -30,6 +30,10 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
     implementation("io.ktor:ktor-server-compression:$ktorVersion")
+    implementation("com.lordcodes.turtle:turtle:0.5.0")
+    implementation("com.opencsv:opencsv:5.7.1")
+    implementation("org.neo4j.driver:neo4j-java-driver:4.4.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+
 }
