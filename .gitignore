@@ -1,3 +1,4 @@
+.DS_Store
 /.idea/
 /KotlinClient/.idea/
 mulval/mulval.iml
@@ -5,7 +6,7 @@ KotlinClient/target/
 KotlinClient/client.iml
 /output/
 
-/FSKotlinClient/.gradle
-/FSKotlinClient/.build
-/FSKotlinClient/build
-/FSKotlinClient/.idea
+/fullstack/frontend/node_modules/*
+/fullstack/backend/.gradle
+/fullstack/backend/.idea
+/fullstack/backend/build
