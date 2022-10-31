@@ -8,13 +8,15 @@ import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
 
 class Neo4JController(private val dir: AttackGraphOutput) {
 
-  private val vertices = mutableListOf<List<String>>()
-  private val arcs = mutableListOf<List<String>>()
+  private var vertices = mutableListOf<List<String>>()
+  private var arcs = mutableListOf<List<String>>()
+  private var hasData = false
 
   companion object {
     val driver: Driver = GraphDatabase.driver(
@@ -34,7 +36,7 @@ class Neo4JController(private val dir: AttackGraphOutput) {
          Bob                  ["Bob"]]
      */
     fun readCSV(filepath: String, storage: MutableList<List<String>>) {
-      val fr: FileReader = FileReader(filepath, StandardCharsets.UTF_8)
+      val fr = FileReader(filepath, StandardCharsets.UTF_8)
 
       fr.use {
         val reader = CSVReader(fr)
@@ -56,9 +58,15 @@ class Neo4JController(private val dir: AttackGraphOutput) {
     }
   }
 
-  init {
-    readVerticesCSV()
-    readRelationsCSV()
+  private fun readData() {
+    hasData = try {
+      readVerticesCSV()
+      readRelationsCSV()
+      true
+    } catch (e: FileNotFoundException){
+      print("attack graph output not found...")
+      false
+    }
   }
 
 
@@ -106,7 +114,7 @@ class Neo4JController(private val dir: AttackGraphOutput) {
     }
   }
 
-  fun flushGraph() {
+  private fun flushGraph() {
     val session: Session = driver.session()
     session.writeTransaction { tx ->
       tx.run("MATCH (n) DETACH DELETE n ", parameters())
@@ -122,10 +130,18 @@ class Neo4JController(private val dir: AttackGraphOutput) {
     println(result)
   }
 
-  fun update() {
+  fun update() : Boolean {
     print("Sending attack graph to Neo4j AuraDB...")
-    generateGraph()
-    println("Done!")
+    hasData = false
+    readData()
+    return if (hasData) {
+      generateGraph()
+      println("Done!")
+      true
+    } else {
+      println("Failed!")
+      false
+    }
   }
 
 }
