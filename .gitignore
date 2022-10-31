@@ -9,3 +9,5 @@ KotlinClient/client.iml
 /FSKotlinClient/.build
 /FSKotlinClient/build
 /FSKotlinClient/.idea
+
+/fullstack/frontend/node_modules/*
