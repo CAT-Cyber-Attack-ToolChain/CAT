@@ -119,6 +119,8 @@ String path = f.getPath();
 		String software="";
 		String severity="";
 		String access="";
+		float exploitabilityScore = -1;
+		float impactScore = -1;
 		
 		try{
 		Connection con = getConnection();
@@ -137,8 +139,13 @@ String path = f.getPath();
 		range = result.getString("rng");
 		software = result.getString("soft");
 		severity = result.getString("severity");
-		access=result.getString("access");
-		String tuple="vuln_exists('"+hostname+"','"+cveid+"','"+software+"',["+range+"],["+lose_types+"],'"+severity+"','"+access+"').\n";
+		access = result.getString("access");
+		exploitabilityScore = result.getFloat("exploit");
+		impactScore = result.getFloat("impact");
+
+		String tuple="vuln_exists('"+hostname+"','"+cveid+"','"+software+
+		"',["+range+"],["+lose_types+"],'"+severity+"','"+access+"',"
+		 + exploitabilityScore + "," + impactScore + ").\n";
 		//System.out.println(tuple);
 		fr.write(tuple);
 		}
