@@ -49,7 +49,7 @@ data class Node(override val id: Int,
                 val labels: List<String>) : NodeOrRelationship(id, properties) {
 
     override fun toCytoscapeJson(): CytoDataWrapper {
-        val cytoNode = CytoNode(id.toString(), id.toString())
+        val cytoNode = CytoNode("n${id.toString()}", id.toString())
         cytoNode.addProperties(properties)
         return CytoDataWrapper(cytoNode)
     }
@@ -66,7 +66,7 @@ data class Relationship(override val id: Int,
                         val endId: Int) : NodeOrRelationship(id, properties) {
 
     override fun toCytoscapeJson(): CytoDataWrapper {
-        val cytoEdge = CytoEdge(id.toString(), startId.toString(), endId.toString(), label)
+        val cytoEdge = CytoEdge("e${id.toString()}", "n${startId.toString()}", "n${endId.toString()}", label)
         cytoEdge.addProperties(properties)
         return CytoDataWrapper(cytoEdge)
     }
