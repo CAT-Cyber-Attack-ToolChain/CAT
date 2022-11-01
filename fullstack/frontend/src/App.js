@@ -77,7 +77,7 @@ function App() {
           <p>New item</p>
           {items}
           <h2>Attack Graph</h2>
-          <CytoscapeComponent elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} />
+          <CytoscapeComponent elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
           </>
         }
       </div>
