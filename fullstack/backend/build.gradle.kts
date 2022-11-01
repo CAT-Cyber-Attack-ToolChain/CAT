@@ -33,6 +33,7 @@ dependencies {
     implementation("com.lordcodes.turtle:turtle:0.5.0")
     implementation("com.opencsv:opencsv:5.7.1")
     implementation("org.neo4j.driver:neo4j-java-driver:4.4.0")
+    implementation("com.beust:klaxon:5.5")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 

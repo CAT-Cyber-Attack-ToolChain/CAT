@@ -44,7 +44,7 @@ function App() {
     {
       selector: 'node',
       style: {
-        label: 'data(id)',
+        label: 'data(properties.text)',
         width: 20,
         height: 20,
         shape: 'circle',

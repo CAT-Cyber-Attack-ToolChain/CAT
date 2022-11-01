@@ -8,6 +8,8 @@ import io.ktor.server.routing.*
 import com.example.model.*
 import com.example.controller.*
 import com.example.shoppingList
+import com.example.graph.*
+
 
 fun Route.ShoppingRouting() {
     val example = """[{ "data": { "id": "one", "label": "Node 1" }}, 
@@ -30,7 +32,10 @@ fun Route.ShoppingRouting() {
             if (mulvalController.getGenerated()) {
                 neo4JController.update()
             }
-            call.respond(example)
+            // TODO: get the graph data from Neo4j
+            val graph: Graph = Export.translateToGraph(Export.exportToJSON())
+            val cytoscapeJson = graph.exportToCytoscapeJSON()
+            call.respond(cytoscapeJson)
         }
         post {
             shoppingList += call.receive<ShoppingListItem>()
