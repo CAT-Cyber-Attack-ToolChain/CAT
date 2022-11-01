@@ -68,10 +68,10 @@ class Neo4JController(private val dir : AttackGraphOutput) {
 
 
     private fun readVerticesCSV() {
-        readCSV("${dir.getPath()}/VERTICES.csv", vertices)
+        readCSV("${dir.getPath()}/VERTICES.CSV", vertices)
     }
     private fun readRelationsCSV() {
-        readCSV("${dir.getPath()}/ARCS.csv", arcs)
+        readCSV("${dir.getPath()}/ARCS.CSV", arcs)
     }
 
     private fun generateGraph() {

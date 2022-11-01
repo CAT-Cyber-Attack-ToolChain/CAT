@@ -33,6 +33,10 @@ function App() {
     backgroundColor: 'blue'
   }
 
+  var layout = {
+    name: 'breadthfirst'
+  }
+
   var stylesheet = [
     {
       selector: 'node',
@@ -68,7 +72,7 @@ function App() {
           <>
           <p>New item</p>
           {items}
-          <CytoscapeComponent elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} />
+          <CytoscapeComponent elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
           </>
         }
         
