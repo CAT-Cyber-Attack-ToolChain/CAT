@@ -40,10 +40,6 @@ function App() {
     name: 'breadthfirst'
   }
 
-  var layout = {
-    name: 'breadthfirst'
-  }
-
   var stylesheet = [
     {
       selector: 'node',
