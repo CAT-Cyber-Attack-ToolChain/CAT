@@ -18,6 +18,8 @@ function App() {
 
   const [items, setItems] = useState()
   const [mets, setMets] = useState()
+  const [selectedFile, setSelectedFile] = useState();
+	const [isFilePicked, setIsFilePicked] = useState(false);
 
   function doStuffOnCy(cy) {
     cy.ready(() => onMouseover(cy))
@@ -62,6 +64,33 @@ function App() {
     cy.removeListener('mouseout');
     cy.on('mouseout', 'node', (event) => event.target.popper.state.elements.popper.style.display = "none");
 
+  }
+
+  const changeHandler = (event) => {
+		setSelectedFile(event.target.files[0]);
+		setIsFilePicked(true);
+	};
+
+  const handleSubmission = async () => {
+    if (isFilePicked) {
+      const formData = new FormData();
+
+      formData.append('File', selectedFile);
+
+      await fetch(
+        'http://localhost:8080/submitInput',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      ).then((response) => response.json())
+       .then((result) => setItems(result))
+       .catch((error) => {
+				console.error('Error:', error);
+			});
+    } else {
+      alert("Please upload an input file!");
+    }
   }
 
   const generateGraph = async () => {
@@ -159,8 +188,10 @@ function App() {
         <Row>
           <h1>Cyber Attack Tool Chain</h1>
         </Row>
+
+        <input type="file" name="file" onChange={changeHandler} />
         
-        <Button variant="primary" onClick={() => generateGraph()}>Generate Graph</Button>
+        <button onClick={() => handleSubmission()}>Generate Graph</button>
         
         <div onClick={() => post()}>Post item</div>
 
@@ -170,8 +201,6 @@ function App() {
             ? <p>No items</p>
             : 
             <>
-              <p>New item</p>
-              {items}
               <h2>Attack Graph</h2>
               <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}}
                 elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
