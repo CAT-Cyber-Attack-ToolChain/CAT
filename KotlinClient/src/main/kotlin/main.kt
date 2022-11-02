@@ -26,14 +26,18 @@ open class Main {
       val cache = PathCache()
 
       val mulvalController = MulvalController(mulvalInput, mulvalOutput)
-      val neo4JController = Neo4JController(mulvalOutput)
+      val neo4JController = Neo4JController(mulvalOutput, cache)
       val graph: Graph = Export.translateToGraph(Export.exportToJSON())
 
       if (mulvalController.generateGraph()) {
         neo4JController.update()
       }
 
-      val metricList = listOf(NormalisedMOPL(cache), NumberOfPaths(cache), ShortestPath(cache), WeakestAdversary(), MeanOfPathLengths(cache), MedianOfPathLengths(cache), ModeOfPathLengths(cache), StandardDeviationOfPathLengths(cache))
+      val metricList = listOf(
+              NormalisedMOPL(cache), NumberOfPaths(cache), ShortestPath(cache),
+              WeakestAdversary(), MeanOfPathLengths(cache), MedianOfPathLengths(cache),
+              ModeOfPathLengths(cache), StandardDeviationOfPathLengths(cache)
+      )
 
       runBlocking {
         metricList.forEach {
