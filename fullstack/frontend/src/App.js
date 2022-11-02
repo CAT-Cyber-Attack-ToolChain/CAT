@@ -17,6 +17,7 @@ cytoscape.use(popper);
 function App() {
 
   const [items, setItems] = useState()
+  const [mets, setMets] = useState()
 
   function doStuffOnCy(cy) {
     cy.ready(() => onMouseover(cy))
@@ -75,6 +76,12 @@ function App() {
       "priority": 5,
       "id": 2040789031
     });
+    console.log(response)
+  }
+
+  const metrics = async() => {
+    const response = await axios.get('http://localhost:8080/metrics')
+    setMets(JSON.parse(response.data))
     console.log(response)
   }
 
@@ -172,7 +179,19 @@ function App() {
           }
         </div>
         <div>
-          <h2>Metrics</h2>
+          <h2 onClick={()=>metrics()}>Metrics</h2>
+          {mets == null
+            ? <p>Click Metrics To Calculate</p>
+            : <ul>
+            <li>shortest path: {mets["shortestpath"]}</li>
+            <li>mean path length: {mets["meanpathlength"]}</li>
+            <li>normalised mean of path lengths: {mets["normalisedmopl"]}</li>
+            <li>mode of path lengths: {mets["modepathlength"]}</li>
+            <li>sd of path lengths: {mets["sdpathlength"]}</li>
+            <li>number of paths: {mets["numberofpaths"]}</li>
+            <li>weakest adversary: {mets["weakestadversary"]}</li>
+            </ul>
+          }
           <p>Hello world!</p>
         </div>
       </div>

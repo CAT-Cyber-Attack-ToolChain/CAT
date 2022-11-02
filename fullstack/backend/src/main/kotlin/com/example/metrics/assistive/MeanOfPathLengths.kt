@@ -1,8 +1,12 @@
 package metrics.assistive
 
 import metrics.AssistiveMetric
-import metrics.PathCache
+import model.PathCache
 
-class MeanOfPathLengths : AssistiveMetric() {
-    override fun calculate(): Double = PathCache.get().average()
+class MeanOfPathLengths(private val cache: PathCache) : AssistiveMetric() {
+
+    override fun toString(): String {
+        return "Mean Path Length"
+    }
+    override fun calculate(): Double = cache.get().average()
 }
