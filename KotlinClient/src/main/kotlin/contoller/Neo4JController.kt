@@ -7,7 +7,6 @@ import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
-import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
@@ -143,5 +142,4 @@ class Neo4JController(private val dir: AttackGraphOutput) {
       false
     }
   }
-
 }
