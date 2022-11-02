@@ -1,19 +1,17 @@
-package routes
+package com.example.plugins
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.example.model.*
 import com.example.controller.*
-import com.example.shoppingList
 import com.example.graph.*
 import io.ktor.http.content.*
 import java.io.File
 
 
-fun Route.ShoppingRouting() {
+fun Route.GraphGenRouting() {
     val example = """[{ "data": { "id": "one", "label": "Node 1" }}, 
         { "data": { "id": "two", "label": "Node 2" }},
         { "data": { "source": "one", "target": "two", "label": "Edge from Node1 to Node2" } }]"""
@@ -69,22 +67,6 @@ fun Route.ShoppingRouting() {
             // generate the graph, move to Neo4j, and display it on frontend
             val cytoscapeJson = generateGraph()
             call.respond(cytoscapeJson)
-        }
-    }
-
-    route(ShoppingListItem.path) {
-        get {
-            val cytoscapeJson = generateGraph()
-            call.respond(cytoscapeJson)
-        }
-        post {
-            shoppingList += call.receive<ShoppingListItem>()
-            call.respond(HttpStatusCode.OK)
-        }
-        delete("/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: error("Invalid delete request")
-            shoppingList.removeIf { it.id == id }
-            call.respond(HttpStatusCode.OK)
         }
     }
 }
