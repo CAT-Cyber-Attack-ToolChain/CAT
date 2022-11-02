@@ -1,5 +1,5 @@
 package view
 
 interface Updateable {
-    fun update()
+  fun update()
 }
