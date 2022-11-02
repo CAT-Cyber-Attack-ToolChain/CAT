@@ -1,9 +1,13 @@
 package metrics.assistive
 
-import metrics.AssistiveMetric;
+import metrics.AssistiveMetric
 import model.PathCache
 
 class MedianOfPathLengths(private val cache: PathCache) : AssistiveMetric() {
+
+    override fun toString(): String {
+        return "Median Path Length"
+    }
     override fun calculate(): Double {
         val lst = cache.get()
         return if (lst.size % 2 == 0) {

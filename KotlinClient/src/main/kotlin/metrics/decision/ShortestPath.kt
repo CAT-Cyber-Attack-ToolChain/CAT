@@ -4,6 +4,9 @@ import metrics.DecisionMetric
 import model.PathCache
 
 class ShortestPath(private val cache: PathCache) : DecisionMetric() {
+    override fun toString(): String {
+        return "Shortest Path"
+    }
     override fun calculate(): Double = cache.get().min().toDouble()
         //1. find the destination node D
         //2. find all the neighbours and add them to an and set and an or set. 

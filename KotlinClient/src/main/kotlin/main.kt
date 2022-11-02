@@ -1,13 +1,18 @@
 import contoller.MulvalController
 import contoller.Neo4JController
-//import kotlinx.coroutines.launch
-//import kotlinx.coroutines.runBlocking
-//import metrics.PathCache
-//import metrics.decision.NormalisedMOPL
-//import metrics.decision.NumberOfPaths
-//import metrics.decision.ShortestPath
+import metrics.decision.NormalisedMOPL
+import metrics.decision.NumberOfPaths
+import metrics.decision.ShortestPath
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import metrics.assistive.MeanOfPathLengths
+import metrics.assistive.MedianOfPathLengths
+import metrics.assistive.ModeOfPathLengths
+import metrics.assistive.StandardDeviationOfPathLengths
+import metrics.decision.WeakestAdversary
 import model.AttackGraphOutput
 import model.MulvalInput
+import model.PathCache
 
 open class Main {
   companion object {
@@ -17,27 +22,22 @@ open class Main {
       val cur = System.getProperty("user.dir")
       val mulvalInput = MulvalInput("$cur/../mulval/testcases/3host/input.P")
       val mulvalOutput = AttackGraphOutput("$cur/../output")
+      val cache = PathCache()
 
       val mulvalController = MulvalController(mulvalInput, mulvalOutput)
-      val neo4JController = Neo4JController(mulvalOutput)
+      val neo4JController = Neo4JController(mulvalOutput, cache)
 
       if (mulvalController.generateGraph()) {
         neo4JController.update()
       }
 
-//      PathCache.update()
-//
-//      val shortestPath = ShortestPath()
-//      val normalisedMOPL = NormalisedMOPL()
-//      val numberOfPaths = NumberOfPaths()
-//      val metricList = listOf(shortestPath, normalisedMOPL, numberOfPaths)
-//
-//      println(PathCache.get())
-//      runBlocking {
-//        metricList.forEach{
-//          launch {print(it.calculate())}
-//        }
-//      }
+      val metricList = listOf(NormalisedMOPL(cache), NumberOfPaths(cache), ShortestPath(cache), WeakestAdversary(), MeanOfPathLengths(cache), MedianOfPathLengths(cache), ModeOfPathLengths(cache), StandardDeviationOfPathLengths(cache))
+
+      runBlocking {
+        metricList.forEach{
+          launch {println(it.toString() + ": " + it.calculate())}
+        }
+      }
     }
   }
 }

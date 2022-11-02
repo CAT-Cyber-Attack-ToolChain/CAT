@@ -2,6 +2,7 @@ package contoller
 
 import com.opencsv.CSVReader
 import model.AttackGraphOutput
+import model.PathCache
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
@@ -11,7 +12,7 @@ import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
 
-class Neo4JController(private val dir: AttackGraphOutput) {
+class Neo4JController(private val dir: AttackGraphOutput, private val cache: PathCache) {
 
   private var vertices = mutableListOf<List<String>>()
   private var arcs = mutableListOf<List<String>>()
@@ -77,6 +78,7 @@ class Neo4JController(private val dir: AttackGraphOutput) {
     readCSV("${dir.getPath()}/ARCS.csv", arcs)
   }
 
+  // TODO:check for successful database query
   private fun generateGraph() {
     flushGraph()
     generateVertices()
@@ -135,6 +137,7 @@ class Neo4JController(private val dir: AttackGraphOutput) {
     readData()
     return if (hasData) {
       generateGraph()
+      cache.update()
       println("Done!")
       true
     } else {
