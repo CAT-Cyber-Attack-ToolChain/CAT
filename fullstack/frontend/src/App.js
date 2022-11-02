@@ -5,50 +5,61 @@ import React from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 
+import popper from 'cytoscape-popper';
 import tippy from 'tippy.js';
+
+cytoscape.use(popper);
 
 function App() {
 
   const [items, setItems] = useState()
 
-  function onMouseover() {
-    var cy = cytoscape({
-      container: document.getElementById('cy')
-    });
+  function doStuffOnCy(cy) {
+    cy.ready(() => onMouseover(cy))
 
+  }
+
+  function onMouseover(cy) {
     function makePopper(ele) {
       let ref = ele.popperRef(); // used only for positioning
-
-      ele.tippy = tippy(ref, { // tippy options:
+      ele.popper = ele.popper({
         content: () => {
-          let content = document.createElement('div');
+          let div = document.createElement('div');
 
-          content.innerHTML = ele.id();
+          div.innerHTML = ele.data('properties').text;
+          div.setAttribute("role", "tooltip")
+          div.classList.add("tooltip")
 
-          return content;
+          div.style.display = 'none'
+
+          document.body.appendChild(div);
+
+          return div;
         },
-        trigger: 'manual' // probably want manual mode
-      });
+        popper: {
+          placement: 'auto'
+        }
+      })
     }
 
     cy.ready(function () {
-      console.log(cy.elements())
-      cy.elements().forEach(function (ele) {
+      cy.nodes().forEach(function (ele) {
         makePopper(ele);
       });
     });
 
-    cy.elements().unbind('mouseover');
-    cy.elements().bind('mouseover', (event) => event.target.tippy.show());
+    cy.removeListener('mouseover');
+    cy.on('mouseover', 'node', (event) => event.target.popper.state.elements.popper.style.display = "flex");
 
-    cy.elements().unbind('mouseout');
-    cy.elements().bind('mouseout', (event) => event.target.tippy.hide());
+    cy.removeListener('mouseout');
+    cy.on('mouseout', 'node', (event) => event.target.popper.state.elements.popper.style.display = "none");
+
   }
 
   const generateGraph = async () => {
     const response = await axios.get('http://localhost:8080/shoppingList')
     console.log(response)
-    setItems(response.data)    
+    setItems(response.data)
   }
 
   const post = async () => {
@@ -58,6 +69,34 @@ function App() {
       "id": 2040789031
     });
     console.log(response)
+  }
+
+  /**
+ * Wait for an element before resolving a promise
+ * @param {String} querySelector - Selector of element to wait for
+ * @param {Integer} timeout - Milliseconds to wait before timing out, or 0 for no timeout              
+ */
+  function waitForElement(querySelector, timeout) {
+    return new Promise((resolve, reject) => {
+      var timer = false;
+      if (document.querySelectorAll(querySelector).length) return resolve();
+
+      const observer = new MutationObserver(() => {
+        if (document.querySelectorAll(querySelector).length) {
+          observer.disconnect();
+          if (timer !== false) clearTimeout(timer);
+          return resolve();
+        }
+      });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      if (timeout) timer = setTimeout(() => {
+        observer.disconnect();
+        reject();
+      }, timeout);
+    });
   }
 
   // var elements = JSON.stringify(
@@ -82,7 +121,7 @@ function App() {
       selector: 'node',
       style: {
         // label: 'data(properties.text)',
-        label: 'data(label)',        
+        label: 'data(label)',
         'font-size': 30,
         width: 'label',
         padding: 10,
@@ -132,7 +171,7 @@ function App() {
     <div className="App">
       <h1>Cyber Attack Tool Chain</h1>
       <div onClick={() => {
-        generateGraph()        
+        generateGraph()
       }}> Generate Graph</div>
 
       <div onClick={() => post()}>Post item</div>
@@ -142,13 +181,14 @@ function App() {
           :
           <>
             <p>New item</p>
-            {items}            
+            {items}
             <h2>Attack Graph</h2>
-            <CytoscapeComponent id="cy"
+            <CytoscapeComponent cy={function (cy) { doStuffOnCy(cy) }}
               elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
-          </>          
+          </>
         }
       </div>
+      <div id="cy"></div>
       <div>
         <h2>Metrics</h2>
       </div>
