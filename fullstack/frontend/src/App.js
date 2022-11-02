@@ -6,6 +6,10 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 
 import tippy from 'tippy.js';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 function App() {
 
@@ -129,30 +133,36 @@ function App() {
   ]
 
   return (
-    <div className="App">
-      <h1>Cyber Attack Tool Chain</h1>
-      <div onClick={() => {
-        generateGraph()        
-      }}> Generate Graph</div>
+    <Container>
+      <div className="App">
+        <Row>
+          <h1>Cyber Attack Tool Chain</h1>
+        </Row>
+        
+        <Button variant="primary" onClick={() => generateGraph()}>Generate Graph</Button>
+        
+        <div onClick={() => post()}>Post item</div>
 
-      <div onClick={() => post()}>Post item</div>
-      <div>
-        {items == null
-          ? <p>No items</p>
-          :
-          <>
-            <p>New item</p>
-            {items}            
-            <h2>Attack Graph</h2>
-            <CytoscapeComponent id="cy"
-              elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
-          </>          
-        }
+
+        <div>
+          {items == null
+            ? <p>No items</p>
+            : 
+            <>
+              <p>New item</p>
+              {items}
+              <h2>Attack Graph</h2>
+              <CytoscapeComponent id="cy"
+                elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
+            </>
+          }
+        </div>
+        <div>
+          <h2>Metrics</h2>
+          <p>Hello world!</p>
+        </div>
       </div>
-      <div>
-        <h2>Metrics</h2>
-      </div>
-    </div>
+    </Container>
   );
 }
 
