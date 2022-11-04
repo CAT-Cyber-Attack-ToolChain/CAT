@@ -163,8 +163,7 @@ function App() {
             ? <p>No items</p>
             : 
             <>
-              <p>New item</p>
-              {items}
+              <p>New item</p>              
               <h2>Attack Graph</h2>
               <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}}
                 elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
