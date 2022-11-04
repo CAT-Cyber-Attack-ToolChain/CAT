@@ -1,4 +1,5 @@
-package metrics;
+package metrics
+
 interface Metric<T> {
-    fun calculate(): T
+  fun calculate(): T
 }

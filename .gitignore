@@ -5,7 +5,7 @@ mulval/mulval.iml
 KotlinClient/target/
 KotlinClient/client.iml
 /output/
-
+/mulval/target
 /fullstack/frontend/node_modules/*
 /fullstack/backend/.gradle
 /fullstack/backend/.idea

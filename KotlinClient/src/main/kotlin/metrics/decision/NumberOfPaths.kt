@@ -1,8 +1,11 @@
 package metrics.decision
 
 import metrics.DecisionMetric
-import metrics.PathCache
+import model.PathCache
 
-class NumberOfPaths : DecisionMetric() {
-    override fun calculate(): Double  = PathCache.get().size.toDouble()
+class NumberOfPaths(private val cache: PathCache) : DecisionMetric() {
+    override fun toString(): String {
+        return "Number of Paths"
+    }
+    override fun calculate(): Double  = cache.get().size.toDouble()
 }
