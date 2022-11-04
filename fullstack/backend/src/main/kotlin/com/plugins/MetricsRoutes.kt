@@ -13,7 +13,7 @@ import metrics.assistive.MeanOfPathLengths
 import metrics.assistive.MedianOfPathLengths
 import metrics.assistive.StandardDeviationOfPathLengths
 
-
+//TODO: Implement MVC model for metrics
 fun Route.MetricsRouting() {
   route("/metrics") {
     get {
