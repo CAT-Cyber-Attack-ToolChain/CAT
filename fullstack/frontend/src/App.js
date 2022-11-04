@@ -17,6 +17,9 @@ cytoscape.use(popper);
 function App() {
 
   const [items, setItems] = useState()
+  const [mets, setMets] = useState()
+  const [selectedFile, setSelectedFile] = useState();
+	const [isFilePicked, setIsFilePicked] = useState(false);
 
   function doStuffOnCy(cy) {
     cy.ready(() => onMouseover(cy))
@@ -63,6 +66,33 @@ function App() {
 
   }
 
+  const changeHandler = (event) => {
+		setSelectedFile(event.target.files[0]);
+		setIsFilePicked(true);
+	};
+
+  const handleSubmission = async () => {
+    if (isFilePicked) {
+      const formData = new FormData();
+
+      formData.append('File', selectedFile);
+
+      await fetch(
+        'http://localhost:8080/submitInput',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      ).then((response) => response.json())
+       .then((result) => setItems(result))
+       .catch((error) => {
+				console.error('Error:', error);
+			});
+    } else {
+      alert("Please upload an input file!");
+    }
+  }
+
   const generateGraph = async () => {
     const response = await axios.get('http://localhost:8080/shoppingList')
     console.log(response)
@@ -75,6 +105,12 @@ function App() {
       "priority": 5,
       "id": 2040789031
     });
+    console.log(response)
+  }
+
+  const metrics = async() => {
+    const response = await axios.get('http://localhost:8080/metrics')
+    setMets(JSON.parse(response.data))
     console.log(response)
   }
 
@@ -152,8 +188,10 @@ function App() {
         <Row>
           <h1>Cyber Attack Tool Chain</h1>
         </Row>
+
+        <input type="file" name="file" onChange={changeHandler} />
         
-        <Button variant="primary" onClick={() => generateGraph()}>Generate Graph</Button>
+        <button onClick={() => handleSubmission()}>Generate Graph</button>
         
         <div onClick={() => post()}>Post item</div>
 
@@ -163,7 +201,6 @@ function App() {
             ? <p>No items</p>
             : 
             <>
-              <p>New item</p>              
               <h2>Attack Graph</h2>
               <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}}
                 elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
@@ -171,7 +208,19 @@ function App() {
           }
         </div>
         <div>
-          <h2>Metrics</h2>
+          <h2 onClick={()=>metrics()}>Metrics</h2>
+          {mets == null
+            ? <p>Click Metrics To Calculate</p>
+            : <ul>
+            <li>shortest path: {mets["shortestpath"]}</li>
+            <li>mean path length: {mets["meanpathlength"]}</li>
+            <li>normalised mean of path lengths: {mets["normalisedmopl"]}</li>
+            <li>mode of path lengths: {mets["modepathlength"]}</li>
+            <li>sd of path lengths: {mets["sdpathlength"]}</li>
+            <li>number of paths: {mets["numberofpaths"]}</li>
+            <li>weakest adversary: {mets["weakestadversary"]}</li>
+            </ul>
+          }
           <p>Hello world!</p>
         </div>
       </div>

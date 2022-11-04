@@ -1,7 +1,6 @@
 package com.example.graph
 
 import com.beust.klaxon.Klaxon
-import com.beust.klaxon.json
 import cytoscape.CytoDataWrapper
 
 import cytoscape.CytoNode
