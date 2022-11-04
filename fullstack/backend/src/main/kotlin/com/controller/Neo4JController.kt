@@ -12,7 +12,7 @@ import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
 
-class Neo4JController(private val dir: AttackGraphOutput, private val cache: PathCache) {
+class Neo4JController(private val dir: AttackGraphOutput, private val cache: PathCache, private val name: String) {
 
     private var vertices = mutableListOf<List<String>>()
     private var arcs = mutableListOf<List<String>>()
@@ -63,12 +63,11 @@ class Neo4JController(private val dir: AttackGraphOutput, private val cache: Pat
             readVerticesCSV()
             readRelationsCSV()
             true
-        } catch (e: FileNotFoundException){
+        } catch (e: FileNotFoundException) {
             print("attack graph output not found...")
             false
         }
     }
-
 
     private fun readVerticesCSV() {
         readCSV("${dir.getPath()}/VERTICES.csv", vertices)
@@ -120,6 +119,14 @@ class Neo4JController(private val dir: AttackGraphOutput, private val cache: Pat
         session.writeTransaction { tx ->
             tx.run("MATCH (n) DETACH DELETE n ", parameters())
         }
+    }
+
+    fun getName(): String {
+        return name
+    }
+
+    fun getCache(): PathCache {
+        return cache
     }
 
     fun getGraph() {
