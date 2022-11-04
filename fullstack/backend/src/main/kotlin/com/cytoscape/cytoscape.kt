@@ -1,4 +1,4 @@
-package cytoscape
+package com.cytoscape
 
 import java.util.HashMap
 
