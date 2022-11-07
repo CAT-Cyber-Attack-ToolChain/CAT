@@ -15,12 +15,3 @@ compileMulval:
     artifacts:
         paths:
             - mulval
-
-compileClient:
-    stage: compile
-    script:
-        - cd KotlinClient/
-        - mvn install
-    artifacts:
-        paths:
-            - KotlinClient/target
