@@ -10,7 +10,7 @@ function doStuffOnCy(cy) {
 
 function onMouseover(cy) {
     function makePopper(ele) {
-        ele.popper = ele.popper({
+        ele.popperDiv = ele.popper({
             content: () => {
                 let div = document.createElement('div');
 
@@ -39,12 +39,12 @@ function onMouseover(cy) {
     cy.removeListener('mouseover');
 
     cy.on('mouseover', 'node', (event) => {
-        event.target.popper.state.elements.popper.style.display = "flex";
+        event.target.popperDiv.state.elements.popper.style.display = "flex";
         console.log("Showing")
     });
 
     cy.removeListener('mouseout');
-    cy.on('mouseout', 'node', (event) => event.target.popper.state.elements.popper.style.display = "none");
+    cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
 }
     
 
