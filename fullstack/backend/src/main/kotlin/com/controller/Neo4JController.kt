@@ -70,11 +70,11 @@ class Neo4JController(private val dir: AttackGraphOutput, private val cache: Pat
     }
 
     private fun readVerticesCSV() {
-        readCSV("${dir.getPath()}/VERTICES.csv", vertices)
+        readCSV("${dir.getPath()}/VERTICES.CSV", vertices)
     }
 
     private fun readRelationsCSV() {
-        readCSV("${dir.getPath()}/ARCS.csv", arcs)
+        readCSV("${dir.getPath()}/ARCS.CSV", arcs)
     }
 
     // TODO:check for successful database query
