@@ -115,7 +115,6 @@ function App() {
             <li>weakest adversary: {mets["weakestadversary"]}</li>
             </ul>
           }
-          <p>Hello world!</p>
         </div>
       </div>
     </Container>
