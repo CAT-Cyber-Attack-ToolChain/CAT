@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  mulval:
+    image: mulval_git:Dockerfile
+    volumes:
+      - ./fullstack/backend:/fullstack/backend
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+  neo4j:
+    image: neo4j:4.4.9-enterprise
+    ports:
+      - 7687:7687
+      - 7474:7474
+      - 7473:7473
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+  node:
+    image: npm-16:latest
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - 3000:3000
+    volumes:
+      - ./fullstack/frontend:/frontend
