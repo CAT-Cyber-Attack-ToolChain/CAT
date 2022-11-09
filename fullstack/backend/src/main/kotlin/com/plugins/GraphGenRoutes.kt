@@ -6,6 +6,7 @@ import com.controller.Neo4JController
 import com.graph.Graph
 import com.model.AttackGraphOutput
 import com.model.MulvalInput
+import com.model.Neo4JMapping
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -63,7 +64,9 @@ fun Route.GraphGenRouting() {
                 }
             }
             // generate the graph, move to Neo4j, and display it on frontend
-            val cytoscapeJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), Neo4JController(mulvalOutput, PathCache()))
+            val neo4JController = Neo4JController(mulvalOutput, PathCache(), "default")
+            Neo4JMapping.add(neo4JController)
+            val cytoscapeJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
             call.respond(cytoscapeJson)
         }
     }

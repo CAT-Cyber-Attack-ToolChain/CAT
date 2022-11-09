@@ -30,7 +30,6 @@ class Export {
       var trimmed = result.replaceFirst("\"", "")
       trimmed = trimmed.replaceAfterLast("]", "")
       trimmed = trimmed.replace("\\", "")
-      driver.close()
 
       return trimmed
 
