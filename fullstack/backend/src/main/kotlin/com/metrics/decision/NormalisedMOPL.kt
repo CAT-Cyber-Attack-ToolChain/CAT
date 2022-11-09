@@ -1,7 +1,7 @@
 package com.metrics.decision
 
 import com.metrics.DecisionMetric
-import model.PathCache
+import com.example.model.PathCache
 import metrics.assistive.MeanOfPathLengths
 
 class NormalisedMOPL(private val cache: PathCache) : DecisionMetric() {
