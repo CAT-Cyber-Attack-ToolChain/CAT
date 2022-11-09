@@ -63,7 +63,7 @@ var stylesheet = [
         selector: 'node',
         style: {
             // label: 'data(properties.text)',
-            label: 'data(label)',
+            label: 'data(properties.node_id)',
             'font-size': 30,
             width: 'label',
             padding: 10,
