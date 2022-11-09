@@ -119,7 +119,8 @@ var stylesheet = [
 
 const Cytoscape = ({items}) => {
     return(
-    <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />)
+        <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
+    )
 }
 
 export default Cytoscape;
