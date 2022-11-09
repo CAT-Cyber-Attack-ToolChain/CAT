@@ -1,11 +1,14 @@
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
+import axios from 'axios';
 
 cytoscape.use(popper);
 
 function doStuffOnCy(cy) {
     cy.ready(() => onMouseover(cy))
+
+    return cy
 }
 
 function onMouseover(cy) {
@@ -32,7 +35,7 @@ function onMouseover(cy) {
 
     cy.ready(function () {
         cy.nodes().forEach(function (ele) {
-        makePopper(ele);
+            makePopper(ele);
         });
     });
 
@@ -51,7 +54,8 @@ function onMouseover(cy) {
 var styles = {
     width: '100%',
     height: '500px',
-    backgroundColor: 'black'
+    backgroundColor: 'grey',
+    zIndex:  0
   }
 
 var layout = {
@@ -62,7 +66,6 @@ var stylesheet = [
     {
         selector: 'node',
         style: {
-            // label: 'data(properties.text)',
             label: 'data(properties.node_id)',
             'font-size': 30,
             width: 'label',
@@ -90,7 +93,7 @@ var stylesheet = [
                 if (node.data('properties').type === "AND") {
                     return 'green'
                 } else if (node.data('properties').type === "OR") {
-                    return 'red'
+                    return 'orange'
                 } else {
                     return 'white'
                 }
@@ -100,26 +103,66 @@ var stylesheet = [
     {
         selector: 'edge',
         style: {
-            'width': 2,
+            'width': 3,
             'line-color': '#ccc',
             'target-arrow-color': '#ccc',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier'
         }
+    },
+    {   selector : '.attacked',
+        style: {
+            backgroundColor : "red",
+            shape : "circle"
+        }
     }
 ]
 
-  // var example = JSON.stringify(
-  //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
-  //    { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 50 } },
-  //    { data: { id: 'three', label: 'Node 3'}, position: { x: 50, y: 100 }}, 
-  //    { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
-  //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
+const simulateRandomAttack = async () => {
+    const nodeAttacked = await axios.get("http://localhost:8080/simulation/random")
+    return  nodeAttacked.data
+}
 
 
 const Cytoscape = ({items}) => {
+
+    //initialise once Cytoscape components finishes
+    var cyRef = undefined;
+
+    /*
+        Match node_id to Cytoscape node id i.e
+
+        const example = {"data" : {"id" : "n52", "label" : "52", "properties" : {"bool": 0, "text": "execCode(workStation,root)", "type": "OR", "node_id": 1}}}
+        Find element which has id = example.data.properties.node_id and get the corresponsing example.data.id
+    */
+    function simulationParser(nodeAttacked) {
+        const result = []
+        for (var i = 0; i < nodeAttacked.length; i++) {
+            const node = nodeAttacked[i]
+            const query = JSON.parse(items).filter((item)=> (item.data.properties.node_id === node))
+            if (query.length !== 0) {
+                result.push(query[0].data.id)
+            } else {
+                console.error('Node id :' + node + "not found in Cytoscape elements")
+            }
+        }
+        return result
+    }
+
+    async function simulationHandler() {
+        const nodeIds = await simulateRandomAttack().then(res=>simulationParser(res))
+        //add class to node so that stylesheet applies
+        nodeIds.forEach((id) => {
+            cyRef.$((ele, i, eles) => (ele._private.data.id === id)).addClass("attacked")
+        })
+    }
+
     return(
-        <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
+        <div style={{width: "100%", height : "100%"}}>
+            <button style={{position: "absolute", zIndex: 1}} onClick={() => simulationHandler()}> Simulate </button>
+            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
+            
+        </div>
     )
 }
 
