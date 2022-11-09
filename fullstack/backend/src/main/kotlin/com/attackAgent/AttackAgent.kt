@@ -22,8 +22,14 @@ open class AttackAgent {
                     Values.parameters()
                 )
                 result.list().toString()
+
             }
             println(text)
         }
     }
+
+    fun returnPath(): MutableList<Int> {
+        return path;
+    }
+
 }

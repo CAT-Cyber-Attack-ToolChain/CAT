@@ -1,6 +1,4 @@
-package attackAgent
-
-import com.attackAgent.AttackAgent
+package com.attackAgent
 
 class RandomAttackAgent : AttackAgent() {
 
