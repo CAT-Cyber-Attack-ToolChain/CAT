@@ -21,8 +21,12 @@ function App() {
 
 
   const changeHandler = (event) => {
-		setSelectedFile(event.target.files[0]);
-		setIsFilePicked(true);
+    if (event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+		  setIsFilePicked(true);
+    } else {
+      setIsFilePicked(false);
+    }
 	};
 
   const handleSubmission = async () => {
