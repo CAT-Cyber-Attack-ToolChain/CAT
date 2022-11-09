@@ -4,7 +4,7 @@ services:
   mulval:
     image: mulval_git:Dockerfile
     volumes:
-      - ./fullstack/backend:/fullstack/backend
+      - ../fullstack/backend:/fullstack/backend
     stdin_open: true # docker run -i
     tty: true        # docker run -t
   neo4j:
@@ -22,5 +22,6 @@ services:
     tty: true        # docker run -t
     ports:
       - 3000:3000
+      - 8080:8080
     volumes:
-      - ./fullstack/frontend:/frontend
+      - ../fullstack/frontend:/frontend
