@@ -3,10 +3,7 @@ package com
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.JsonReader
 import com.controller.Neo4JController
-import com.graph.Graph
-import com.graph.Node
-import com.graph.NodeOrRelationship
-import com.graph.Relationship
+import com.graph.*
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 import java.io.StringReader
@@ -39,8 +36,9 @@ class Export {
 
     }
 
-    fun translateToGraph(json: String): Graph {
-      val graph: MutableList<NodeOrRelationship> = mutableListOf()
+    fun translateToGraph(json: String): AttackGraph {
+      val nodes: MutableMap<Int, AttackNode> = mutableMapOf()
+      val neo4jarcs : MutableList<AttackRelationship> = mutableListOf()
 
       JsonReader(StringReader(json)).use { reader ->
         reader.beginArray() {
@@ -77,8 +75,6 @@ class Export {
                 }
               }
 
-
-
               while (reader.hasNext()) {
                 val readName = reader.nextName()
                 when (readName) {
@@ -94,18 +90,23 @@ class Export {
                 }
               }
 
-              var nr: NodeOrRelationship =
-                      when (type) {
-                        "node" -> Node(id.toInt(), properties as MutableMap<String, Any>, labels)
-                        "relationship" -> Relationship(id.toInt(), properties as MutableMap<String, Any>, label, start!!.id.toInt(), end!!.id.toInt())
-                        else -> throw NoSuchElementException("Only Nodes or Relationships can be parsed")
-                      }
-              graph.add(nr)
+              when (type) {
+                "node" -> nodes[id.toInt()] = (AttackNode(id.toInt(), properties as MutableMap<String, Any>, labels))
+                "relationship" -> neo4jarcs.add(AttackRelationship(id.toInt(), properties as MutableMap<String, Any>, label, start!!.id.toInt(), end!!.id.toInt()))
+                else -> throw NoSuchElementException("Only Nodes or Relationships can be parsed")
+              }
             }
           }
         }
       }
-      return Graph(graph)
+      val arcs = mutableMapOf<Int, MutableSet<Int>>();
+      for (n in nodes.keys) {
+        arcs[n] = mutableSetOf()
+      }
+      for (arc in neo4jarcs) {
+        arcs[arc.startId]?.add(arc.endId)
+      }
+      return AttackGraph(nodes, arcs, neo4jarcs)
     }
   }
 }

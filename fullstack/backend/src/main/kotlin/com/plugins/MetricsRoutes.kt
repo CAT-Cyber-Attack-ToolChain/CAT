@@ -11,7 +11,7 @@ import com.metrics.decision.NormalisedMOPL
 import com.metrics.decision.NumberOfPaths
 import com.metrics.decision.ShortestPath
 import com.metrics.decision.WeakestAdversary
-import model.PathCache
+import com.example.model.PathCache
 
 
 fun Route.MetricsRouting() {

@@ -11,7 +11,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.content.*
-import model.PathCache
+import com.example.model.PathCache
+import com.graph.AttackGraph
+import com.graph.AttackNode
 import java.io.File
 
 
@@ -28,7 +30,7 @@ fun Route.GraphGenRouting() {
             neo4JController.update()
         }
         // get the graph data from Neo4j
-        val graph: Graph = Export.translateToGraph(Export.exportToJSON())
+        val graph: AttackGraph = Export.translateToGraph(Export.exportToJSON())
         return graph.exportToCytoscapeJSON()
     }
 
