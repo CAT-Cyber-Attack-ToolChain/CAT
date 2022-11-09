@@ -17,45 +17,45 @@ class Neo4JAdapter {
     }
 
     private fun buildAttackGraph(): Node {
-        val ruleNodes : MutableList<Int> = mutableListOf()
+        val ruleNodes: MutableList<Int> = mutableListOf()
         for (id in attackerLocatedNodes()) {
             ruleNodes.add(connectedRule(id))
         }
-        val connections : Map<Rule, Node> = buildRules(ruleNodes)
+        val connections: Map<Rule, Node> = buildRules(ruleNodes)
         return Node("none", connections)
     }
 
     private fun buildNode(id: Int): Node {
         val permission: String = getNodeText(id)
-        val connections : Map<Rule, Node> = buildRules(connectedRules(id))
+        val connections: Map<Rule, Node> = buildRules(connectedRules(id))
         return Node(permission, connections)
     }
 
-    private fun buildRules(ids: List<Int>) : Map<Rule,Node> {
-        val rules : MutableMap<Rule,Node> = mutableMapOf()
+    private fun buildRules(ids: List<Int>): Map<Rule, Node> {
+        val rules: MutableMap<Rule, Node> = mutableMapOf()
         for (id in ids) {
-            val key : Rule = buildRule(id)
-            val value : Node = buildNode(connectedPermission(id))
+            val key: Rule = buildRule(id)
+            val value: Node = buildNode(connectedPermission(id))
             rules[key] = value
         }
         return rules
     }
 
-    private fun buildRule(id: Int) : Rule {
-        val rule : String = getNodeText(id)
-        val requirements : List<String> = buildRequirements(connectedFacts(id))
+    private fun buildRule(id: Int): Rule {
+        val rule: String = getNodeText(id)
+        val requirements: List<String> = buildRequirements(connectedFacts(id))
         return Rule(rule, requirements)
     }
 
-    private fun buildRequirements(ids: List<Int>) : List<String> {
-        val result : MutableList<String> = mutableListOf()
+    private fun buildRequirements(ids: List<Int>): List<String> {
+        val result: MutableList<String> = mutableListOf()
         for (id in ids) {
             result.add(getNodeText(id))
         }
         return result
     }
 
-    private fun connectedPermission(id: Int) : Int {
+    private fun connectedPermission(id: Int): Int {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
@@ -65,17 +65,17 @@ class Neo4JAdapter {
         }
     }
 
-    private fun connectedRules(id: Int) : List<Int> {
+    private fun connectedRules(id: Int): List<Int> {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
                 "MATCH(start {node_id: $id})-[:To]->(end:Rule) RETURN end.node_id", parameters()
             )
-            result.list {r -> r.get(0).toString().toInt()}
+            result.list { r -> r.get(0).toString().toInt() }
         }
     }
 
-    private fun connectedRule(id: Int) : Int {
+    private fun connectedRule(id: Int): Int {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
@@ -85,13 +85,13 @@ class Neo4JAdapter {
         }
     }
 
-    private fun connectedFacts(id: Int) : List<Int> {
+    private fun connectedFacts(id: Int): List<Int> {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
                 "MATCH(start {node_id: $id})<-[:To]-(end: Fact) RETURN end.node_id", parameters()
             )
-            result.list {r -> r.get(0).toString().toInt()}
+            result.list { r -> r.get(0).toString().toInt() }
         }
     }
 
@@ -105,52 +105,27 @@ class Neo4JAdapter {
         }
     }
 
-    private fun attackerLocatedNodes() : List<Int> {
+    private fun attackerLocatedNodes(): List<Int> {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
                 "MATCH(x) WHERE x.text STARTS WITH \"attackerLocated\" RETURN x.node_id",
                 parameters()
             )
-            result.list {r -> r.get(0).toString().toInt()}
+            result.list { r -> r.get(0).toString().toInt() }
         }
-    }
-
-    /* Can there ever be 2 or more attackLocated nodes?
-    *  Can an attackerLocated node ever lead to 2 or more rules/permissions.
-    *  !DEPRECIATED */
-    fun getStartNode(): Int {
-        val session: Session = driver.session()
-        return session.writeTransaction { tx ->
-            val result: Result = tx.run(
-                "MATCH(x)-[:To]->(z)-[:To]->(y) WHERE x.text STARTS WITH \"attackerLocated\" RETURN y.node_id",
-                parameters()
-            )
-            result.list()[0].get(0).toString().toInt()
-        }
-    }
-
-    /* !DEPRECIATED */
-    fun getConnectedNodes(id: Int): List<Int> {
-        val session: Session = driver.session()
-        val connectedNodeIds: List<Int> = session.writeTransaction { tx ->
-            val result: Result =
-                tx.run("MATCH(start {node_id: $id})-[:To]->(end) RETURN (end.node_id)", parameters("id", id))
-            result.list().map { e -> e[0].toString().toInt() }
-        }
-        return connectedNodeIds
     }
 }
 
-fun printNode(n : Node) {
+fun printNode(n: Node) {
     println(n.permission)
     for (node in n.connections.values) {
         printNode(node)
     }
 }
 
-fun main(args : Array<String>) {
-    val adapter : Neo4JAdapter = Neo4JAdapter()
+fun main(args: Array<String>) {
+    val adapter: Neo4JAdapter = Neo4JAdapter()
     printNode(adapter.getGraph())
 }
 
@@ -160,6 +135,6 @@ class Node(
 ) {}
 
 class Rule(
-    final val rule: String,
-    final val requirements: List<String>
+    val rule: String,
+    val requirements: List<String>
 ) {}
