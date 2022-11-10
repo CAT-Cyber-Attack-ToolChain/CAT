@@ -28,12 +28,12 @@ open class AttackAgent {
         }
     }
 
-    //Converts path to a tuple
-    fun returnPath(): MutableList<Pair<Int,Int>> {
-        val paths = mutableListOf<Pair<Int,Int>>()
+    //Converts path to a pairs of string
+    fun returnPath(): MutableList<Pair<String,String>> {
+        val paths = mutableListOf<Pair<String,String>>()
         for (i in 0 until visitedNode.size - 1) {
 
-            paths.add(Pair(visitedNode[i], visitedNode[i+1]))
+            paths.add(Pair("n" + visitedNode[i], "n" + visitedNode[i+1]))
         }
         return paths
     }
