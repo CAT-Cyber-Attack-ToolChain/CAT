@@ -46,8 +46,8 @@ data class AttackRelationship(override val id: Int,
 class AttackGraph(nodes: MutableMap<Int, AttackNode>, arcs: MutableMap<Int, MutableSet<Int>>, val arclist : MutableList<AttackRelationship>): Graph<AttackNode>(nodes, arcs) {
     fun exportToCytoscapeJSON(): String {
         val klaxon = Klaxon()
-        val nodestrlist: List<String> = nodes.values.map {nr -> klaxon.toJsonString(nr.toCytoscapeJson())}
-        val arcstrlist: List<String> = arclist.map {nr -> klaxon.toJsonString(nr.toCytoscapeJson())}
-        return "[" + nodestrlist.joinToString() + "," + arcstrlist.joinToString() + "]"
+        val nodeStrList: List<String> = nodes.values.map { nr -> klaxon.toJsonString(nr.toCytoscapeJson())}
+        val arcStrList: List<String> = arclist.map { nr -> klaxon.toJsonString(nr.toCytoscapeJson())}
+        return "[" + nodeStrList.joinToString() + "," + arcStrList.joinToString() + "]"
     }
 }

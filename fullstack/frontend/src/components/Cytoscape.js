@@ -110,50 +110,75 @@ var stylesheet = [
             'curve-style': 'bezier'
         }
     },
-    {   selector : '.attacked',
+    {   selector : '.attackedNode',
         style: {
             backgroundColor : "red",
             shape : "circle"
         }
+    },
+    {   selector : '.attackedEdge',
+        style: {
+            'target-arrow-color': '#ff0000',
+            'line-color': '#ff0000',
+        }
     }
 ]
 
-const simulateRandomAttack = async () => {
-    const nodeAttacked = await axios.get("http://localhost:8080/simulation/random")
-    return  nodeAttacked.data
+async function simulateRandomAttack() {
+    const response = await axios.get("http://localhost:8080/simulation/random")
+    return response.data
 }
+
+/*
+    Convert array of path into set of node
+    arr : [{ first: nodeFrom, second: nodeTo}]
+*/
+function getNodesFromPath(arr) {
+    const nodes = new Set()
+    arr.forEach((path) => {
+        nodes.add(path.first) 
+        nodes.add(path.second)
+    })
+    return Array.from(nodes)
+}
+
 
 
 const Cytoscape = ({items}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
-
+    
     /*
-        Match node_id to Cytoscape node id i.e
-
-        const example = {"data" : {"id" : "n52", "label" : "52", "properties" : {"bool": 0, "text": "execCode(workStation,root)", "type": "OR", "node_id": 1}}}
-        Find element which has id = example.data.properties.node_id and get the corresponsing example.data.id
+        Find id of edge on graph with corresponding src and dst
+        Returns id of nodes and edges the belongs on the graph
     */
-    function simulationParser(nodeAttacked) {
-        const result = []
-        for (var i = 0; i < nodeAttacked.length; i++) {
-            const node = nodeAttacked[i]
-            const query = JSON.parse(items).filter((item)=> (item.data.properties.node_id === node))
-            if (query.length !== 0) {
-                result.push(query[0].data.id)
+    function simulationParser(attackedPath) {
+        const nodes = getNodesFromPath(attackedPath)
+        const edges = []
+        
+        for (var i = 0; i < attackedPath.length; i++) {
+            const src = attackedPath[i].first
+            const dst = attackedPath[i].second
+            const queryPath = JSON.parse(items).filter((item)=> (item.data.source === src) && (item.data.target === dst))
+            if (queryPath.length !== 0) {
+                edges.push(queryPath[0].data.id)
             } else {
-                console.error('Node id :' + node + "not found in Cytoscape elements")
+                console.error('Could not find edges with source : ' + src + ' target: ' + dst)
             }
         }
-        return result
+        return {nodes: nodes, edges: edges}
     }
 
     async function simulationHandler() {
-        const nodeIds = await simulateRandomAttack().then(res=>simulationParser(res))
-        //add class to node so that stylesheet applies
-        nodeIds.forEach((id) => {
-            cyRef.$((ele, i, eles) => (ele._private.data.id === id)).addClass("attacked")
+        const attacked = await simulateRandomAttack().then(path=>simulationParser(path))
+        
+        //add class to node and edges so that stylesheet applies
+        attacked.nodes.forEach((id) => {
+            cyRef.$((ele) => (ele._private.data.id === id)).addClass("attackedNode")
+        })
+        attacked.edges.forEach((id) => {
+            cyRef.$((ele) => (ele._private.data.id === id)).addClass("attackedEdge")
         })
     }
 
@@ -161,7 +186,6 @@ const Cytoscape = ({items}) => {
         <div style={{width: "100%", height : "100%"}}>
             <button style={{position: "absolute", zIndex: 1}} onClick={() => simulationHandler()}> Simulate </button>
             <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
-            
         </div>
     )
 }

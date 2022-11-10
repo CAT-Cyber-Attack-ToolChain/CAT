@@ -7,18 +7,18 @@ import org.neo4j.driver.Values
 
 open class AttackAgent {
 
-    protected val path: MutableList<Int> = mutableListOf()
+    protected val visitedNode: MutableList<Int> = mutableListOf()
     protected val adapter : Neo4JAdapter = Neo4JAdapter()
 
     open fun attack() {}
 
     fun printPath() {
-        for (id in path) {
+        for (id in visitedNode) {
             val session: Session = driver.session()
 
             val text: String = session.writeTransaction { tx ->
                 val result: org.neo4j.driver.Result = tx.run(
-                    "MATCH(n {node_id: ${id}}) RETURN (n.text)",
+                    "MATCH (n) WHERE ID(n) = $id RETURN (n.text)",
                     Values.parameters()
                 )
                 result.list().toString()
@@ -28,8 +28,14 @@ open class AttackAgent {
         }
     }
 
-    fun returnPath(): MutableList<Int> {
-        return path;
+    //Converts path to a pairs of string
+    fun returnPath(): MutableList<Pair<String,String>> {
+        val paths = mutableListOf<Pair<String,String>>()
+        for (i in 0 until visitedNode.size - 1) {
+
+            paths.add(Pair("n" + visitedNode[i], "n" + visitedNode[i+1]))
+        }
+        return paths
     }
 
 }
