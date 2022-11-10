@@ -129,7 +129,10 @@ async function simulateRandomAttack() {
     return response.data
 }
 
-//Convert array of path into set of node
+/*
+    Convert array of path into set of node
+    arr : [{ first: nodeFrom, second: nodeTo}]
+*/
 function getNodesFromPath(arr) {
     const nodes = new Set()
     arr.forEach((path) => {
@@ -146,7 +149,10 @@ const Cytoscape = ({items}) => {
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
     
-    //Find id of edge on graph with corresponding src and dst
+    /*
+        Find id of edge on graph with corresponding src and dst
+        Returns id of nodes and edges the belongs on the graph
+    */
     function simulationParser(attackedPath) {
         const nodes = getNodesFromPath(attackedPath)
         const edges = []
@@ -165,7 +171,7 @@ const Cytoscape = ({items}) => {
     }
 
     async function simulationHandler() {
-        const attacked = await simulateRandomAttack().then(res=>simulationParser(res))
+        const attacked = await simulateRandomAttack().then(path=>simulationParser(path))
         
         //add class to node and edges so that stylesheet applies
         attacked.nodes.forEach((id) => {
