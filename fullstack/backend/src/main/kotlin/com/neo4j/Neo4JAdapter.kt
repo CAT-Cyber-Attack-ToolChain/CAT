@@ -14,7 +14,7 @@ class Neo4JAdapter {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
-                "MATCH(n) WHERE n.text STARTS WITH \"attackerLocated\" RETURN n.node_id", parameters()
+                "MATCH(n) WHERE n.text STARTS WITH \"attackerLocated\" RETURN ID(n)", parameters()
             )
             result.list()[0].get(0).toString().toInt()
         }
@@ -24,7 +24,7 @@ class Neo4JAdapter {
         val session: Session = driver.session()
         val connectedNodeIds: List<Int> = session.writeTransaction { tx ->
             val result: Result =
-                tx.run("MATCH(start {node_id: $id})-[:To]->(end) RETURN (end.node_id)", parameters("id", id))
+                tx.run("MATCH(start)-[:To]->(end) WHERE ID(start) = $id RETURN ID(end)", parameters("id", id))
             result.list().map { e -> e[0].toString().toInt() }
         }
         return connectedNodeIds
