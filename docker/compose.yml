@@ -8,9 +8,8 @@ services:
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     ports:
-      - 8081:8080
-    networks:
-      - network
+      - 8081:8080      
+
   neo4j:
     image: neo4j:4.4.9-enterprise
     ports:
@@ -19,9 +18,10 @@ services:
       - 7473:7473
     environment:
       NEO4J_AUTH: neo4j/password
-      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
-    networks:
-      - network
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"      
+    volumes:
+      - ./neo4j-plugins:/var/lib/neo4j/plugins
+
   node:
     image: npm-16:latest
     stdin_open: true # docker run -i
@@ -31,9 +31,3 @@ services:
       - 8080:8080
     volumes:
       - ./fullstack/frontend:/frontend
-    networks:
-      - network
-
-networks:
-  network:
-    driver: bridge
