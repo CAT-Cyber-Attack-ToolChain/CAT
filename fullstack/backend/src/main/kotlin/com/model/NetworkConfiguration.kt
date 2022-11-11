@@ -4,12 +4,14 @@ import java.io.FileReader
 
 object NetworkConfiguration {
 
-  private val conf = FileReader(System.getProperty("user.dir") + ".conf").readText()
-  val neo4j: Configuration
-  val backend: Configuration
-  val frontend: Configuration
+  private lateinit var conf: String
+  lateinit var neo4j: Configuration
+  lateinit var backend: Configuration
+  lateinit var frontend: Configuration
 
-  init {
+
+  fun init() {
+    conf = FileReader( "./.conf").readText()
     neo4j = getConfigFor("neo4j")
     backend = getConfigFor("backend")
     frontend = getConfigFor("frontend")
