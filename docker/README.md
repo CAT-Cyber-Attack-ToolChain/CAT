@@ -54,4 +54,10 @@ docker exec mulval cd fullstack/backend
 ```
 
 ## Explaining what the compose.yml does
-TODO
+
+* ### mulval
+    It uses the image built from the `mulval.Dockerfile`
+
+
+
+* 
