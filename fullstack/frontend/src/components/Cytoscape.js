@@ -113,13 +113,17 @@ var stylesheet = [
     {   selector : '.attackedNode',
         style: {
             backgroundColor : "red",
-            shape : "circle"
+            shape : "circle",
+            'transition-property': 'background-color, shape',
+            'transition-duration': '0.5s'
         }
     },
     {   selector : '.attackedEdge',
         style: {
             'target-arrow-color': '#ff0000',
             'line-color': '#ff0000',
+            'transition-property': 'line-color, target-arrow-color',
+            'transition-duration': '0.5s'
         }
     }
 ]
@@ -148,6 +152,8 @@ const Cytoscape = ({items}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
+    // set in every attack simulation (used for removing previous attack path)
+    var prevAttackPath = undefined;
     
     /*
         Find id of edge on graph with corresponding src and dst
@@ -171,15 +177,34 @@ const Cytoscape = ({items}) => {
     }
 
     async function simulationHandler() {
+        if (typeof prevAttackPath !== 'undefined') {
+            prevAttackPath.nodes.forEach((id) => {
+                cyRef.$((ele) => (ele._private.data.id === id)).removeClass("attackedNode")
+            })
+            prevAttackPath.edges.forEach((id) => {
+                cyRef.$((ele) => (ele._private.data.id === id)).removeClass("attackedEdge")
+            })
+        }
+
         const attacked = await simulateRandomAttack().then(path=>simulationParser(path))
-        
-        //add class to node and edges so that stylesheet applies
-        attacked.nodes.forEach((id) => {
-            cyRef.$((ele) => (ele._private.data.id === id)).addClass("attackedNode")
-        })
-        attacked.edges.forEach((id) => {
-            cyRef.$((ele) => (ele._private.data.id === id)).addClass("attackedEdge")
-        })
+        prevAttackPath = attacked;
+
+        function highlightNode(index) {
+          if (index == attacked.nodes.length) {
+            return
+          }
+          cyRef.$((ele) => (ele._private.data.id === attacked.nodes[index])).addClass("attackedNode")
+          setTimeout(function(){highlightEdge(index)}, 1000)
+        }
+
+        function highlightEdge(index) {
+          // animate the path (if not the last node)
+          cyRef.$((ele) => (ele._private.data.id === attacked.edges[index])).addClass("attackedEdge")
+          setTimeout(function(){highlightNode(index + 1)}, 1000)
+        }
+
+        // start highlighting nodes and edges of attack
+        highlightNode(0)
     }
 
     return(
