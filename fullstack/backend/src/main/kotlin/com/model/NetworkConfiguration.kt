@@ -17,11 +17,12 @@ object NetworkConfiguration {
     frontend = getConfigFor("frontend")
   }
 
+  //TODO: this indexing is jank, will fix at some point
   private fun getConfigFor (service: String): Configuration {
-    val ptn = Regex("$service:(localhost|([0-9])+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]+)")
+    val ptn = Regex("$service:(localhost|[0-9]+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]*)")
     val result = ptn.find(conf)
-    val (address, port) = result!!.destructured
-    return Configuration(address, port.toInt())
+    val groups = result!!.destructured.toList()
+    return Configuration(groups[0], groups[4].toInt())
   }
 }
 
