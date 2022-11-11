@@ -12,7 +12,7 @@ import Col from 'react-bootstrap/Col';
 
 function App() {
 
-  const [items, setItems] = useState()
+  const [graph, setGraph] = useState()
   const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
 
@@ -28,6 +28,7 @@ function App() {
   const handleSubmission = async () => {
     if (isFilePicked) {
       const formData = new FormData();
+      console.log(graph)
 
       formData.append('File', selectedFile);
 
@@ -38,7 +39,7 @@ function App() {
           body: formData,
         }
       ).then((response) => response.json())
-       .then((result) => setItems(result))
+       .then((result) => setGraph(result))
        .catch((error) => {
 				console.error('Error:', error);
 			});
@@ -65,18 +66,22 @@ function App() {
           <h1>Cyber Attack Tool Chain</h1>
         </Row>
 
-        <input type="file" name="file" onChange={changeHandler} />
         
-        <button onClick={() => handleSubmission()}>Generate Graph</button>
 
         <div>
-          {items == null
-            ? <p>No items</p>
-            : 
-            <>
-              <h2>Attack Graph</h2>
-              <Cytoscape items={items}></Cytoscape>
-            </>
+
+          <div class="inner-button"> 
+            <input type="file" name="file" onChange={changeHandler} />
+            <button onClick={() => handleSubmission()}>Generate Graph</button>
+          </div>
+
+          {graph == null ?
+              
+              <div class="no-item"> No graph displayed</div>
+
+              :
+
+              <Cytoscape graph={graph}/>
           }
         </div>
         <Metrics/>

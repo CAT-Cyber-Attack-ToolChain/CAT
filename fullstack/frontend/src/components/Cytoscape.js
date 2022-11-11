@@ -55,7 +55,8 @@ var styles = {
     width: '100%',
     height: '500px',
     backgroundColor: 'grey',
-    zIndex:  0
+    zIndex:  0,
+    position: "relative"
   }
 
 var layout = {
@@ -148,7 +149,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({items}) => {
+const Cytoscape = ({graph}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -166,7 +167,7 @@ const Cytoscape = ({items}) => {
         for (var i = 0; i < attackedPath.length; i++) {
             const src = attackedPath[i].first
             const dst = attackedPath[i].second
-            const queryPath = JSON.parse(items).filter((item)=> (item.data.source === src) && (item.data.target === dst))
+            const queryPath = JSON.parse(graph).filter((item)=> (item.data.source === src) && (item.data.target === dst))
             if (queryPath.length !== 0) {
                 edges.push(queryPath[0].data.id)
             } else {
@@ -214,9 +215,9 @@ const Cytoscape = ({items}) => {
     }
 
     return(
-        <div style={{width: "100%", height : "100%"}}>
-            <button id="simulate-button" style={{position: "absolute", zIndex: 1}} onClick={() => simulationHandler()}> Simulate </button>
-            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
+        <div style={{position: "relative"}}>
+            <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
+            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
 }
