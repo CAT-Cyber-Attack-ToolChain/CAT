@@ -20,10 +20,6 @@ import java.io.File
 
 
 fun Route.GraphGenRouting() {
-    val example = """[{ "data": { "id": "one", "label": "Node 1" }}, 
-        { "data": { "id": "two", "label": "Node 2" }},
-        { "data": { "source": "one", "target": "two", "label": "Edge from Node1 to Node2" } }]"""
-
     val cur = System.getProperty("user.dir") // cur = backend directory
 
     fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
