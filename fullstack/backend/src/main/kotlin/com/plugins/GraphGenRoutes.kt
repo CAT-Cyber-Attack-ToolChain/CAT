@@ -65,7 +65,6 @@ fun Route.GraphGenRouting() {
                 }
             }
             // generate the graph, move to Neo4j, and display it on frontend
-            NetworkConfiguration.init()
             val neo4JController = Neo4JController(mulvalOutput, PathCache(), "default")
             Neo4JMapping.add(neo4JController)
             val cytoscapeJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
