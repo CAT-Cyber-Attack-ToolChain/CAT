@@ -177,30 +177,36 @@ const Cytoscape = ({items}) => {
     }
 
     async function simulationHandler() {
+        
+        //disable simulate button
+        document.getElementById('simulate-button').disabled = true
+    
         if (typeof prevAttackPath !== 'undefined') {
             prevAttackPath.nodes.forEach((id) => {
-                cyRef.$((ele) => (ele._private.data.id === id)).removeClass("attackedNode")
+                cyRef.$('#' + id).removeClass("attackedNode")
             })
             prevAttackPath.edges.forEach((id) => {
-                cyRef.$((ele) => (ele._private.data.id === id)).removeClass("attackedEdge")
+                cyRef.$('#' + id).removeClass("attackedEdge")
             })
         }
-
+        
         const attacked = await simulateRandomAttack().then(path=>simulationParser(path))
         prevAttackPath = attacked;
 
         function highlightNode(index) {
-          if (index == attacked.nodes.length) {
+          if (index === attacked.nodes.length) {
+            //allow simulate button to be press after animation is complete
+            document.getElementById('simulate-button').disabled = false
             return
           }
-          cyRef.$((ele) => (ele._private.data.id === attacked.nodes[index])).addClass("attackedNode")
-          setTimeout(function(){highlightEdge(index)}, 1000)
+          cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
+          setTimeout(function(){highlightEdge(index)}, 500)
         }
 
         function highlightEdge(index) {
           // animate the path (if not the last node)
-          cyRef.$((ele) => (ele._private.data.id === attacked.edges[index])).addClass("attackedEdge")
-          setTimeout(function(){highlightNode(index + 1)}, 1000)
+          cyRef.$('#' + attacked.edges[index]).addClass("attackedEdge")
+          setTimeout(function(){highlightNode(index + 1)}, 500)
         }
 
         // start highlighting nodes and edges of attack
@@ -209,7 +215,7 @@ const Cytoscape = ({items}) => {
 
     return(
         <div style={{width: "100%", height : "100%"}}>
-            <button style={{position: "absolute", zIndex: 1}} onClick={() => simulationHandler()}> Simulate </button>
+            <button id="simulate-button" style={{position: "absolute", zIndex: 1}} onClick={() => simulationHandler()}> Simulate </button>
             <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
