@@ -11,7 +11,7 @@ class RandomAttackAgent : AttackAgent() {
 
         while (rules.isNotEmpty()) {
             val rule = rules.random()
-            currentNode = currentNode.connections[rule]!!
+            currentNode = adapter.nodes[currentNode.connections[rule]!!]!!
             rules = currentNode.connections.keys
             path.add(RuleNodePair(currentNode, rule))
         }

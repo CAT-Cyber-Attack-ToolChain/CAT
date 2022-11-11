@@ -10,7 +10,7 @@ class Neo4JAdapter {
         AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
     )
 
-    private val nodes: MutableMap<Int, Node> = mutableMapOf()
+    val nodes: MutableMap<Int, Node> = mutableMapOf()
     private val attackGraph: Node = buildAttackGraph()
 
     fun getGraph(): Node {
@@ -22,35 +22,39 @@ class Neo4JAdapter {
         for (id in attackerLocatedNodes()) {
             ruleNodes.add(connectedRule(id))
         }
-        val connections: Map<Rule, Node> = buildRules(ruleNodes)
-        return Node("none", connections)
+        val connections: Map<Rule, Int> = buildRules(ruleNodes)
+        return Node(-1, "none", connections)
     }
 
-    private fun buildNode(id: Int): Node {
-        if (this.nodes.containsKey(id)) {
-            return this.nodes[id]!!
+    /* id required to be id of a permission node */
+    private fun buildNode(id: Int): Int {
+        if (!nodes.containsKey(id)) {
+            val permission: String = getNodeText(id)
+            val connections: Map<Rule, Int> = buildRules(connectedRules(id))
+            nodes[id] = Node(id, permission, connections)
         }
-        val permission: String = getNodeText(id)
-        val connections: Map<Rule, Node> = buildRules(connectedRules(id))
-        return this.nodes.apply { put(id, Node(permission, connections)) }[id]!!
+        return id
     }
 
-    private fun buildRules(ids: List<Int>): Map<Rule, Node> {
-        val rules: MutableMap<Rule, Node> = mutableMapOf()
+    /* ids required to be ids of rule nodes */
+    private fun buildRules(ids: List<Int>): Map<Rule, Int> {
+        val rules: MutableMap<Rule, Int> = mutableMapOf()
         for (id in ids) {
             val key: Rule = buildRule(id)
-            val value: Node = buildNode(connectedPermission(id))
+            val value: Int = buildNode(connectedPermission(id))
             rules[key] = value
         }
         return rules
     }
 
+    /* id required to be id of a rule node */
     private fun buildRule(id: Int): Rule {
         val rule: String = getNodeText(id)
         val requirements: List<String> = buildRequirements(connectedFacts(id))
-        return Rule(rule, requirements)
+        return Rule(id, rule, requirements)
     }
 
+    /* ids required to be ids of fact nodes */
     private fun buildRequirements(ids: List<Int>): List<String> {
         val result: MutableList<String> = mutableListOf()
         for (id in ids) {
@@ -59,6 +63,7 @@ class Neo4JAdapter {
         return result
     }
 
+    /* id required to be id of a rule node */
     private fun connectedPermission(id: Int): Int {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
@@ -69,6 +74,7 @@ class Neo4JAdapter {
         }
     }
 
+    /* id required to be id of a permission node */
     private fun connectedRules(id: Int): List<Int> {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
@@ -79,6 +85,7 @@ class Neo4JAdapter {
         }
     }
 
+    /* id required to be id of a fact node */
     private fun connectedRule(id: Int): Int {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
@@ -89,6 +96,7 @@ class Neo4JAdapter {
         }
     }
 
+    /* id required to be id of a rule node */
     private fun connectedFacts(id: Int): List<Int> {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
@@ -121,24 +129,30 @@ class Neo4JAdapter {
     }
 }
 
+val adapter: Neo4JAdapter = Neo4JAdapter()
+
 fun printNode(n: Node) {
     println(n.permission)
     for (node in n.connections.values) {
-        printNode(node)
+        printNode(adapter.nodes[node]!!)
     }
 }
-
 fun main(args: Array<String>) {
-    val adapter: Neo4JAdapter = Neo4JAdapter()
-    printNode(adapter.getGraph())
+
+    for (n : Node in adapter.nodes.values) {
+        println(n.permission)
+    }
+//    printNode(adapter.getGraph())
 }
 
 class Node(
-    final val permission: String,
-    final val connections: Map<Rule, Node>
+    val id: Int,
+    val permission: String,
+    val connections: Map<Rule, Int>
 ) {}
 
 class Rule(
+    val id: Int,
     val rule: String,
-    val requirements: List<String>
+    val facts: List<String>
 ) {}
