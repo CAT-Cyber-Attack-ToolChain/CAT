@@ -10,7 +10,8 @@ class Neo4JAdapter {
         AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
     )
 
-    private final val attackGraph: Node = buildAttackGraph()
+    private val nodes: MutableMap<Int, Node> = mutableMapOf()
+    private val attackGraph: Node = buildAttackGraph()
 
     fun getGraph(): Node {
         return attackGraph
@@ -26,9 +27,12 @@ class Neo4JAdapter {
     }
 
     private fun buildNode(id: Int): Node {
+        if (this.nodes.containsKey(id)) {
+            return this.nodes[id]!!
+        }
         val permission: String = getNodeText(id)
         val connections: Map<Rule, Node> = buildRules(connectedRules(id))
-        return Node(permission, connections)
+        return this.nodes.apply { put(id, Node(permission, connections)) }[id]!!
     }
 
     private fun buildRules(ids: List<Int>): Map<Rule, Node> {
