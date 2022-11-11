@@ -18,7 +18,7 @@ object NetworkConfiguration {
   }
 
   private fun getConfigFor (service: String): Configuration {
-    val ptn = Regex("$service:(localhost|[0-9]*.[0-9]*.[0-9]*.[0-9]*):([0-9]*)")
+    val ptn = Regex("$service:(localhost|([0-9])+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]+)")
     val result = ptn.find(conf)
     val (address, port) = result!!.destructured
     return Configuration(address, port.toInt())
