@@ -2,7 +2,7 @@ package com.controller
 
 import com.model.AttackGraphOutput
 import com.opencsv.CSVReader
-import model.PathCache
+import com.example.model.PathCache
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase

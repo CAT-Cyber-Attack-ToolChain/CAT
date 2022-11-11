@@ -6,7 +6,25 @@ import com.cytoscape.CytoDataWrapper
 import com.cytoscape.CytoNode
 import com.cytoscape.CytoEdge
 
-class Graph(val list : MutableList<NodeOrRelationship>) {
+interface GraphNode {
+    fun id(): Int
+}
+
+abstract class Graph<T: GraphNode>(val nodes: MutableMap<Int, T>, val arcs: MutableMap<Int, MutableSet<Int>>) {
+    fun getNode(id: Int): GraphNode? {
+        return nodes[id]
+    }
+
+    fun getArcs(id: Int): List<Int>? {
+        return arcs[id]?.toList()
+    }
+
+    fun hasArc(id1: Int, id2: Int): Boolean? {
+        return arcs[id1]?.contains(id2)
+    }
+}
+
+/*class Graph(val list : MutableList<NodeOrRelationship>) {
 
     fun getNode(id: Int) : Node {
         try {
@@ -74,3 +92,4 @@ data class Relationship(override val id: Int,
         return "Relationship $id: $startId $label $endId"
     }
 }
+*/

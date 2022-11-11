@@ -9,5 +9,6 @@ fun Application.configureRouting() {
     routing {
         GraphGenRouting()
         MetricsRouting()
+        SimulationRouting()
     }
 }

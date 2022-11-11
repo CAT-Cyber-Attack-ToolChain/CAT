@@ -1,11 +1,14 @@
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
+import axios from 'axios';
 
 cytoscape.use(popper);
 
 function doStuffOnCy(cy) {
     cy.ready(() => onMouseover(cy))
+
+    return cy
 }
 
 function onMouseover(cy) {
@@ -32,7 +35,7 @@ function onMouseover(cy) {
 
     cy.ready(function () {
         cy.nodes().forEach(function (ele) {
-        makePopper(ele);
+            makePopper(ele);
         });
     });
 
@@ -51,7 +54,8 @@ function onMouseover(cy) {
 var styles = {
     width: '100%',
     height: '500px',
-    backgroundColor: 'black'
+    backgroundColor: 'grey',
+    zIndex:  0
   }
 
 var layout = {
@@ -62,8 +66,7 @@ var stylesheet = [
     {
         selector: 'node',
         style: {
-            // label: 'data(properties.text)',
-            label: 'data(label)',
+            label: 'data(properties.node_id)',
             'font-size': 30,
             width: 'label',
             padding: 10,
@@ -90,7 +93,7 @@ var stylesheet = [
                 if (node.data('properties').type === "AND") {
                     return 'green'
                 } else if (node.data('properties').type === "OR") {
-                    return 'red'
+                    return 'orange'
                 } else {
                     return 'white'
                 }
@@ -100,26 +103,91 @@ var stylesheet = [
     {
         selector: 'edge',
         style: {
-            'width': 2,
+            'width': 3,
             'line-color': '#ccc',
             'target-arrow-color': '#ccc',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier'
         }
+    },
+    {   selector : '.attackedNode',
+        style: {
+            backgroundColor : "red",
+            shape : "circle"
+        }
+    },
+    {   selector : '.attackedEdge',
+        style: {
+            'target-arrow-color': '#ff0000',
+            'line-color': '#ff0000',
+        }
     }
 ]
 
-  // var example = JSON.stringify(
-  //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
-  //    { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 50 } },
-  //    { data: { id: 'three', label: 'Node 3'}, position: { x: 50, y: 100 }}, 
-  //    { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
-  //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
+async function simulateRandomAttack() {
+    const response = await axios.get("http://localhost:8080/simulation/random")
+    return response.data
+}
+
+/*
+    Convert array of path into set of node
+    arr : [{ first: nodeFrom, second: nodeTo}]
+*/
+function getNodesFromPath(arr) {
+    const nodes = new Set()
+    arr.forEach((path) => {
+        nodes.add(path.first) 
+        nodes.add(path.second)
+    })
+    return Array.from(nodes)
+}
+
 
 
 const Cytoscape = ({items}) => {
+
+    //initialise once Cytoscape components finishes
+    var cyRef = undefined;
+    
+    /*
+        Find id of edge on graph with corresponding src and dst
+        Returns id of nodes and edges the belongs on the graph
+    */
+    function simulationParser(attackedPath) {
+        const nodes = getNodesFromPath(attackedPath)
+        const edges = []
+        
+        for (var i = 0; i < attackedPath.length; i++) {
+            const src = attackedPath[i].first
+            const dst = attackedPath[i].second
+            const queryPath = JSON.parse(items).filter((item)=> (item.data.source === src) && (item.data.target === dst))
+            if (queryPath.length !== 0) {
+                edges.push(queryPath[0].data.id)
+            } else {
+                console.error('Could not find edges with source : ' + src + ' target: ' + dst)
+            }
+        }
+        return {nodes: nodes, edges: edges}
+    }
+
+    async function simulationHandler() {
+        const attacked = await simulateRandomAttack().then(path=>simulationParser(path))
+        
+        //add class to node and edges so that stylesheet applies
+        attacked.nodes.forEach((id) => {
+            cyRef.$((ele) => (ele._private.data.id === id)).addClass("attackedNode")
+        })
+        attacked.edges.forEach((id) => {
+            cyRef.$((ele) => (ele._private.data.id === id)).addClass("attackedEdge")
+        })
+    }
+
     return(
-    <CytoscapeComponent cy={(cy) => {doStuffOnCy(cy)}} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />)
+        <div style={{width: "100%", height : "100%"}}>
+            <button style={{position: "absolute", zIndex: 1}} onClick={() => simulationHandler()}> Simulate </button>
+            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(items)} style={styles} stylesheet={stylesheet} layout={layout} />
+        </div>
+    )
 }
 
 export default Cytoscape;
