@@ -1,7 +1,3 @@
-import { useState } from "react"
-import axios from 'axios';
-
-
 const metricsContainerStyle = {
   width : "100%",
   height : "300px",
@@ -9,18 +5,11 @@ const metricsContainerStyle = {
   padding: "20px"
 } 
 
-const Metrics = () => {
-
-    const [mets, setMets] = useState()
-
-    async function getMetrics() {
-        const response = await axios.get('http://localhost:8080/metrics')
-        setMets(JSON.parse(response.data))
-    }
+const Metrics = ({mets}) => {
 
     return (
         <div style={metricsContainerStyle}>
-          <h2 onClick={() => getMetrics()}>Metrics</h2>
+          <h2>Metrics</h2>
           {mets == null
             ? <p>No metrics to calculate, upload a graph</p>
             : <ul>

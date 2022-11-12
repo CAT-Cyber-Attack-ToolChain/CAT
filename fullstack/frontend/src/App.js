@@ -1,6 +1,7 @@
 import './App.css';
 import { useState } from 'react';
 import React from 'react';
+import axios from 'axios';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 function App() {
@@ -8,6 +9,12 @@ function App() {
   const [graph, setGraph] = useState()
   const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
+  const [mets, setMets] = useState()
+
+  async function getMetrics() {
+    const response = await axios.get('http://localhost:8080/metrics')
+    setMets(JSON.parse(response.data))
+  }
 
   const changeHandler = (event) => {
     if (event.target.files.length > 0) {
@@ -32,8 +39,10 @@ function App() {
           body: formData,
         }
       ).then((response) => response.json())
-       .then((result) => setGraph(result))
-       .catch((error) => {
+       .then((result) => {
+        setGraph(result)
+        setMets(getMetrics())
+      }).catch((error) => {
 				console.error('Error:', error);
 			});
     } else {
@@ -55,23 +64,17 @@ function App() {
   return (
       <div className="App">
         <h1>Cyber Attack Tool Chain</h1>
-        <div>
 
+        <div>
           <div class="inner-button"> 
             <input class="input-button" type="file" name="file" onChange={changeHandler} />
             <button class="generate-button" onClick={() => handleSubmission()}>Generate Graph</button>
           </div>
-
           {graph == null ?
-              
-              <div class="no-item"> No graph displayed</div>
-
-              :
-
-              <Cytoscape graph={graph}/>
+            <div class="no-item"> No graph displayed</div> :
+            <Cytoscape graph={graph}/>
           }
-
-            <Metrics/>
+          <Metrics mets={mets}/>
         </div>      
       </div>
   );
