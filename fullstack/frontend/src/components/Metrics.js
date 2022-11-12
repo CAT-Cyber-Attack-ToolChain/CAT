@@ -2,21 +2,27 @@ import { useState } from "react"
 import axios from 'axios';
 
 
+const metricsContainerStyle = {
+  width : "100%",
+  height : "300px",
+  backgroundColor : "#C0C0C0",
+  padding: "20px"
+} 
+
 const Metrics = () => {
 
     const [mets, setMets] = useState()
 
-    const metrics = async() => {
+    async function getMetrics() {
         const response = await axios.get('http://localhost:8080/metrics')
         setMets(JSON.parse(response.data))
-        console.log(response)
     }
 
     return (
-        <div>
-          <h2 onClick={()=>metrics()}>Metrics</h2>
+        <div style={metricsContainerStyle}>
+          <h2 onClick={() => getMetrics()}>Metrics</h2>
           {mets == null
-            ? <p>Click Metrics To Calculate</p>
+            ? <p>No metrics to calculate, upload a graph</p>
             : <ul>
             <li>shortest path: {mets["shortestpath"]}</li>
             <li>mean path length: {mets["meanpathlength"]}</li>

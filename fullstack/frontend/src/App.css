@@ -1,12 +1,30 @@
+#root {
+  background-color: #708090;
+}
+
+.App {
+  padding : 20px;
+}
+
 .no-item {
   display : flex;
+  width: 100%;
   height : 500px;
-  background : grey;
+  background : #808080;
   justify-content : center;
-  align-items: center
+  align-items: center;
 }
 
 .inner-button {
   position : absolute; 
   z-index : 1;
+}
+
+.input-button {
+  margin-top: 20px;
+  margin-left: 20px 
+}
+
+.generate-button {
+  margin-top: 20px;
 }

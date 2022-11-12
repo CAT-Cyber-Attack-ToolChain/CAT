@@ -1,15 +1,8 @@
 import './App.css';
 import { useState } from 'react';
 import React from 'react';
-import Cytoscape from "./components/Cytoscape"
-import Metrics from "./components/Metrics"
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
-
-
+import Cytoscape from "./components/Cytoscape";
+import Metrics from "./components/Metrics";
 function App() {
 
   const [graph, setGraph] = useState()
@@ -60,19 +53,13 @@ function App() {
 
 
   return (
-    <Container>
       <div className="App">
-        <Row>
-          <h1>Cyber Attack Tool Chain</h1>
-        </Row>
-
-        
-
+        <h1>Cyber Attack Tool Chain</h1>
         <div>
 
           <div class="inner-button"> 
-            <input type="file" name="file" onChange={changeHandler} />
-            <button onClick={() => handleSubmission()}>Generate Graph</button>
+            <input class="input-button" type="file" name="file" onChange={changeHandler} />
+            <button class="generate-button" onClick={() => handleSubmission()}>Generate Graph</button>
           </div>
 
           {graph == null ?
@@ -83,10 +70,10 @@ function App() {
 
               <Cytoscape graph={graph}/>
           }
-        </div>
-        <Metrics/>
+
+            <Metrics/>
+        </div>      
       </div>
-    </Container>
   );
 }
 

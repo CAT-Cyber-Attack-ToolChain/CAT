@@ -2,6 +2,7 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import axios from 'axios';
+import {useEffect} from "react"
 
 cytoscape.use(popper);
 
@@ -52,11 +53,11 @@ function onMouseover(cy) {
     
 
 var styles = {
-    width: '100%',
     height: '500px',
     backgroundColor: 'grey',
     zIndex:  0,
-    position: "relative"
+    position: "relative",
+
   }
 
 var layout = {
@@ -149,6 +150,8 @@ function getNodesFromPath(arr) {
 
 
 
+
+
 const Cytoscape = ({graph}) => {
 
     //initialise once Cytoscape components finishes
@@ -156,6 +159,15 @@ const Cytoscape = ({graph}) => {
     // set in every attack simulation (used for removing previous attack path)
     var prevAttackPath = undefined;
     
+    useEffect(() => {
+        function fitGraph() {
+            cyRef.fit(cyRef.elements())
+        }
+
+        window.addEventListener('resize', fitGraph)
+    })
+
+
     /*
         Find id of edge on graph with corresponding src and dst
         Returns id of nodes and edges the belongs on the graph
@@ -215,7 +227,7 @@ const Cytoscape = ({graph}) => {
     }
 
     return(
-        <div style={{position: "relative"}}>
+        <div style={{width: "100%",position: "relative"}}>
             <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
             <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
