@@ -97,6 +97,7 @@ function App() {
             : 
             <>
               <h2>Attack Graph</h2>
+              
               <Cytoscape items={items}></Cytoscape>
             </>
           }
