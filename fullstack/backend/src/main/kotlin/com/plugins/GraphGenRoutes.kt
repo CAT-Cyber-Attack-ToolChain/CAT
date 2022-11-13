@@ -83,7 +83,7 @@ val adapter : Neo4JAdapter = Neo4JAdapter()
 fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
     val result : LinkedList<CytoDataWrapper> = LinkedList()
     result.add(CytoDataWrapper(CytoNode("n${n.id}", n.permission)))
-    n.connections.forEach { e -> result.add(CytoDataWrapper(CytoEdge("${e.key.id}", "${n.id}", "${e.value}", e.key.rule))) }
+    n.connections.forEach { e -> result.add(CytoDataWrapper(CytoEdge("e${e.key.id}", "n${n.id}", "n${e.value}", e.key.rule))) }
     return result
 }
 
@@ -93,7 +93,7 @@ fun exportToCytoscapeJSON(): String {
 
             val dataWrappers = nodeToCytoJSON(n)
             val nodeStrs = dataWrappers.map { dw -> klaxon.toJsonString(dw) }
-            return nodeStrs.joinToString()
+            nodeStrs.joinToString()
         }
 
         return "[" + nodestrlist.joinToString() + "]"
