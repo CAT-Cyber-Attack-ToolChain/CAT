@@ -2,9 +2,8 @@ package com.graph
 
 import java.io.BufferedReader
 import java.io.FileReader
-import javax.crypto.Mac
 
-data class Hacl(val m1: Machine, val m2: Machine, val protocol: String, val port : String) {
+data class Hacl(val m1: Machine, val m2: Machine, val protocol: String, val port: String) {
     override fun toString(): String {
         return "hacl($m1, $m2, $protocol, $port)."
     }
@@ -16,29 +15,37 @@ data class HasAccount(val user: User, val machine: Machine, val privilege: Strin
     }
 }
 
-data class NetworkServiceInfo(val machine: Machine, val application: Application, val protocol: String, val port: String, val privilege: String) {
+data class NetworkServiceInfo(
+    val machine: Machine,
+    val application: Application,
+    val protocol: String,
+    val port: String,
+    val privilege: String
+) {
     override fun toString(): String {
         return "networkServiceInfo($machine, $application, $protocol, $port, $privilege)."
     }
 }
 
-class Machine : GraphNode{
+class Machine : GraphNode {
     val haclList: MutableList<Hacl> = mutableListOf()
     val accountList: MutableList<HasAccount> = mutableListOf()
     val services: MutableList<NetworkServiceInfo> = mutableListOf()
     val name: String
     val id: Int
     var subnet: String = ""
+
     constructor(_name: String, _id: Int) {
         name = _name
         id = _id
     }
+
     constructor(name: String) : this(name, next++)
 
     override fun id(): Int = id
 
     companion object {
-        var next : Int = 0
+        var next: Int = 0
     }
 
     override fun toString(): String {
@@ -49,7 +56,7 @@ class Machine : GraphNode{
         val sb = StringBuilder()
         var flag = false
         if (haclList.isNotEmpty()) {
-            sb.append(haclList.joinToString("\n") {x -> x.toString()})
+            sb.append(haclList.joinToString("\n") { x -> x.toString() })
             sb.append("\n")
             flag = true
         }
@@ -75,11 +82,12 @@ class Machine : GraphNode{
 }
 
 class Application(val name: String) {
-    val programInfo : MutableList<SetuidProgramInfo> = mutableListOf()
+    val programInfo: MutableList<SetuidProgramInfo> = mutableListOf()
     var client: Boolean = false
     override fun toString(): String {
         return name
     }
+
     fun build(): String {
         val sb = StringBuilder()
         if (client) {
@@ -97,6 +105,7 @@ class User(val name: String) {
     override fun toString(): String {
         return name
     }
+
     fun build(): String {
         val sb = StringBuilder()
         if (inCompetent) {
@@ -145,7 +154,7 @@ class TopologyGraph(
     nodes: MutableMap<Int, Machine>,
     arcs: MutableMap<Int, MutableSet<Int>>,
     val machines: MutableMap<String, Machine>,
-    val applications: MutableMap<String,Application>,
+    val applications: MutableMap<String, Application>,
     val vulnerabilities: MutableMap<String, Vulnerability>,
     val users: MutableMap<String, User>
 ) : Graph<Machine>(nodes, arcs) {
@@ -164,61 +173,77 @@ class TopologyGraph(
                 when (props[0]) {
                     "hacl" -> {
                         val m1 = getMachine(props[1], machines)
-                        val m2 = getMachine(props[2], machines)
+                        val m2 = if (props[2] == "_") {
+                            Machine("_")
+                        } else {
+                            getMachine(props[2], machines)
+                        }
                         m1.haclList.add(Hacl(m1, m2, props[3], props[4]))
                     }
+
                     "inSubnet" -> {
                         val m1 = getMachine(props[1], machines)
                         m1.subnet = props[2]
                     }
+
                     "inCompetent" -> {
                         val u = getUser(props[1], users)
                         u.inCompetent = true
                     }
+
                     "vulExists" -> {
                         val m = getMachine(props[1], machines)
                         val v = getVulnerability(props[2], vulnerabilities)
                         val a = getApplication(props[3], applications)
                         v.exists.add(VulExists(m, v, a))
                     }
+
                     "vulProperty" -> {
                         val v = getVulnerability(props[1], vulnerabilities)
                         v.locality = props[2]
                         v.type = props[3]
                     }
+
                     "isClient" -> {
                         val app = getApplication(props[1], applications)
                         app.client = true
                     }
+
                     "setuidProgramInfo" -> {
                         val m = getMachine(props[1], machines)
                         val a = getApplication(props[2], applications)
                         a.programInfo.add(SetuidProgramInfo(m, a, props[3]))
                     }
+
                     "cvss" -> {
                         val v = getVulnerability(props[1], vulnerabilities)
                         when (props[2]) {
                             "l" -> {
                                 v.cvss = CVSS.LOW
                             }
+
                             "m" -> {
                                 v.cvss = CVSS.MEDIUM
                             }
+
                             "h" -> {
                                 v.cvss = CVSS.HIGH
                             }
                         }
                     }
+
                     "hasAccount" -> {
                         val u = getUser(props[1], users)
                         val m = getMachine(props[2], machines)
                         m.accountList.add(HasAccount(u, m, props[3]))
                     }
+
                     "networkServiceInfo" -> {
                         val m = getMachine(props[1], machines)
                         val a = getApplication(props[2], applications)
                         m.services.add(NetworkServiceInfo(m, a, props[3], props[4], props[5]))
                     }
+
                     else -> continue
                 }
             }
@@ -242,13 +267,36 @@ class TopologyGraph(
                 nodes[m.id()] = m
                 arcs[m.id()] = mutableSetOf()
                 for (h in m.haclList) {
-                    arcs[m.id()]!!.add(h.m2.id())
+                    if (h.m2.name == "_") {
+                        addWildcardConnections(m, machines, arcs)
+                    } else {
+                        arcs[m.id()]!!.add(h.m2.id())
+                        //println("Added arc from ${m.name} to ${h.m2.name}")
+                    }
                 }
+
             }
             return TopologyGraph(nodes, arcs, machines, applications, vulnerabilities, users)
         }
 
-        private fun getMachine(name: String, machines: MutableMap<String, Machine>): Machine {
+        private fun addWildcardConnections(
+            m: Machine,
+            machines: MutableMap<String, Machine>,
+            arcs: MutableMap<Int, MutableSet<Int>>
+        ) {
+            for (m2 in machines.values) {
+                if (m != m2) {
+                    arcs[m.id()]!!.add(m2.id())
+                    //println("Added arc from ${m.name} to ${m2.name}")
+                }
+            }
+
+        }
+
+        private fun getMachine(
+            name: String,
+            machines: MutableMap<String, Machine>,
+        ): Machine {
             if (!machines.containsKey(name)) {
                 machines[name] = Machine(name)
             }
