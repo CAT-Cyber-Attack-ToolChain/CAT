@@ -19,8 +19,8 @@ class Neo4JAdapter {
 
     private fun buildAttackGraph(): Node {
         val ruleNodes: MutableList<Int> = mutableListOf()
-        for (id in attackerLocatedNodes()) {
-            ruleNodes.add(connectedRule(id))
+        for (rule : Int in connectedRule(attackerLocatedNode())) {
+            ruleNodes.add(rule)
         }
         val connections: Map<Rule, Int> = buildRules(ruleNodes)
         return Node(-1, "none", connections)
@@ -86,13 +86,13 @@ class Neo4JAdapter {
     }
 
     /* id required to be id of a fact node */
-    private fun connectedRule(id: Int): Int {
+    private fun connectedRule(id: Int): List<Int> {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
                 "MATCH(start {node_id: $id})-[:To]->(end:Rule) RETURN end.node_id", parameters()
             )
-            result.list()[0].get(0).toString().toInt()
+            result.list { r -> r.get(0).toString().toInt() }
         }
     }
 
@@ -117,14 +117,14 @@ class Neo4JAdapter {
         }
     }
 
-    private fun attackerLocatedNodes(): List<Int> {
+    private fun attackerLocatedNode(): Int {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
                 "MATCH(x) WHERE x.text STARTS WITH \"attackerLocated\" RETURN x.node_id",
                 parameters()
             )
-            result.list { r -> r.get(0).toString().toInt() }
+            result.list()[0].get(0).toString().toInt()
         }
     }
 }
