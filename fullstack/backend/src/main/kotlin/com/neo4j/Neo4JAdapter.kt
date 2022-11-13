@@ -19,11 +19,13 @@ class Neo4JAdapter {
 
     private fun buildAttackGraph(): Node {
         val ruleNodes: MutableList<Int> = mutableListOf()
-        for (rule : Int in connectedRule(attackerLocatedNode())) {
+        for (rule: Int in connectedRule(attackerLocatedNode())) {
             ruleNodes.add(rule)
         }
         val connections: Map<Rule, Int> = buildRules(ruleNodes)
-        return Node(-1, "none", connections)
+        val node = Node(0, "start", connections)
+        nodes[0] = node
+        return node
     }
 
     /* id required to be id of a permission node */
@@ -137,9 +139,10 @@ fun printNode(n: Node) {
         printNode(adapter.nodes[node]!!)
     }
 }
+
 fun main(args: Array<String>) {
 
-    for (n : Node in adapter.nodes.values) {
+    for (n: Node in adapter.nodes.values) {
         println(n.permission)
     }
 //    printNode(adapter.getGraph())
