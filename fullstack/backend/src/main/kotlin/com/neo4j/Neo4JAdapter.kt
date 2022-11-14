@@ -116,7 +116,7 @@ class Neo4JAdapter {
             val result: Result = tx.run(
                 "MATCH(n {node_id: $id}) RETURN n.text", parameters()
             )
-            result.list()[0].get(0).toString()
+            result.list()[0].get(0).toString().replace("\"", "")
         }
     }
 
