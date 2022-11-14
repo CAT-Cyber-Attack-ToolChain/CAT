@@ -1,5 +1,6 @@
 package com.neo4j
 
+import com.attackAgent.getMitreTechnique
 import org.neo4j.driver.*
 import org.neo4j.driver.Values.parameters
 
@@ -158,4 +159,17 @@ class Rule(
     val id: Int,
     val rule: String,
     val facts: List<String>
-) {}
+) {
+
+    companion object {
+        val DEFAULT_EASYNESS = Int.MAX_VALUE
+    }
+
+    var easyness: Int = DEFAULT_EASYNESS
+
+    fun calculateEasynessScore() {
+        val technique = getMitreTechnique(this)
+        //TODO: come up with heuristic to calculate easyness from technique
+        println(technique.technique)
+    }
+}
