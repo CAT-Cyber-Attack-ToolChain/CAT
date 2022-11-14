@@ -1,10 +1,12 @@
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
+import dagre from 'cytoscape-dagre';
 import axios from 'axios';
 import {useEffect} from "react"
 
 cytoscape.use(popper);
+cytoscape.use( dagre );
 
 function doStuffOnCy(cy) {
     cy.ready(() => onMouseover(cy))
@@ -61,7 +63,8 @@ var styles = {
   }
 
 var layout = {
-    name: 'breadthfirst'
+    name: "dagre",
+    spacingFactor: 3
 }
 
 var stylesheet = [
@@ -70,9 +73,9 @@ var stylesheet = [
         style: {
             label: 'data(label)',
             fontSize: 200,
+            padding: 300,
             width: 'label' ,
             height : 'label',
-            padding: 300,
             textValign: "center",
             textHalign: "center",
             shape: 'rectangle',
@@ -83,27 +86,27 @@ var stylesheet = [
     {
         selector: 'edge',
         style: {
-            'width': 20,
-            'line-color': '#000',
-            'target-arrow-color': '#000',
-            'target-arrow-shape': 'triangle',
-            curveStyle : 'bezier'
+            width: 20,
+            lineColor: '#000',
+            targetArrowColor: '#000',
+            arrowScale : 5,
+            targetArrowShape: 'triangle',
+            curveStyle : 'taxi'
         }
     },
     {   selector : '.attackedNode',
         style: {
             backgroundColor : "red",
-            shape : "circle",
-            'transition-property': 'background-color, shape',
-            'transition-duration': '0.5s'
+            transitionProperty: 'background-color, shape',
+            transitionDuration: '0.5s'
         }
     },
     {   selector : '.attackedEdge',
         style: {
-            'target-arrow-color': '#ff0000',
-            'line-color': '#ff0000',
-            'transition-property': 'line-color, target-arrow-color',
-            'transition-duration': '0.5s'
+            targetArrowColor: '#ff0000',
+            lineColor: '#ff0000',
+            transitionProperty: 'line-color, target-arrow-color',
+            transitionDuration: '0.5s'
         }
     }
 ]
