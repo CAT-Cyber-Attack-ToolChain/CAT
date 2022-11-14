@@ -68,48 +68,26 @@ var stylesheet = [
     {
         selector: 'node',
         style: {
-            label: 'data(properties.node_id)',
-            'font-size': 30,
-            width: 'label',
-            padding: 10,
-            "text-valign": "center",
-            "text-halign": "center",
-            shape: function (node) {
-                switch (node.data('properties').type) {
-                    case "LEAF": return 'rectangle'
-                    case "AND": return 'ellipse'
-                    case "OR": return 'diamond'
-                    default: return 'circle'
-                }
-
-            },
-            color: function (node) {
-                switch (node.data('properties').type) {
-                    case "LEAF": return 'black'
-                    case "AND": return 'white'
-                    case "OR": return 'yellow'
-                    default: return 'white'
-                }
-            },
-            backgroundColor: function (node) {
-                if (node.data('properties').type === "AND") {
-                    return 'green'
-                } else if (node.data('properties').type === "OR") {
-                    return 'orange'
-                } else {
-                    return 'white'
-                }
-            }
+            label: 'data(label)',
+            fontSize: 200,
+            width: 'label' ,
+            height : 'label',
+            padding: 300,
+            textValign: "center",
+            textHalign: "center",
+            shape: 'rectangle',
+            color: 'black',
+            backgroundColor: 'white'
         }
     },
     {
         selector: 'edge',
         style: {
-            'width': 3,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
+            'width': 20,
+            'line-color': '#000',
+            'target-arrow-color': '#000',
             'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier'
+            curveStyle : 'bezier'
         }
     },
     {   selector : '.attackedNode',
