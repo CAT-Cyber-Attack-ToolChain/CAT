@@ -24,6 +24,7 @@ fun Route.GraphGenRouting() {
         { "data": { "source": "one", "target": "two", "label": "Edge from Node1 to Node2" } }]"""
 
     val cur = System.getProperty("user.dir") // cur = backend directory
+    var filePath: String = "";
 
     fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
         // upload the graph to Neo4j
@@ -44,7 +45,7 @@ fun Route.GraphGenRouting() {
                 if (part is PartData.FileItem) {
                     // retrieve file name of upload
                     val name = part.originalFileName!!
-                    val filePath = "$cur/src/main/resources/uploads/$name"
+                    filePath = "$cur/src/main/resources/uploads/$name"
                     val file = File(filePath)
 
                     // use InputStream from part to save file
@@ -64,7 +65,7 @@ fun Route.GraphGenRouting() {
                 }
             }
             // generate the graph, move to Neo4j, and display it on frontend
-            val neo4JController = Neo4JController(mulvalOutput, PathCache(), "default")
+            val neo4JController = Neo4JController(mulvalOutput, PathCache(filePath), "default")
             Neo4JMapping.add(neo4JController)
             val cytoscapeJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
             call.respond(cytoscapeJson)

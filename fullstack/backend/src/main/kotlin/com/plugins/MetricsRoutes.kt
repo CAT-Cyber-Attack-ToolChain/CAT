@@ -33,7 +33,7 @@ fun Route.MetricsRouting() {
       val modepathlength = ModeOfPathLengths(cache)
       val sdpathlength = StandardDeviationOfPathLengths(cache)
       val numberofpaths = NumberOfPaths(cache)
-      val weakestadversary = WeakestAdversary()
+      val weakestadversary = WeakestAdversary(cache)
 
       call.respond("{\"shortestpath\": " + shortestPath.calculate() +
               ",\"meanpathlength\": " + meanofpathlength.calculate() +
