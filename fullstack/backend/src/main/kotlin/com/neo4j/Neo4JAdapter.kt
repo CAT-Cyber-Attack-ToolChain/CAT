@@ -1,5 +1,6 @@
 package com.neo4j
 
+import com.attackAgent.TEHCNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
 import org.neo4j.driver.*
 import org.neo4j.driver.Values.parameters
@@ -169,7 +170,6 @@ class Rule(
 
     fun calculateEasynessScore() {
         val technique = getMitreTechnique(this)
-        //TODO: come up with heuristic to calculate easyness from technique
-        println(technique.technique)
+        easyness = TEHCNIQUE_EASYNESS_MAP.getOrDefault(technique.technique, 0)
     }
 }

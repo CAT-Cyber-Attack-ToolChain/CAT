@@ -5,16 +5,28 @@ import com.neo4j.Rule
 
 class RealAttackAgent : AttackAgent() {
     override fun attack() {
-        chooseRule(adapter.getGraph())
+        val startNode = adapter.getGraph()
+        println(startNode.connections)
+        var node = startNode
+
+        while (!node.connections.isEmpty()) {
+            var rule = chooseRule(node)
+            path.add(RuleNodePair(node, rule))
+            val index = node.connections[rule]!!
+            node = adapter.nodes[index]!!
+        }
     }
 
     private fun chooseRule(n : Node): Rule {
         var pickedRule: Rule? = null
-        n.connections.forEach {entry -> {
-            val rule = entry.key
+        n.connections.forEach {entry ->
+            val rule: Rule = entry.key
             rule.calculateEasynessScore()
-            pickedRule = rule
-        }}
+            if (pickedRule == null) {
+                pickedRule = rule
+            } else if (pickedRule!!.easyness > rule.easyness)
+                pickedRule = rule
+        }
         return pickedRule!!
     }
 
