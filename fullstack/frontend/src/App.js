@@ -62,6 +62,11 @@ function App() {
     console.log(response)
   }
 
+  const test = async () => {
+    const response = await axios.get('http://localhost:8080/test')
+    console.log(response)
+  }
+
   const metrics = async() => {
     const response = await axios.get('http://localhost:8080/metrics')
     setMets(JSON.parse(response.data))
@@ -117,6 +122,7 @@ function App() {
             </ul>
           }
         </div>
+        <button onClick={() => test()}>Test</button>
       </div>
     </Container>
   );

@@ -1,6 +1,7 @@
 package com.plugins
 
 import com.Export
+import com.attackAgent.RealAttackAgent
 import com.beust.klaxon.Klaxon
 import com.controller.MulvalController
 import com.controller.Neo4JController
@@ -39,6 +40,13 @@ fun Route.GraphGenRouting() {
         // get the graph data from Neo4j
         val graph: AttackGraph = Export.translateToGraph(Export.exportToJSON())
         return exportToCytoscapeJSON()
+    }
+
+    route("/test") {
+        get {
+            val attack = RealAttackAgent()
+            attack.attack()
+        }
     }
 
     route("/submitInput") {
