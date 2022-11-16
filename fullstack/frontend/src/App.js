@@ -15,9 +15,9 @@ function App() {
 
     const handleSubmission = async () => {
       const formData = new FormData();
-  
+
       formData.append('File', selectedFile);
-  
+
       await fetch(
         'http://localhost:8080/submitInput',
         {
@@ -26,11 +26,11 @@ function App() {
         }
       ).then((response) => response.json())
         .then((result) => {
-        setGraph(result)
-        setMets(getMetrics())
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+          setGraph(result)
+          setMets(getMetrics())
+        }).catch((error) => {
+          console.error('Error:', error);
+        });
     }
 
     // skip the initial render
@@ -48,7 +48,12 @@ function App() {
     if (event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
     }
-	};
+  };
+
+  const test = async () => {
+    const response = await axios.get('http://localhost:8080/test')
+    console.log(response)
+  }
 
 
   // var elements = JSON.stringify(
@@ -59,20 +64,21 @@ function App() {
   //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
 
   return (
-      <div className="App">
-        <h1>Cyber Attack Tool Chain</h1>
+    <div className="App">
+      <h1>Cyber Attack Tool Chain</h1>
 
-        <div>
-          <div className="inner-button"> 
-            <input className="input-button" type="file" name="file" onChange={changeHandler} />
-          </div>
-          {graph == null ?
-            <div className="no-item"> No graph displayed</div> :
-            <Cytoscape graph={graph}/>
-          }
-          <Metrics mets={mets}/>
-        </div>      
+      <div>
+        <div className="inner-button">
+          <input className="input-button" type="file" name="file" onChange={changeHandler} />
+        </div>
+        {graph == null ?
+          <div className="no-item"> No graph displayed</div> :
+          <Cytoscape graph={graph} />
+        }
+        <Metrics mets={mets} />
       </div>
+      {/* <button onClick={() => test()}>Test</button> */}
+    </div>
   );
 }
 

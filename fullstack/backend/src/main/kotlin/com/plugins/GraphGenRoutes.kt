@@ -1,9 +1,14 @@
 package com.plugins
 
 import com.Export
+import com.attackAgent.RandomAttackAgent
+import com.attackAgent.RealAttackAgent
+import com.beust.klaxon.Klaxon
 import com.controller.MulvalController
 import com.controller.Neo4JController
-import com.graph.Graph
+import com.cytoscape.CytoDataWrapper
+import com.cytoscape.CytoEdge
+import com.cytoscape.CytoNode
 import com.model.AttackGraphOutput
 import com.model.MulvalInput
 import com.model.Neo4JMapping
@@ -14,8 +19,11 @@ import io.ktor.server.routing.*
 import io.ktor.http.content.*
 import com.example.model.PathCache
 import com.graph.AttackGraph
-import com.graph.AttackNode
+import com.neo4j.Neo4JAdapter
+import com.neo4j.Node
+import com.neo4j.Rule
 import java.io.File
+import java.util.LinkedList
 
 
 fun Route.GraphGenRouting() {
@@ -33,7 +41,16 @@ fun Route.GraphGenRouting() {
         }
         // get the graph data from Neo4j
         val graph: AttackGraph = Export.translateToGraph(Export.exportToJSON())
-        return graph.exportToCytoscapeJSON()
+        return exportToCytoscapeJSON()
+    }
+
+    route("/test") {
+        get {
+            val attack = RealAttackAgent()
+//            val attack = RandomAttackAgent()
+            attack.attack()
+            attack.printPath()
+        }
     }
 
     route("/submitInput") {
@@ -71,4 +88,25 @@ fun Route.GraphGenRouting() {
             call.respond(cytoscapeJson)
         }
     }
+}
+
+val adapter : Neo4JAdapter = Neo4JAdapter()
+
+fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
+    val result : LinkedList<CytoDataWrapper> = LinkedList()
+    result.add(CytoDataWrapper(CytoNode("n${n.id}", n.permission)))
+    n.connections.forEach { e -> result.add(CytoDataWrapper(CytoEdge("e${e.key.id}", "n${n.id}", "n${e.value}", e.key.rule))) }
+    return result
+}
+
+fun exportToCytoscapeJSON(): String {
+    val klaxon = Klaxon()
+    val nodestrlist: List<String> = adapter.nodes.values.map { n ->
+
+            val dataWrappers = nodeToCytoJSON(n)
+            val nodeStrs = dataWrappers.map { dw -> klaxon.toJsonString(dw) }
+            nodeStrs.joinToString()
+        }
+
+        return "[" + nodestrlist.joinToString() + "]"
 }
