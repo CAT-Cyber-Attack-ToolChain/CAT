@@ -5,7 +5,6 @@ import com.neo4j.Rule
 
 class RealAttackAgent : AttackAgent() {
 
-
     override fun chooseRule(n : Node): Rule {
         var pickedRule: Rule? = null
         n.connections.forEach {entry ->

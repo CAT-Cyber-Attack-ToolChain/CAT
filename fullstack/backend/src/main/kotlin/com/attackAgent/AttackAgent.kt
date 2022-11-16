@@ -7,7 +7,6 @@ import com.neo4j.Rule
 abstract class AttackAgent {
 
     protected val path: MutableList<RuleNodePair> = mutableListOf()
-    protected val visitedNode: MutableList<Int> = mutableListOf()
     protected val adapter : Neo4JAdapter = Neo4JAdapter()
 
     fun attack() {
@@ -25,28 +24,23 @@ abstract class AttackAgent {
     protected abstract fun chooseRule(n: Node): Rule
 
     fun printPath() {
-        for (id in visitedNode) {
-            val session: Session = driver.session()
-
-            val text: String = session.writeTransaction { tx ->
-                val result: org.neo4j.driver.Result = tx.run(
-                    "MATCH (n) WHERE ID(n) = $id RETURN (n.text)",
-                    Values.parameters()
-                )
-                result.list().toString()
-
-            }
-            println(text)
+        for (pair in path) {
+            println(pair.rule.rule)
+            println(pair.node.permission)
         }
     }
+
 
     //Converts path to a pairs of string
     fun returnPath(): MutableList<Pair<String,String>> {
         val paths = mutableListOf<Pair<String,String>>()
-        for (i in 0 until visitedNode.size - 1) {
 
-            paths.add(Pair("n" + visitedNode[i], "n" + visitedNode[i+1]))
+        for (ruleNodePair: RuleNodePair in path) {
+
+            val nextNodeIndex = ruleNodePair.node.connections[ruleNodePair.rule]!!
+            paths.add(Pair("n${ruleNodePair.node.id}", "n${adapter.nodes[nextNodeIndex]!!.id}"))
         }
+
         return paths
     }
 
