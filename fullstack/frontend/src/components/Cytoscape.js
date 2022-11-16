@@ -116,6 +116,11 @@ async function simulateRandomAttack() {
     return response.data
 }
 
+async function simulateRealAttack() {
+    const response = await axios.get("http://localhost:8080/simulation/real")
+    return response.data
+}
+
 /*
     Convert array of path into set of node
     arr : [{ first: nodeFrom, second: nodeTo}]
@@ -184,7 +189,7 @@ const Cytoscape = ({graph}) => {
             })
         }
         
-        const attacked = await simulateRandomAttack().then(path=>simulationParser(path))
+        const attacked = await simulateRealAttack().then(path=>simulationParser(path))
         prevAttackPath = attacked;
 
         function highlightNode(index) {
