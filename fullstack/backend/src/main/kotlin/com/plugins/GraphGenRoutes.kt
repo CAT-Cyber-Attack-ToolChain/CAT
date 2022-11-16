@@ -1,6 +1,7 @@
 package com.plugins
 
 import com.Export
+import com.attackAgent.RandomAttackAgent
 import com.attackAgent.RealAttackAgent
 import com.beust.klaxon.Klaxon
 import com.controller.MulvalController
@@ -45,7 +46,9 @@ fun Route.GraphGenRouting() {
     route("/test") {
         get {
             val attack = RealAttackAgent()
+//            val attack = RandomAttackAgent()
             attack.attack()
+            attack.printPath()
         }
     }
 
