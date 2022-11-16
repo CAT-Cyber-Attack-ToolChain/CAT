@@ -5,16 +5,8 @@ import com.neo4j.Rule
 
 class RandomAttackAgent : AttackAgent() {
 
-    override fun attack() {
-        var currentNode: Node = adapter.getGraph()
-        var rules : Set<Rule> = currentNode.connections.keys
-
-        while (rules.isNotEmpty()) {
-            val rule = rules.random()
-            currentNode = adapter.nodes[currentNode.connections[rule]!!]!!
-            rules = currentNode.connections.keys
-            path.add(RuleNodePair(currentNode, rule))
-        }
+    override fun chooseRule(n: Node): Rule {
+        return n.connections.keys.random()
     }
 }
 
