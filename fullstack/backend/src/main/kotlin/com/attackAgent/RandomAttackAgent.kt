@@ -13,5 +13,5 @@ class RandomAttackAgent : AttackAgent() {
 fun main(args : Array<String>) {
     val random : AttackAgent = RandomAttackAgent()
     random.attack()
-    random.printPath()
+    random.returnPath()
 }

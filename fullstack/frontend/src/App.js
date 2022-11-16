@@ -1,32 +1,19 @@
 import './App.css';
-import axios from 'axios';
 import { useState } from 'react';
 import React from 'react';
-import Cytoscape from "./components/Cytoscape"
-
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
-
-
+import axios from 'axios';
+import Cytoscape from "./components/Cytoscape";
+import Metrics from "./components/Metrics";
+import { useEffect } from 'react';
 function App() {
 
-  const [items, setItems] = useState()
+  const [graph, setGraph] = useState()
+  const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
-  const [selectedFile, setSelectedFile] = useState();
-	const [isFilePicked, setIsFilePicked] = useState(false);
 
+  useEffect(() => {
 
-
-  const changeHandler = (event) => {
-		setSelectedFile(event.target.files[0]);
-		setIsFilePicked(true);
-	};
-
-  const handleSubmission = async () => {
-    if (isFilePicked) {
+    const handleSubmission = async () => {
       const formData = new FormData();
 
       formData.append('File', selectedFile);
@@ -38,40 +25,36 @@ function App() {
           body: formData,
         }
       ).then((response) => response.json())
-       .then((result) => setItems(result))
-       .catch((error) => {
-				console.error('Error:', error);
-			});
-    } else {
-      alert("Please upload an input file!");
+        .then((result) => {
+          setGraph(result)
+          setMets(getMetrics())
+        }).catch((error) => {
+          console.error('Error:', error);
+        });
     }
+
+    // skip the initial render
+    if (selectedFile !== null) {
+      handleSubmission()
+    }
+  }, [selectedFile])
+
+  async function getMetrics() {
+    const response = await axios.get('http://localhost:8080/metrics')
+    setMets(JSON.parse(response.data))
   }
 
-  const generateGraph = async () => {
-    const response = await axios.get('http://localhost:8080/shoppingList')
-    console.log(response)
-    setItems(response.data)
-  }
-
-  const post = async () => {
-    const response = await axios.post('http://localhost:8080/shoppingList', {
-      "desc": "Apple 🍎",
-      "priority": 5,
-      "id": 2040789031
-    });
-    console.log(response)
-  }
+  const changeHandler = (event) => {
+    if (event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
 
   const test = async () => {
     const response = await axios.get('http://localhost:8080/test')
     console.log(response)
   }
 
-  const metrics = async() => {
-    const response = await axios.get('http://localhost:8080/metrics')
-    setMets(JSON.parse(response.data))
-    console.log(response)
-  }
 
   // var elements = JSON.stringify(
   //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
@@ -80,51 +63,22 @@ function App() {
   //    { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
   //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
 
-
-
   return (
-    <Container>
-      <div className="App">
-        <Row>
-          <h1>Cyber Attack Tool Chain</h1>
-        </Row>
+    <div className="App">
+      <h1>Cyber Attack Tool Chain</h1>
 
-        <input type="file" name="file" onChange={changeHandler} />
-        
-        <button onClick={() => handleSubmission()}>Generate Graph</button>
-        
-        <div onClick={() => post()}>Post item</div>
-
-
-        <div>
-          {items == null
-            ? <p>No items</p>
-            : 
-            <>
-              <h2>Attack Graph</h2>
-              
-              <Cytoscape items={items}></Cytoscape>
-            </>
-          }
+      <div>
+        <div className="inner-button">
+          <input className="input-button" type="file" name="file" onChange={changeHandler} />
         </div>
-        <div>
-          <h2 onClick={()=>metrics()}>Metrics</h2>
-          {mets == null
-            ? <p>Click Metrics To Calculate</p>
-            : <ul>
-            <li>shortest path: {mets["shortestpath"]}</li>
-            <li>mean path length: {mets["meanpathlength"]}</li>
-            <li>normalised mean of path lengths: {mets["normalisedmopl"]}</li>
-            <li>mode of path lengths: {mets["modepathlength"]}</li>
-            <li>sd of path lengths: {mets["sdpathlength"]}</li>
-            <li>number of paths: {mets["numberofpaths"]}</li>
-            <li>weakest adversary: {mets["weakestadversary"]}</li>
-            </ul>
-          }
-        </div>
-        <button onClick={() => test()}>Test</button>
+        {graph == null ?
+          <div className="no-item"> No graph displayed</div> :
+          <Cytoscape graph={graph} />
+        }
+        <Metrics mets={mets} />
       </div>
-    </Container>
+      {/* <button onClick={() => test()}>Test</button> */}
+    </div>
   );
 }
 
