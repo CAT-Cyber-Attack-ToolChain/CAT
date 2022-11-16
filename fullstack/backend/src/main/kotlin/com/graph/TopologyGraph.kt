@@ -348,5 +348,20 @@ class TopologyGraph(
     }
     return "[" + nodestrlist.joinToString() + "," + arcstrlist.joinToString() + "]"
   }
+  fun separateGraph(removeNodes: List<Int>, removeEdges: List<Pair<Int, Int>>) {
+    for (i in removeNodes) {
+      nodes.remove(i)
+      arcs.remove(i)
+      for ((_, s) in arcs) {
+        s.remove(i)
+      }
+    }
+    for ((i, j) in removeEdges) {
+      if (arcs.containsKey(i)) {
+        arcs[i]!!.remove(j)
+        nodes[i]!!.haclList.filterNot { h -> h.m1.id() == i && h.m2.id() == j }
+      }
+    }
+  }
 
 }
