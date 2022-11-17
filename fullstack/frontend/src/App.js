@@ -8,7 +8,8 @@ import { useEffect } from 'react';
 import Topology from './components/Topology';
 function App() {
 
-  const [graph, setGraph] = useState()
+  const [atkGraph, setGraph] = useState()
+  const [topology, setTopology] = useState()
   const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
 
@@ -28,6 +29,7 @@ function App() {
       ).then((response) => response.json())
         .then((result) => {
           setGraph(result)
+          setTopology(sample)
           setMets(getMetrics())
         }).catch((error) => {
           console.error('Error:', error);
@@ -92,14 +94,17 @@ const sample = `[
         </div>
         <div id="toolchain-container">
           <div id="attack-graph">
-            {graph == null ?
+            {atkGraph == null ?
               <div className="no-item"> No graph displayed</div> :
-              <Cytoscape graph={graph} />
+              <Cytoscape graph={atkGraph} />
             }
             <Metrics mets={mets} />
           </div>
           <div id="topology">
-            <Topology graph={sample} />
+            {topology == null ?
+              <div className="no-item"> No graph displayed </div> :
+              <Topology graph={sample} />
+            }
           </div>
         </div>
         
