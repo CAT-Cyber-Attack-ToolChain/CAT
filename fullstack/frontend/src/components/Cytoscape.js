@@ -9,12 +9,12 @@ cytoscape.use(popper);
 cytoscape.use( dagre );
 
 function doStuffOnCy(cy) {
-    cy.ready(() => onMouseover(cy))
+    cy.ready(() => mouseAction(cy))
 
     return cy
 }
 
-function onMouseover(cy) {
+function mouseAction(cy) {
     function makePopper(ele) {
         ele.popperDiv = ele.popper({
             content: () => {
@@ -50,7 +50,7 @@ function onMouseover(cy) {
 
     cy.on('mouseover', 'edge', (event) => {
       console.log(event.target.data("id"))
-  });
+    });
 
     cy.removeListener('mouseout');
     cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");

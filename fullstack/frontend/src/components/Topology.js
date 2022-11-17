@@ -2,8 +2,43 @@ import { useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
 
 function doStuffOnCy(cy) {
+    cy.ready(() => onMouseover(cy))
     return cy
 }
+
+function onMouseover(cy) {
+
+    cy.removeListener('click'); 
+
+    cy.on('click', 'node', (event) => {
+        console.log(event.target.data("id"))
+    });
+
+    cy.on('click', 'edge', (event) => {
+        console.log(event.target.data("id"))
+    });
+
+    cy.removeListener('mouseover') 
+    
+    cy.on('mouseover', 'node', (event) => {
+        cy.$('#'+event.target.data("id")).addClass("highlightNode")
+    })
+
+    cy.on('mouseover', 'edge', (event) => {
+        cy.$('#'+event.target.data("id")).addClass("highlightEdge")
+    })
+    
+    cy.removeListener('mouseout')
+
+    cy.on('mouseout', 'node' , (event) => {
+        cy.$('#'+event.target.data("id")).removeClass("highlightNode")
+    })
+
+    cy.on('mouseout', 'edge' , (event) => {
+        cy.$('#'+event.target.data("id")).removeClass("highlightEdge")
+    })
+}
+    
 
 var styles = {
     height : "800px",
@@ -41,23 +76,19 @@ var stylesheet = [
             targetArrowColor: '#000',
             arrowScale : 5,
             targetArrowShape: 'triangle',
-            curveStyle : 'taxi',
-            //'control-point-step-size' : '1000'
+            curveStyle : 'bezier',
+            'control-point-step-size' : '1000'
         }
     },
-    {   selector : '.attackedNode',
+    {   selector : '.highlightNode',
         style: {
             backgroundColor : "red",
-            transitionProperty: 'background-color, shape',
-            transitionDuration: '0.5s'
         }
     },
-    {   selector : '.attackedEdge',
+    {   selector : '.highlightEdge',
         style: {
             targetArrowColor: '#ff0000',
             lineColor: '#ff0000',
-            transitionProperty: 'line-color, target-arrow-color',
-            transitionDuration: '0.5s'
         }
     }
 ]
