@@ -11,14 +11,14 @@ class Neo4JAdapter {
     private val driver: Driver = Neo4JController.driver
 
     val nodes: MutableMap<Int, Node> = mutableMapOf()
-    private val attackGraph: Node = buildAttackGraph()
+    private var attackGraph: Node = buildAttackGraph()
 
     fun getGraph(): Node {
         return attackGraph
     }
 
     fun update() {
-        buildAttackGraph()
+        attackGraph = buildAttackGraph()
     }
 
     private fun buildAttackGraph(): Node {
