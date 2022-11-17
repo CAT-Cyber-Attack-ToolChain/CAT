@@ -20,7 +20,7 @@ function onMouseover(cy) {
             content: () => {
                 let div = document.createElement('div');
 
-                div.innerHTML = ele.data('properties').text;
+                div.innerHTML = ele.data('id');
                 div.setAttribute("role", "tooltip")
                 div.classList.add("my-tooltip")
 
