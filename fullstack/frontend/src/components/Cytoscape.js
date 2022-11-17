@@ -58,11 +58,10 @@ function onMouseover(cy) {
     
 
 var styles = {
-    height: '500px',
     backgroundColor: 'grey',
     zIndex:  0,
     position: "relative",
-
+    height : "600px"
   }
 
 var layout = {
@@ -225,7 +224,7 @@ const Cytoscape = ({graph}) => {
     }
 
     return(
-        <div style={{width: "100%",position: "relative"}}>
+        <div style={{width: "100%", position: "relative"}}>
             <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
             <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>

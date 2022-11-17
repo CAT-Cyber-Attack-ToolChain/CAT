@@ -5,6 +5,7 @@ import axios from 'axios';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import { useEffect } from 'react';
+import Topology from './components/Topology';
 function App() {
 
   const [graph, setGraph] = useState()
@@ -56,6 +57,24 @@ function App() {
   }
 
 
+const sample = `[
+  {"data" : {"id" : "n0", "label" : "internet", "properties" : {"bool": 0, "text": "internet", "type": "OR", "node_id": 0}}},
+  {"data" : {"id" : "n1", "label" : "webServer", "properties" : {"bool": 0, "text": "webServer", "type": "OR", "node_id": 1}}}, 
+  {"data" : {"id" : "n3", "label" : "fileServer", "properties" : {"bool": 0, "text": "fileServer", "type": "OR", "node_id": 3}}}, 
+  {"data" : {"id" : "n5", "label" : "workStation", "properties" : {"bool": 0, "text": "workStation", "type": "OR", "node_id": 5}}}, 
+  {"data" : {"id" : "n7", "label" : "H", "properties" : {"bool": 0, "text": "H", "type": "OR", "node_id": 7}}},
+  {"data" : {"id" : "e1", "label" : "edge", "properties" : {}, "source" : "n0", "target" : "n1"}}, 
+  {"data" : {"id" : "e2", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n0"}},
+  {"data" : {"id" : "e3", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n3"}},
+  {"data" : {"id" : "e4", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n5"}},
+  {"data" : {"id" : "e9", "label" : "edge", "properties" : {}, "source" : "n3", "target" : "n7"}}, 
+  {"data" : {"id" : "e10", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n0"}}, 
+  {"data" : {"id" : "e11", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n1"}}, 
+  {"data" : {"id" : "e12", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n3"}}, 
+  {"data" : {"id" : "e13", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n7"}}, 
+  {"data" : {"id" : "e14", "label" : "edge", "properties" : {}, "source" : "n7", "target" : "n7"}}
+]`
+
   // var elements = JSON.stringify(
   //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
   //    { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 50 } },
@@ -71,11 +90,21 @@ function App() {
         <div className="inner-button">
           <input className="input-button" type="file" name="file" onChange={changeHandler} />
         </div>
-        {graph == null ?
-          <div className="no-item"> No graph displayed</div> :
-          <Cytoscape graph={graph} />
-        }
-        <Metrics mets={mets} />
+        <div id="toolchain-container">
+          <div id="attack-graph">
+            {graph == null ?
+              <div className="no-item"> No graph displayed</div> :
+              <Cytoscape graph={graph} />
+            }
+            <Metrics mets={mets} />
+          </div>
+          <div id="topology">
+            <Topology graph={sample} />
+          </div>
+        </div>
+        
+    
+        
       </div>
       {/* <button onClick={() => test()}>Test</button> */}
     </div>
