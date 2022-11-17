@@ -1,9 +1,6 @@
 import { useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
 
-
-    
-
 var styles = {
     height : "800px",
     backgroundColor: 'grey',
@@ -60,7 +57,7 @@ var stylesheet = [
 
 const Topology = ({graph}) => {
 
-    const [cursor, setCursor] = useState("pointer")
+    const [cursor, setCursor] = useState("default")
     const [isCutting, setCutting] = useState(false)
     var topologyCyRef = undefined
 
@@ -110,7 +107,7 @@ const Topology = ({graph}) => {
         setCutting(!isCutting)
         setCursor(prevState => {
             if(prevState === 'crosshair'){
-              return 'pointer';
+              return 'default';
             }
             return 'crosshair';
         });
@@ -120,7 +117,7 @@ const Topology = ({graph}) => {
 
     return (
         <div style={{width: "100%",position: "relative", cursor : cursor}}>
-            <button id="cut-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => cutModeHandler()}> Cut </button>
+            <button id="cut-button" style={{position: "absolute", zIndex: 1, left: 0, bottom: 0,  margin : "0 0 20px 20px"}} onClick={() => cutModeHandler()}> Cut </button>
             <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
