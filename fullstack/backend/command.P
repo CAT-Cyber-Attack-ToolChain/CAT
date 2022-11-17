@@ -1,5 +1,5 @@
 
-start1 :-
+start1:-
     set_prolog_flag(write_depth, 1000),
     open('output.txt', write, OS),
     findall([X,Y,Z,W], hacl(X,Y,Z,W), L),

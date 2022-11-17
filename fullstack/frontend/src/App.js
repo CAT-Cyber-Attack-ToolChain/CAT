@@ -12,7 +12,8 @@ import Col from 'react-bootstrap/Col';
 
 function App() {
 
-  const [items, setItems] = useState()
+  const [attackGraph, setAttackGraph] = useState()
+  const [topologyGraph, setTopologyGraph] = useState()
   const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
 
@@ -38,7 +39,12 @@ function App() {
           body: formData,
         }
       ).then((response) => response.json())
-       .then((result) => setItems(result))
+       .then((result) => {
+         let parsed = JSON.parse(result)
+         setAttackGraph(JSON.stringify(parsed['attackGraph']))
+         setTopologyGraph(JSON.stringify(parsed['topologyGraph']))
+         console.log(JSON.stringify(parsed['topologyGraph']))
+       })
        .catch((error) => {
 				console.error('Error:', error);
 			});
@@ -70,12 +76,12 @@ function App() {
         <button onClick={() => handleSubmission()}>Generate Graph</button>
 
         <div>
-          {items == null
+          {attackGraph == null
             ? <p>No items</p>
             : 
             <>
               <h2>Attack Graph</h2>
-              <Cytoscape items={items}></Cytoscape>
+              <Cytoscape items={attackGraph}></Cytoscape>
             </>
           }
         </div>

@@ -4,8 +4,14 @@ import com.beust.klaxon.Klaxon
 import com.cytoscape.CytoDataWrapper
 import com.cytoscape.CytoEdge
 import com.cytoscape.CytoNode
+import com.lordcodes.turtle.shellRun
+import com.model.MulvalInput
+import kotlinx.serialization.json.jsonArray
 import java.io.BufferedReader
+import java.io.File
 import java.io.FileReader
+import java.io.FileWriter
+import java.io.OutputStream
 
 data class Hacl(val m1: Machine, val m2: Machine, val protocol: String, val port: String) {
   override fun toString(): String {
@@ -163,7 +169,8 @@ class TopologyGraph(
         val users: MutableMap<String, User>
 ) : Graph<Machine>(nodes, arcs) {
   companion object {
-    fun build(filepath: String): TopologyGraph {
+    fun build(input: MulvalInput): TopologyGraph {
+      val filepath = input.getPath()
       val machines = mutableMapOf<String, Machine>()
       val applications = mutableMapOf<String, Application>()
       val vulnerabilities = mutableMapOf<String, Vulnerability>()
@@ -363,5 +370,4 @@ class TopologyGraph(
       }
     }
   }
-
 }
