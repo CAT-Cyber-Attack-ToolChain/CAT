@@ -1,43 +1,7 @@
 import { useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
 
-function doStuffOnCy(cy) {
-    cy.ready(() => onMouseover(cy))
-    return cy
-}
 
-function onMouseover(cy) {
-
-    cy.removeListener('click'); 
-
-    cy.on('click', 'node', (event) => {
-        console.log(event.target.data("id"))
-    });
-
-    cy.on('click', 'edge', (event) => {
-        console.log(event.target.data("id"))
-    });
-
-    cy.removeListener('mouseover') 
-    
-    cy.on('mouseover', 'node', (event) => {
-        cy.$('#'+event.target.data("id")).addClass("highlightNode")
-    })
-
-    cy.on('mouseover', 'edge', (event) => {
-        cy.$('#'+event.target.data("id")).addClass("highlightEdge")
-    })
-    
-    cy.removeListener('mouseout')
-
-    cy.on('mouseout', 'node' , (event) => {
-        cy.$('#'+event.target.data("id")).removeClass("highlightNode")
-    })
-
-    cy.on('mouseout', 'edge' , (event) => {
-        cy.$('#'+event.target.data("id")).removeClass("highlightEdge")
-    })
-}
     
 
 var styles = {
@@ -93,14 +57,70 @@ var stylesheet = [
     }
 ]
 
+
 const Topology = ({graph}) => {
 
+    const [cursor, setCursor] = useState("pointer")
     const [isCutting, setCutting] = useState(false)
     var topologyCyRef = undefined
 
+    function doStuffOnCy(cy) {
+        cy.ready(() => onMouseover(cy))
+        return cy
+    }
+    
+    function onMouseover(cy) {
+    
+        cy.removeListener('click'); 
+    
+        cy.on('click', 'node', (event) => {
+            if (isCutting) {
+                console.log(event.target.data("id"))
+            }
+        });
+    
+        cy.on('click', 'edge', (event) => {
+            if (isCutting) {
+                console.log(event.target.data("id"))
+            }
+        });
+    
+        cy.removeListener('mouseover') 
+        
+        cy.on('mouseover', 'node', (event) => {
+            cy.$('#'+event.target.data("id")).addClass("highlightNode")
+        })
+    
+        cy.on('mouseover', 'edge', (event) => {
+            cy.$('#'+event.target.data("id")).addClass("highlightEdge")
+        })
+        
+        cy.removeListener('mouseout')
+    
+        cy.on('mouseout', 'node' , (event) => {
+            cy.$('#'+event.target.data("id")).removeClass("highlightNode")
+        })
+    
+        cy.on('mouseout', 'edge' , (event) => {
+            cy.$('#'+event.target.data("id")).removeClass("highlightEdge")
+        })
+    }
+
+    function cutModeHandler() {
+        setCutting(!isCutting)
+        setCursor(prevState => {
+            if(prevState === 'crosshair'){
+              return 'pointer';
+            }
+            return 'crosshair';
+        });
+        
+    }
+
+
     return (
-        <div style={{width: "100%",position: "relative"}}>
-            <button id="cut-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => setCutting(true)}> Simulate </button>
+        <div style={{width: "100%",position: "relative", cursor : cursor}}>
+            <button id="cut-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => cutModeHandler()}> Cut </button>
             <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
