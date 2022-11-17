@@ -182,7 +182,7 @@ class TopologyGraph(
         }
         val props = line.replace(Regex("\\s"), "").replace('(', ',').dropLast(2).split(",")
         when (props[0]) {
-          "hacl" -> {
+          /*"hacl" -> {
             val m1 = getMachine(props[1], machines)
             val m2 = if (props[2] == "_") {
               Machine("_")
@@ -190,7 +190,7 @@ class TopologyGraph(
               getMachine(props[2], machines)
             }
             m1.haclList.add(Hacl(m1, m2, props[3], props[4]))
-          }
+          }*/
 
           "inSubnet" -> {
             val m1 = getMachine(props[1], machines)
@@ -258,6 +258,33 @@ class TopologyGraph(
           else -> continue
         }
       }
+
+      val writer = FileWriter("xsbParse")
+      writer.write("xsb -e \"consult(command),consult('${input.getPath()}'),start1,halt.\"")
+      writer.close()
+      shellRun("chmod", listOf("+x", "xsbParse"))
+      shellRun("./xsbParse")
+      File("xsbParse").delete()
+
+      val haclReader = BufferedReader(FileReader("output.txt"))
+      val haclText: String = haclReader.readText()
+      haclReader.close()
+      val obj = kotlinx.serialization.json.Json.parseToJsonElement(haclText)
+      for (props in obj.jsonArray) {
+
+        val m1 = if (props.jsonArray[0].toString() == "_") {
+          Machine("_")
+        } else {
+          getMachine(props.jsonArray[1].toString(), machines)
+        }
+        val m2 = if (props.jsonArray[2].toString() == "_") {
+          Machine("_")
+        } else {
+          getMachine(props.jsonArray[2].toString(), machines)
+        }
+        //m1.haclList.add(Hacl(m1, m2, props.json))
+      }
+
       val sb = StringBuilder()
       for (m in machines.values) {
         sb.append(m.build())
@@ -343,6 +370,10 @@ class TopologyGraph(
 
     for (m in nodes.values) {
       val cytoNode = CytoNode("n${m.id()}", m.name)
+      cytoNode.addProperty("bool", 0)
+      cytoNode.addProperty("node_id", m.id())
+      cytoNode.addProperty("text", m.toString())
+      cytoNode.addProperty("type", "OR")
       nodestrlist.add(klaxon.toJsonString(CytoDataWrapper(cytoNode)))
     }
 
@@ -350,7 +381,8 @@ class TopologyGraph(
     for ((k, v) in arcs) {
       for (n in v) {
         counter++
-        arcstrlist.add(klaxon.toJsonString(CytoDataWrapper(CytoEdge("e$counter", "n$k", "n$n", "edge"))))
+        val cytoEdge = CytoEdge("e$counter", "n$k", "n$n", "edge")
+        arcstrlist.add(klaxon.toJsonString(CytoDataWrapper(cytoEdge)))
       }
     }
     return "[" + nodestrlist.joinToString() + "," + arcstrlist.joinToString() + "]"

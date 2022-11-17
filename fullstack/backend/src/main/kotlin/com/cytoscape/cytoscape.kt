@@ -15,7 +15,7 @@ data class CytoNode(val id: String, val label: String) : CytoObject {
     }
 
     override fun addProperty(key: String, value: Any) {
-        properties.put(key, String)
+        properties.put(key, value)
     }
 }
 

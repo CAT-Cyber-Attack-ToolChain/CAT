@@ -85,6 +85,16 @@ function App() {
             </>
           }
         </div>
+        <div>
+          {topologyGraph == null
+              ? <p>No topology graph</p>
+              :
+              <>
+                <h2>Topology Graph</h2>
+                <Cytoscape items={topologyGraph}></Cytoscape>
+              </>
+          }
+        </div>
         <Metrics/>
       </div>
     </Container>
