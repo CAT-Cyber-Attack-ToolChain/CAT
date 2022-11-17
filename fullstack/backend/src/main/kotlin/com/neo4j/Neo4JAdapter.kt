@@ -2,21 +2,23 @@ package com.neo4j
 
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
+import com.controller.Neo4JController
 import org.neo4j.driver.*
 import org.neo4j.driver.Values.parameters
 
 class Neo4JAdapter {
 
-    private val driver: Driver = GraphDatabase.driver(
-        "neo4j+s://42ce3f9a.databases.neo4j.io",
-        AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
-    )
+    private val driver: Driver = Neo4JController.driver
 
     val nodes: MutableMap<Int, Node> = mutableMapOf()
     private val attackGraph: Node = buildAttackGraph()
 
     fun getGraph(): Node {
         return attackGraph
+    }
+
+    fun update() {
+        buildAttackGraph()
     }
 
     private fun buildAttackGraph(): Node {

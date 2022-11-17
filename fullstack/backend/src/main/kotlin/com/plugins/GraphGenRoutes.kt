@@ -40,7 +40,7 @@ fun Route.GraphGenRouting() {
             neo4JController.update()
         }
         // get the graph data from Neo4j
-        val graph: AttackGraph = Export.translateToGraph(Export.exportToJSON())
+
         return exportToCytoscapeJSON()
     }
 
@@ -101,6 +101,7 @@ fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
 
 fun exportToCytoscapeJSON(): String {
     val klaxon = Klaxon()
+    adapter.update()
     val nodestrlist: List<String> = adapter.nodes.values.map { n ->
 
             val dataWrappers = nodeToCytoJSON(n)
