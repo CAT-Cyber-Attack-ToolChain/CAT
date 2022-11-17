@@ -94,7 +94,7 @@ fun Route.GraphGenRouting() {
 fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
     val result : LinkedList<CytoDataWrapper> = LinkedList()
     result.add(CytoDataWrapper(CytoNode("n${n.id}", n.permission)))
-    n.connections.forEach { e -> result.add(CytoDataWrapper(CytoEdge("e${e.key.id}", "n${n.id}", "n${e.value}", e.key.rule))) }
+    n.connections.forEach { rule -> result.add(CytoDataWrapper(CytoEdge("e${rule.id}", "n${n.id}", "n${rule.dest.id}", rule.rule))) }
     return result
 }
 

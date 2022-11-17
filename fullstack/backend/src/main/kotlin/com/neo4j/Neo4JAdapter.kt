@@ -22,41 +22,41 @@ class Neo4JAdapter {
     }
 
     private fun buildAttackGraph(): Node {
-        val ruleNodes: MutableList<Int> = mutableListOf()
+        val ruleNodeIds: MutableList<Int> = mutableListOf()
         for (rule: Int in connectedRule(attackerLocatedNode())) {
-            ruleNodes.add(rule)
+            ruleNodeIds.add(rule)
         }
-        val connections: Map<Rule, Int> = buildRules(ruleNodes)
+        val connections: Set<Rule> = buildRules(ruleNodeIds)
         val node = Node(0, "start", connections)
         nodes[0] = node
         return node
     }
 
     /* id required to be id of a permission node */
-    private fun buildNode(id: Int): Int {
+    private fun buildNode(id: Int): Node {
         if (!nodes.containsKey(id)) {
             val permission: String = getNodeText(id)
-            val connections: Map<Rule, Int> = buildRules(connectedRules(id))
+            val connections: Set<Rule> = buildRules(connectedRules(id))
             nodes[id] = Node(id, permission, connections)
         }
-        return id
+        return nodes[id]!!
     }
 
     /* ids required to be ids of rule nodes */
-    private fun buildRules(ids: List<Int>): Map<Rule, Int> {
-        val rules: MutableMap<Rule, Int> = mutableMapOf()
+    private fun buildRules(ids: List<Int>): Set<Rule> {
+        val rules: MutableSet<Rule> = mutableSetOf()
         for (id in ids) {
-            val key: Rule = buildRule(id)
-            val value: Int = buildNode(connectedPermission(id))
-            rules[key] = value
+            val rule : Rule = buildRule(id)
+            rules.add(rule)
         }
         return rules
     }
 
     /* id required to be id of a rule node */
     private fun buildRule(id: Int): Rule {
-        val rule: String = getNodeText(id)
-        return Rule(id, rule)
+        val rule : String = getNodeText(id)
+        val dest : Node = buildNode(connectedPermission(id))
+        return Rule(id, rule, dest)
     }
 
     /* id required to be id of a rule node */
@@ -119,19 +119,23 @@ val adapter: Neo4JAdapter = Neo4JAdapter()
 fun main(args: Array<String>) {
 
     for (n: Node in adapter.nodes.values) {
-        println(n.permission)
+        println(String.format("Node: ${n.permission}"))
+        for (r : Rule in n.connections) {
+            println(String.format("    - ${r.rule}"))
+        }
     }
 }
 
 class Node(
     val id: Int,
     val permission: String,
-    val connections: Map<Rule, Int>
+    val connections: Set<Rule>
 ) {}
 
 class Rule(
     val id: Int,
-    val rule: String
+    val rule: String,
+    val dest: Node
 ) {
 
     companion object {
@@ -144,4 +148,18 @@ class Rule(
         val technique = getMitreTechnique(this)
         easiness = TECHNIQUE_EASYNESS_MAP.getOrDefault(technique.technique, 0)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Rule) return false
+        if (rule == other.rule) return true
+        return false
+    }
+
+    override fun hashCode(): Int {
+        var result = rule.hashCode()
+        result = 31 * result + dest.hashCode()
+        return result
+    }
+
 }
