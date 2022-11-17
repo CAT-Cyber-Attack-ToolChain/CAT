@@ -90,7 +90,6 @@ fun Route.GraphGenRouting() {
     }
 }
 
-val adapter : Neo4JAdapter = Neo4JAdapter()
 
 fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
     val result : LinkedList<CytoDataWrapper> = LinkedList()
@@ -101,7 +100,7 @@ fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
 
 fun exportToCytoscapeJSON(): String {
     val klaxon = Klaxon()
-    adapter.update()
+    val adapter : Neo4JAdapter = Neo4JAdapter()
     val nodestrlist: List<String> = adapter.nodes.values.map { n ->
 
             val dataWrappers = nodeToCytoJSON(n)

@@ -46,8 +46,11 @@ function onMouseover(cy) {
 
     cy.on('mouseover', 'node', (event) => {
         event.target.popperDiv.state.elements.popper.style.display = "flex";
-        console.log("Showing")
     });
+
+    cy.on('mouseover', 'edge', (event) => {
+      console.log(event.target.data("id"))
+  });
 
     cy.removeListener('mouseout');
     cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
@@ -189,16 +192,18 @@ const Cytoscape = ({graph}) => {
             })
         }
         
-        const attacked = await simulateRealAttack().then(path=>simulationParser(path))
+        const attacked = await simulateRealAttack().then(path=> {
+          return simulationParser(path);
+        })
         prevAttackPath = attacked;
 
         function highlightNode(index) {
-          if (index === attacked.nodes.length) {
+          cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
+          if (index === attacked.nodes.length - 1) {
             //allow simulate button to be press after animation is complete
             document.getElementById('simulate-button').disabled = false
             return
           }
-          cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
           setTimeout(function(){highlightEdge(index)}, 500)
         }
 
