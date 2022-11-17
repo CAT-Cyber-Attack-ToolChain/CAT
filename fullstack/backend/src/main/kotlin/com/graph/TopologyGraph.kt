@@ -271,18 +271,37 @@ class TopologyGraph(
       haclReader.close()
       val obj = kotlinx.serialization.json.Json.parseToJsonElement(haclText)
       for (props in obj.jsonArray) {
-
-        val m1 = if (props.jsonArray[0].toString() == "_") {
-          Machine("_")
-        } else {
+        if (props.jsonArray[0].toString()[0] != '_') {
+          getMachine(props.jsonArray[0].toString(), machines)
+        }
+        if (props.jsonArray[1].toString()[0] != '_') {
           getMachine(props.jsonArray[1].toString(), machines)
         }
-        val m2 = if (props.jsonArray[2].toString() == "_") {
-          Machine("_")
+      }
+      for (props in obj.jsonArray) {
+        if (props.jsonArray[0].toString() == props.jsonArray[1].toString() && props.jsonArray[0].toString()[0] == '_') {
+          for (m in machines.values) {
+            m.haclList.add(Hacl(m, m, props.jsonArray[2].toString(), props.jsonArray[3].toString()))
+          }
         } else {
-          getMachine(props.jsonArray[2].toString(), machines)
+          val m1set = mutableSetOf<Machine>()
+          val m2set = mutableSetOf<Machine>()
+          if (props.jsonArray[0].toString()[0] == '_') {
+            m1set.addAll(machines.values)
+          } else {
+            m1set.add(getMachine(props.jsonArray[0].toString(), machines))
+          }
+          if (props.jsonArray[1].toString()[0] == '_') {
+            m2set.addAll(machines.values)
+          } else {
+            m2set.add(getMachine(props.jsonArray[1].toString(), machines))
+          }
+          for (m in m1set) {
+            for (n in m2set) {
+              m.haclList.add(Hacl(m, n, props.jsonArray[2].toString(), props.jsonArray[3].toString()))
+            }
+          }
         }
-        //m1.haclList.add(Hacl(m1, m2, props.json))
       }
 
       val sb = StringBuilder()
@@ -298,7 +317,7 @@ class TopologyGraph(
       for (a in applications.values) {
         sb.append(a.build())
       }
-      //println(sb)
+      println(sb)
       val nodes = mutableMapOf<Int, Machine>()
       val arcs = mutableMapOf<Int, MutableSet<Int>>()
       for (m in machines.values) {
