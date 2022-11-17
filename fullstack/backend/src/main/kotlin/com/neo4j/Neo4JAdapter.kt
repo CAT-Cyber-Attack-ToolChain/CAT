@@ -56,17 +56,7 @@ class Neo4JAdapter {
     /* id required to be id of a rule node */
     private fun buildRule(id: Int): Rule {
         val rule: String = getNodeText(id)
-        val requirements: List<String> = buildRequirements(connectedFacts(id))
-        return Rule(id, rule, requirements)
-    }
-
-    /* ids required to be ids of fact nodes */
-    private fun buildRequirements(ids: List<Int>): List<String> {
-        val result: MutableList<String> = mutableListOf()
-        for (id in ids) {
-            result.add(getNodeText(id))
-        }
-        return result
+        return Rule(id, rule)
     }
 
     /* id required to be id of a rule node */
@@ -102,17 +92,6 @@ class Neo4JAdapter {
         }
     }
 
-    /* id required to be id of a rule node */
-    private fun connectedFacts(id: Int): List<Int> {
-        val session: Session = driver.session()
-        return session.writeTransaction { tx ->
-            val result: Result = tx.run(
-                "MATCH(start {node_id: $id})<-[:To]-(end: Fact) RETURN end.node_id", parameters()
-            )
-            result.list { r -> r.get(0).toString().toInt() }
-        }
-    }
-
     private fun getNodeText(id: Int): String {
         val session: Session = driver.session()
         return session.writeTransaction { tx ->
@@ -137,19 +116,11 @@ class Neo4JAdapter {
 
 val adapter: Neo4JAdapter = Neo4JAdapter()
 
-fun printNode(n: Node) {
-    println(n.permission)
-    for (node in n.connections.values) {
-        printNode(adapter.nodes[node]!!)
-    }
-}
-
 fun main(args: Array<String>) {
 
     for (n: Node in adapter.nodes.values) {
         println(n.permission)
     }
-//    printNode(adapter.getGraph())
 }
 
 class Node(
@@ -160,18 +131,17 @@ class Node(
 
 class Rule(
     val id: Int,
-    val rule: String,
-    val facts: List<String>
+    val rule: String
 ) {
 
     companion object {
-        val DEFAULT_EASYNESS = Int.MAX_VALUE
+        const val DEFAULT_EASINESS = Int.MAX_VALUE
     }
 
-    var easyness: Int = DEFAULT_EASYNESS
+    var easiness: Int = DEFAULT_EASINESS
 
-    fun calculateEasynessScore() {
+    fun calculateEasinessScore() {
         val technique = getMitreTechnique(this)
-        easyness = TECHNIQUE_EASYNESS_MAP.getOrDefault(technique.technique, 0)
+        easiness = TECHNIQUE_EASYNESS_MAP.getOrDefault(technique.technique, 0)
     }
 }

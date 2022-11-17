@@ -9,10 +9,10 @@ class RealAttackAgent : AttackAgent() {
         var pickedRule: Rule? = null
         n.connections.forEach {entry ->
             val rule: Rule = entry.key
-            rule.calculateEasynessScore()
+            rule.calculateEasinessScore()
             if (pickedRule == null) {
                 pickedRule = rule
-            } else if (pickedRule!!.easyness > rule.easyness)
+            } else if (pickedRule!!.easiness > rule.easiness)
                 pickedRule = rule
         }
         return pickedRule!!
