@@ -22,6 +22,7 @@ class Neo4JAdapter {
     }
 
     private fun buildAttackGraph(): Node {
+        
         val ruleNodeIds: MutableList<Int> = mutableListOf()
         for (rule: Int in connectedRule(attackerLocatedNode())) {
             ruleNodeIds.add(rule)
