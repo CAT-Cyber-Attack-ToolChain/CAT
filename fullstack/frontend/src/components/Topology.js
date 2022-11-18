@@ -137,10 +137,10 @@ const Topology = ({graph}) => {
     function cutModeHandler() {
         setCutting(!isCutting)
         setCursor(prevState => {
-            if(prevState === 'crosshair'){
-              return 'default';
+            if(prevState === 'default'){
+              return "url(cursor.cur), auto";
             }
-            return 'crosshair';
+            return "default";
         });
         
     }

@@ -22,6 +22,6 @@ class WeakestAdversary(private val cache: PathCache) : DecisionMetric() {
         return factSets.min().toDouble()
     }
     companion object {
-        private val driver: Driver = GraphDatabase.driver("neo4j+s://42ce3f9a.databases.neo4j.io", AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38"))
+        private val driver: Driver = GraphDatabase.driver("neo4j+s://c7776984.databases.neo4j.io", AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU"))
     }
 }
