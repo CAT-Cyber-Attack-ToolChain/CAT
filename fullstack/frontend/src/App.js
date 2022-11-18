@@ -29,7 +29,6 @@ function App() {
       ).then((response) => response.json())
         .then((result) => {
           let parsed = JSON.parse(result)
-          console.log(parsed)
           setGraph(JSON.stringify(parsed['attackGraph']))
           setTopology(JSON.stringify(parsed['topologyGraph']))
           setMets(getMetrics())
@@ -98,19 +97,17 @@ const sample = `[
           <div id="attack-graph">
             {atkGraph == null ?
               <div className="no-item"> No graph displayed</div> :
-              <Cytoscape graph={atkGraph} />
+              <Cytoscape graph={atkGraph} key={atkGraph} />
             }
             <Metrics mets={mets} />
           </div>
           <div id="topology">
             {topology == null ?
               <div className="no-item"> No graph displayed </div> :
-              <Topology graph={topology} />
+              <Topology graph={topology} key={topology} />
             }
           </div>
         </div>
-        
-    
         
       </div>
       {/* <button onClick={() => test()}>Test</button> */}
