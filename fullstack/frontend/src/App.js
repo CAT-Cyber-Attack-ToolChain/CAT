@@ -16,6 +16,9 @@ function App() {
   const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
 
+  const host = process.env.REACT_APP_HOST
+  const port = process.env.REACT_APP_PORT
+
   const changeHandler = (event) => {
     if (event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
@@ -32,7 +35,7 @@ function App() {
       formData.append('File', selectedFile);
 
       await fetch(
-        'http://localhost:8080/submitInput',
+        `http://${host}:${port}/submitInput`,
         {
           method: 'POST',
           body: formData,
@@ -70,11 +73,14 @@ function App() {
         <button onClick={() => handleSubmission()}>Generate Graph</button>
 
         <div>
+          {console.log(`Host: ${host}`)}
+          {console.log(`Port: ${port}`)}
+          {console.log(`ENV: ${process.env.NODE_ENV}`)}
           {items == null
             ? <p>No items</p>
             : 
             <>
-              <h2>Attack Graph</h2>
+              <h2>Attack Graph</h2>              
               <Cytoscape items={items}></Cytoscape>
             </>
           }

@@ -5,9 +5,11 @@ import axios from 'axios';
 const Metrics = () => {
 
     const [mets, setMets] = useState()
+    const host = process.env.REACT_APP_HOST
+    const port = process.env.REACT_APP_PORT
 
     const metrics = async() => {
-        const response = await axios.get('http://localhost:8080/metrics')
+        const response = await axios.get(`http://${host}:${port}/metrics`)
         setMets(JSON.parse(response.data))
         console.log(response)
     }
