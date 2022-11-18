@@ -29,6 +29,7 @@ function App() {
       ).then((response) => response.json())
         .then((result) => {
           let parsed = JSON.parse(result)
+          console.log(parsed)
           setGraph(JSON.stringify(parsed['attackGraph']))
           setTopology(JSON.stringify(parsed['topologyGraph']))
           setMets(getMetrics())
@@ -104,7 +105,7 @@ const sample = `[
           <div id="topology">
             {topology == null ?
               <div className="no-item"> No graph displayed </div> :
-              <Topology graph={sample} />
+              <Topology graph={topology} />
             }
           </div>
         </div>
