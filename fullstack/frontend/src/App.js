@@ -26,6 +26,7 @@ function App() {
         }
       ).then((response) => response.json())
         .then((result) => {
+          setGraph(null)
           setGraph(result)
           setMets(getMetrics())
         }).catch((error) => {
@@ -73,7 +74,7 @@ function App() {
         </div>
         {graph == null ?
           <div className="no-item"> No graph displayed</div> :
-          <Cytoscape graph={graph} />
+          <Cytoscape graph={graph} key={graph}/>
         }
         <Metrics mets={mets} />
       </div>
