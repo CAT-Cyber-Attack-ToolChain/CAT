@@ -29,7 +29,6 @@ function App() {
       ).then((response) => response.json())
         .then((result) => {
           let parsed = JSON.parse(result)
-          console.log(parsed)
           setGraph(JSON.stringify(parsed['attackGraph']))
           setTopology(JSON.stringify(parsed['topologyGraph']))
           setMets(getMetrics())
