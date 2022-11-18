@@ -11,13 +11,12 @@ abstract class AttackAgent {
 
     fun attack() {
         val startNode = adapter.getGraph()
-        var node = startNode
+        var currNode = startNode
 
-        while (!node.connections.isEmpty()) {
-            var rule = chooseRule(node)
-            path.add(RuleNodePair(node, rule))
-            val index = node.connections[rule]!!
-            node = adapter.nodes[index]!!
+        while (currNode.connections.isNotEmpty()) {
+            var rule = chooseRule(currNode)
+            path.add(RuleNodePair(currNode, rule))
+            currNode = rule.dest
         }
     }
 
@@ -37,8 +36,7 @@ abstract class AttackAgent {
 
         for (ruleNodePair: RuleNodePair in path) {
 
-            val nextNodeIndex = ruleNodePair.node.connections[ruleNodePair.rule]!!
-            paths.add(Pair("n${ruleNodePair.node.id}", "n${adapter.nodes[nextNodeIndex]!!.id}"))
+            paths.add(Pair("n${ruleNodePair.node.id}", "n${ruleNodePair.rule.dest.id}"))
         }
 
         return paths

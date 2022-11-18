@@ -97,19 +97,17 @@ const sample = `[
           <div id="attack-graph">
             {atkGraph == null ?
               <div className="no-item"> No graph displayed</div> :
-              <Cytoscape graph={atkGraph} />
+              <Cytoscape graph={atkGraph} key={atkGraph} />
             }
             <Metrics mets={mets} />
           </div>
           <div id="topology">
             {topology == null ?
               <div className="no-item"> No graph displayed </div> :
-              <Topology graph={sample} />
+              <Topology graph={sample} key={sample} />
             }
           </div>
         </div>
-        
-    
         
       </div>
       {/* <button onClick={() => test()}>Test</button> */}
