@@ -28,8 +28,9 @@ function App() {
         }
       ).then((response) => response.json())
         .then((result) => {
-          setGraph(result)
-          setTopology(sample)
+          let parsed = JSON.parse(result)
+          setGraph(JSON.stringify(parsed['attackGraph']))
+          setTopology(JSON.stringify(parsed['topologyGraph']))
           setMets(getMetrics())
         }).catch((error) => {
           console.error('Error:', error);

@@ -22,6 +22,7 @@ import com.graph.AttackGraph
 import com.neo4j.Neo4JAdapter
 import com.neo4j.Node
 import com.neo4j.Rule
+import com.graph.TopologyGraph
 import java.io.File
 import java.util.LinkedList
 
@@ -84,8 +85,10 @@ fun Route.GraphGenRouting() {
             // generate the graph, move to Neo4j, and display it on frontend
             val neo4JController = Neo4JController(mulvalOutput, PathCache(filePath), "default")
             Neo4JMapping.add(neo4JController)
-            val cytoscapeJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
-            call.respond(cytoscapeJson)
+            val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
+            val topologyGraphJson = TopologyGraph.build(mulvalInput).exportToCytoscapeJSON()
+            println(attackGraphJson)
+            call.respond("{\"attackGraph\": $attackGraphJson, \"topologyGraph\": $topologyGraphJson}")
         }
     }
 }
