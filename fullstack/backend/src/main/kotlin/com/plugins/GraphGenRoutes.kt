@@ -26,6 +26,7 @@ import com.graph.TopologyGraph
 import java.io.File
 import java.util.LinkedList
 
+var topologyGraph : TopologyGraph? = null
 
 fun Route.GraphGenRouting() {
     val example = """[{ "data": { "id": "one", "label": "Node 1" }}, 
@@ -86,7 +87,8 @@ fun Route.GraphGenRouting() {
             val neo4JController = Neo4JController(mulvalOutput, PathCache(filePath), "default")
             Neo4JMapping.add(neo4JController)
             val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
-            val topologyGraphJson = TopologyGraph.build(mulvalInput).exportToCytoscapeJSON()
+            topologyGraph = TopologyGraph.build(mulvalInput)
+            val topologyGraphJson = topologyGraph!!.exportToCytoscapeJSON()
             println(attackGraphJson)
             call.respond("{\"attackGraph\": $attackGraphJson, \"topologyGraph\": $topologyGraphJson}")
         }

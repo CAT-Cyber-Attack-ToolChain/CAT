@@ -303,20 +303,6 @@ class TopologyGraph(
         }
       }
 
-      val sb = StringBuilder()
-      for (m in machines.values) {
-        sb.append(m.build())
-      }
-      for (v in vulnerabilities.values) {
-        sb.append(v.build())
-      }
-      for (u in users.values) {
-        sb.append(u.build())
-      }
-      for (a in applications.values) {
-        sb.append(a.build())
-      }
-      //println(sb)
       val nodes = mutableMapOf<Int, Machine>()
       val arcs = mutableMapOf<Int, MutableSet<Int>>()
       for (m in machines.values) {
@@ -346,7 +332,6 @@ class TopologyGraph(
           // println("Added arc from ${m.name} to ${m2.name}")
         }
       }
-
     }
 
     private fun getMachine(
@@ -379,6 +364,23 @@ class TopologyGraph(
       }
       return map[name]!!
     }
+  }
+
+  override fun toString(): String {
+    val sb = StringBuilder()
+    for (m in machines.values) {
+      sb.append(m.build())
+    }
+    for (v in vulnerabilities.values) {
+      sb.append(v.build())
+    }
+    for (u in users.values) {
+      sb.append(u.build())
+    }
+    for (a in applications.values) {
+      sb.append(a.build())
+    }
+    return sb.toString()
   }
 
   fun exportToCytoscapeJSON(): String {
