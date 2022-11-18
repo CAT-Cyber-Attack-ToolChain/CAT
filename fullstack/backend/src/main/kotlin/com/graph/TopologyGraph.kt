@@ -11,7 +11,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.io.OutputStream
 
 data class Hacl(val m1: Machine, val m2: Machine, val protocol: String, val port: String) {
   override fun toString(): String {
@@ -317,7 +316,7 @@ class TopologyGraph(
       for (a in applications.values) {
         sb.append(a.build())
       }
-      println(sb)
+      //println(sb)
       val nodes = mutableMapOf<Int, Machine>()
       val arcs = mutableMapOf<Int, MutableSet<Int>>()
       for (m in machines.values) {
@@ -382,7 +381,7 @@ class TopologyGraph(
     }
   }
 
-  fun exportToCytoscapeJSON() : String{
+  fun exportToCytoscapeJSON(): String {
     val klaxon = Klaxon()
     val nodestrlist: MutableList<String> = mutableListOf()
     val arcstrlist: MutableList<String> = mutableListOf()
@@ -406,6 +405,7 @@ class TopologyGraph(
     }
     return "[" + nodestrlist.joinToString() + "," + arcstrlist.joinToString() + "]"
   }
+
   fun separateGraph(removeNodes: List<Int>, removeEdges: List<Pair<Int, Int>>) {
     for (i in removeNodes) {
       nodes.remove(i)
