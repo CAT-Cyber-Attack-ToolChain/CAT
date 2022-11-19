@@ -4,10 +4,14 @@ import java.io.FileReader
 
 object NetworkConfiguration {
 
-  val conf: String
+  private val conf: String
   val neo4j: Configuration
   val backend: Configuration
   val frontend: Configuration
+
+  private val HOSTNAME_INDEX = 2
+  private val PORT_INDEX = 6
+  private val PROTOCOL_INTEX = 1
 
 
   init {
@@ -19,11 +23,24 @@ object NetworkConfiguration {
 
   //TODO: this indexing is jank, will fix at some point
   private fun getConfigFor (service: String): Configuration {
-    val ptn = Regex("$service:(localhost|[0-9]+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]*)")
+    val secureNeo4J = Regex.escape("neo4j+s")
+    val ptn = Regex("$service:(($secureNeo4J|bolt|neo4j):)?(localhost|[0-9]+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]*)")
     val result = ptn.find(conf)
     val groups = result!!.destructured.toList()
-    return Configuration(groups[0], groups[4].toInt())
+    if (!groups[0].isEmpty())
+      return Configuration(groups[HOSTNAME_INDEX], groups[PORT_INDEX].toInt(), groups[PROTOCOL_INTEX])
+    return Configuration(groups[HOSTNAME_INDEX], groups[PORT_INDEX].toInt())
   }
 }
 
-class Configuration(val address: String, val port: Int){}
+class Configuration(val address: String, val port: Int, val protocol: String = "https"){
+  override fun toString(): String {
+    return "$protocol://$address:$port"
+  }
+}
+
+fun main() {
+  println(NetworkConfiguration.neo4j)
+  println(NetworkConfiguration.frontend)
+  println(NetworkConfiguration.backend)
+}
