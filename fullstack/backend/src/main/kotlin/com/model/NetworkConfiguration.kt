@@ -24,7 +24,7 @@ object NetworkConfiguration {
   //TODO: this indexing is jank, will fix at some point
   private fun getConfigFor (service: String): Configuration {
     val secureNeo4J = Regex.escape("neo4j+s")
-    val ptn = Regex("$service:(($secureNeo4J|bolt|neo4j):)?(localhost|[0-9]+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]*)")
+    val ptn = Regex("$service:(($secureNeo4J|bolt|neo4j|https):)?(localhost|[0-9]+.[0-9]+.[0-9]+.[0-9]+|(([A-Z]*[a-z]*[0-9]*)+.)+([A-Z]*[a-z]*)+):([0-9]*)")
     val result = ptn.find(conf)
     val groups = result!!.destructured.toList()
     if (!groups[0].isEmpty())
