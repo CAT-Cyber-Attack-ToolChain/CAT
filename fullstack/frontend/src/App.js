@@ -72,10 +72,7 @@ function App() {
         
         <button onClick={() => handleSubmission()}>Generate Graph</button>
 
-        <div>
-          {console.log(`Host: ${host}`)}
-          {console.log(`Port: ${port}`)}
-          {console.log(`ENV: ${process.env.NODE_ENV}`)}
+        <div>          
           {items == null
             ? <p>No items</p>
             : 
