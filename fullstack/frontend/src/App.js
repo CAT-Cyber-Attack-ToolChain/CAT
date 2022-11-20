@@ -6,6 +6,10 @@ import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import { useEffect } from 'react';
 import Topology from './components/Topology';
+
+import 'react-reflex/styles.css'
+import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
+
 function App() {
 
   const [atkGraph, setGraph] = useState()
@@ -86,32 +90,30 @@ const sample = `[
   //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
 
   return (
-    <div className="App">
-      <h1>Cyber Attack Tool Chain</h1>
+    <>
+    <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
+    <input className="input-button" type="file" name="file" onChange={changeHandler} />
+    <ReflexContainer orientation="vertical" className='App'>
 
-      <div>
-        <div className="inner-button">
-          <input className="input-button" type="file" name="file" onChange={changeHandler} />
-        </div>
-        <div id="toolchain-container">
-          <div id="attack-graph">
-            {atkGraph == null ?
-              <div className="no-item"> No graph displayed</div> :
-              <Cytoscape graph={atkGraph} key={atkGraph} />
-            }
-            <Metrics mets={mets} />
-          </div>
-          <div id="topology">
-            {topology == null ?
-              <div className="no-item"> No graph displayed </div> :
-              <Topology graph={topology} key={topology} />
-            }
-          </div>
-        </div>
-        
-      </div>
+      <ReflexElement className='attack-graph' minSize='250'>
+        {atkGraph == null ?
+          <div className="no-item"> No graph displayed</div> :
+          <Cytoscape graph={atkGraph} key={atkGraph} />
+        }
+        <Metrics mets={mets} />
+      </ReflexElement>
+
+      <ReflexSplitter style={{width: '10px', backgroundColor: 'Snow'}} className='gutter-vertical' />
+
+      <ReflexElement className='topology' minSize='250'>
+        {topology == null ?
+          <div className="no-item"> No graph displayed </div> :
+          <Topology graph={topology} key={topology} />
+        }
+      </ReflexElement>
       {/* <button onClick={() => test()}>Test</button> */}
-    </div>
+    </ReflexContainer>
+    </>
   );
 }
 

@@ -13,6 +13,8 @@ body {
 
 .App {
   padding : 20px;
+  display: flex;
+  height : 800px;
 }
 
 .no-item {
@@ -24,12 +26,14 @@ body {
   align-items: center;
 }
 
-.inner-button {
+/* .inner-button {
   position : absolute; 
   z-index : 1;
-}
+} */
 
 .input-button {
+  position : absolute; 
+  z-index : 1;
   margin-top: 20px;
   margin-left: 20px 
 }
@@ -38,17 +42,24 @@ body {
   margin-top: 20px;
 }
 
-#toolchain-container {
+/* #toolchain-container {
   display: flex;
   height : 800px
-}
+} */
 
-#attack-graph {
+.attack-graph {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-#topology {
+.topology {
   flex: 1
+}
+
+.gutter-vertical {
+  background-image: url('../public/vertical.png');
+  background-repeat: no-repeat;
+  background-position: 50%;
+  cursor: pointer;
 }
