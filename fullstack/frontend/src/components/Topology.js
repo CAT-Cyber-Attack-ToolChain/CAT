@@ -80,7 +80,6 @@ const Topology = ({graph}) => {
                 setCutNodes([])
                 topologyCyRef.nodes().removeClass("toDelete")
                 topologyCyRef.edges().removeClass("toDelete")
-
             }
         }
 
@@ -100,7 +99,11 @@ const Topology = ({graph}) => {
         cy.on('click', 'node', (event) => {
             if (isCutting) {
                 const nodeId = event.target.data("id")
+                const edges = getEdgesFromNode(nodeId)
                 cy.$('#'+nodeId).addClass("toDelete")
+                edges.addClass("toDelete")
+                
+                setCutEdges(prevState => [...prevState, ...edges.map(edge => edge.data("id"))])
                 setCutNodes(prevState => [...prevState, nodeId])
             }
         });
@@ -142,13 +145,16 @@ const Topology = ({graph}) => {
             }
             return "default";
         });
-        
+    }
+
+    function getEdgesFromNode(nodeId) {
+        return topologyCyRef.edges(`[source = "${nodeId}"],[target = "${nodeId}"]`)
     }
 
     async function submitHandler() {
         if (isCutting) {
-            console.log("nodes cutting " + nodeToCut)
-            console.log("edges cutting" + edgeToCut)
+            console.log("nodes cutting " + Array.from(new Set(nodeToCut).values()))
+            console.log("edges cutting" + Array.from(new Set (edgeToCut).values()))
 
             const formData = {
                 nodes : nodeToCut,
