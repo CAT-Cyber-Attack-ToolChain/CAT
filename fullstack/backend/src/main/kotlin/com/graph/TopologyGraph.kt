@@ -168,6 +168,7 @@ class TopologyGraph(
         val users: MutableMap<String, User>
 ) : Graph<Machine>(nodes, arcs) {
   companion object {
+    var topologyGraph: TopologyGraph? = null
     fun build(input: MulvalInput): TopologyGraph {
       val filepath = input.getPath()
       val machines = mutableMapOf<String, Machine>()

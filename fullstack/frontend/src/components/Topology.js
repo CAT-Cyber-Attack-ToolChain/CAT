@@ -1,3 +1,4 @@
+import axios from "axios"
 import { useEffect, useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
 
@@ -62,9 +63,10 @@ var stylesheet = [
 ]
 
 
-const Topology = ({graph}) => {
+const Topology = ({graph, setAtkGraph, setMetrics}) => {
 
     const [cursor, setCursor] = useState("default")
+    const [topology, setTopology] = useState(graph)
 
     const [isCutting, setCutting] = useState(false)
     const [edgeToCut, setCutEdges] = useState([])
@@ -102,8 +104,11 @@ const Topology = ({graph}) => {
                 const edges = getEdgesFromNode(nodeId)
                 cy.$('#'+nodeId).addClass("toDelete")
                 edges.addClass("toDelete")
+
+                var addedEdges = edges.map(edge => ({"first": edge.data("source"), "second": edge.data("target")}))
+                console.log(addedEdges)
                 
-                setCutEdges(prevState => [...prevState, ...edges.map(edge => edge.data("id"))])
+                setCutEdges(prevState => [...prevState, ...addedEdges])
                 setCutNodes(prevState => [...prevState, nodeId])
             }
         });
@@ -153,21 +158,27 @@ const Topology = ({graph}) => {
 
     async function submitHandler() {
         if (isCutting) {
-            console.log("nodes cutting " + Array.from(new Set(nodeToCut).values()))
-            console.log("edges cutting" + Array.from(new Set (edgeToCut).values()))
+            var nodes = new Set(nodeToCut)
+            console.log("Edges strings (contain duplicates): " + edgeToCut)
+            var edges = [...new Set(edgeToCut.map(JSON.stringify))].map(JSON.parse)
+            console.log("nodes cutting " + Array.from(nodes.values()))
+            console.log(Array.from(edges))
+            console.log(JSON.stringify(Array.from(edges)))
 
-            const formData = {
-                nodes : nodeToCut,
-                edges : edgeToCut
+            try {
+              const response = await axios.post('http://localhost:8080/graph/separate', {
+                nodes: JSON.stringify(Array.from(nodes)),
+                edges: JSON.stringify(Array.from(edges))
+              })
+
+              let data = response.data
+              // setAtkGraph(JSON.stringify(data['attackGraph']))
+              // setTopology(JSON.stringify(data['topologyGraph']))
+              // setMetrics()
+              console.log(data)
+            } catch (error) {
+              console.error('Error:', error);
             }
-
-            await fetch(
-                'http://localhost:8080/graph/seperate',
-                {
-                  method: 'POST',
-                  body: formData,
-                }
-            )
         }
     }
 
@@ -176,7 +187,7 @@ const Topology = ({graph}) => {
         <div style={{width: "100%",position: "relative", cursor : cursor}}>
             <button id="cut-button" style={{position: "absolute", zIndex: 1, left: 0, bottom: 0,  margin : "0 0 20px 20px"}} onClick={() => cutModeHandler()}> Cut mode </button>
             <button id="push-button" style={{position: "absolute", zIndex: 1, right: 0, bottom: 0,  margin : "0 20px 20px 0"}} onClick={() => submitHandler()}> Cut </button>
-            <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+            <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(topology)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
 }

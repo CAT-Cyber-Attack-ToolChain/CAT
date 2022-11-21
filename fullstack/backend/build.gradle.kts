@@ -35,6 +35,7 @@ dependencies {
     implementation("org.neo4j.driver:neo4j-java-driver:4.4.0")
     implementation("com.beust:klaxon:5.5")
     implementation("org.apache.commons:commons-csv:1.9.0")
+    implementation("com.google.code.gson:gson:2.10")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

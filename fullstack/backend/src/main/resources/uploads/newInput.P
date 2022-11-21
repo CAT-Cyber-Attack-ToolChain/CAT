@@ -1,0 +1,31 @@
+hacl(fileServer, fileServer, _h590, _h592).
+hacl(fileServer, webServer, _h590, _h592).
+hacl(fileServer, internet, _h590, _h592).
+hacl(fileServer, workStation, _h590, _h592).
+hacl(fileServer, fileServer, _h610, _h612).
+networkServiceInfo(fileServer, mountd, rpc, 100005, root).
+
+hacl(webServer, fileServer, _h580, _h582).
+hacl(webServer, webServer, _h580, _h582).
+hacl(webServer, internet, _h580, _h582).
+hacl(webServer, workStation, _h580, _h582).
+hacl(webServer, webServer, _h610, _h612).
+networkServiceInfo(webServer, httpd, tcp, 80, apache).
+
+hacl(internet, webServer, tcp, 80).
+hacl(internet, internet, _h610, _h612).
+
+hacl(workStation, fileServer, _h600, _h602).
+hacl(workStation, webServer, _h600, _h602).
+hacl(workStation, internet, _h600, _h602).
+hacl(workStation, workStation, _h600, _h602).
+hacl(workStation, workStation, _h610, _h612).
+
+vulProperty(vulID, remoteExploit, privEscalation).
+cvss(vulID, UNDEFINED).
+vulExists(fileServer, vulID, mountd).
+
+vulProperty('CAN-2002-0392', remoteExploit, privEscalation).
+cvss('CAN-2002-0392', UNDEFINED).
+vulExists(webServer, 'CAN-2002-0392', httpd).
+
