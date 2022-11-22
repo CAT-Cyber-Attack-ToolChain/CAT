@@ -19,18 +19,19 @@ import io.ktor.server.routing.*
 import io.ktor.http.content.*
 import com.example.model.PathCache
 import com.graph.AttackGraph
+
 import com.neo4j.Neo4JAdapter
 import com.neo4j.Node
 import com.neo4j.Rule
 import com.graph.TopologyGraph
+
+import com.graph.AttackNode
+import com.model.NetworkConfiguration
+
 import java.io.File
 import java.util.LinkedList
 
 fun Route.GraphGenRouting() {
-    val example = """[{ "data": { "id": "one", "label": "Node 1" }}, 
-        { "data": { "id": "two", "label": "Node 2" }},
-        { "data": { "source": "one", "target": "two", "label": "Edge from Node1 to Node2" } }]"""
-
     val cur = System.getProperty("user.dir") // cur = backend directory
     var filePath: String = "";
 

@@ -3,6 +3,12 @@ package com.controller
 import com.model.AttackGraphOutput
 import com.opencsv.CSVReader
 import com.example.model.PathCache
+
+import com.model.Configuration
+import com.model.NetworkConfiguration
+
+
+
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
@@ -19,9 +25,12 @@ class Neo4JController(private val dir: AttackGraphOutput, private val cache: Pat
     private var hasData = false
 
     companion object {
+        private val networkConfig: Configuration = NetworkConfiguration.neo4j
+        
+        // TODO: Add configurability for user/password
         val driver: Driver = GraphDatabase.driver(
-                "neo4j+s://c7776984.databases.neo4j.io",
-                AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU")
+            networkConfig.toString(),
+            AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
         )
 
         fun close() {

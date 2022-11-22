@@ -10,12 +10,15 @@ import Topology from './components/Topology';
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 
+//TODO: Add configurability for host and port for all requests being sent.
+
 function App() {
 
   const [atkGraph, setGraph] = useState()
   const [topology, setTopology] = useState()
   const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
+
 
   const wrapperSetAtkGraph = useCallback(newAtkGraph => {
     setGraph(newAtkGraph);
@@ -25,6 +28,18 @@ function App() {
     setMets(getMetrics());
   }, [setMets])
 
+  const host = process.env.REACT_APP_HOST
+  const port = process.env.REACT_APP_PORT
+
+  const changeHandler = (event) => {
+    if (event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+		  setIsFilePicked(true);
+    } else {
+      setIsFilePicked(false);
+    }
+	};
+
   useEffect(() => {
 
     const handleSubmission = async () => {
@@ -33,7 +48,7 @@ function App() {
       formData.append('File', selectedFile);
 
       await fetch(
-        'http://localhost:8080/submitInput',
+        `http://${host}:${port}/submitInput`,
         {
           method: 'POST',
           body: formData,
@@ -113,6 +128,7 @@ const sample = `[
 
       <ReflexSplitter style={{width: '10px', backgroundColor: 'Snow'}} className='gutter-vertical' />
 
+
       <ReflexElement className='topology' minSize='250'>
         {topology == null ?
           <div className="no-item"> No graph displayed </div> :
@@ -122,6 +138,7 @@ const sample = `[
       {/* <button onClick={() => test()}>Test</button> */}
     </ReflexContainer>
     </>
+
   );
 }
 

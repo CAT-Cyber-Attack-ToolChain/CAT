@@ -14,7 +14,10 @@ function doStuffOnCy(cy) {
     return cy
 }
 
-function mouseAction(cy) {
+const host = process.env.REACT_APP_HOST
+const port = process.env.REACT_APP_PORT
+
+function onMouseover(cy) {
     function makePopper(ele) {
         ele.popperDiv = ele.popper({
             content: () => {
@@ -115,7 +118,7 @@ var stylesheet = [
 ]
 
 async function simulateRandomAttack() {
-    const response = await axios.get("http://localhost:8080/simulation/random")
+    const response = await axios.get(`http://${host}:${port}/simulation/random`)
     return response.data
 }
 
