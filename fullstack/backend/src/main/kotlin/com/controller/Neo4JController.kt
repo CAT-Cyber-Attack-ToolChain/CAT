@@ -30,7 +30,7 @@ class Neo4JController(private val dir: AttackGraphOutput, private val cache: Pat
         // TODO: Add configurability for user/password
         val driver: Driver = GraphDatabase.driver(
             networkConfig.toString(),
-            AuthTokens.basic("neo4j", "qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38")
+            AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU")
         )
 
         fun close() {

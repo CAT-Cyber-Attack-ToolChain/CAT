@@ -18,7 +18,7 @@ services:
       - 7474:7474
       - 7473:7473
     environment:
-      NEO4J_AUTH: neo4j/qufvn4LK6AiPaRBIWDLPRzFh4wqzgI5x_n2bXHc1d38
+      NEO4J_AUTH: neo4j/cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU
       NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"      
     volumes:
       - ./neo4j-plugins:/var/lib/neo4j/plugins
