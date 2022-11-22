@@ -31,15 +31,6 @@ function App() {
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
 
-  const changeHandler = (event) => {
-    if (event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-		  setIsFilePicked(true);
-    } else {
-      setIsFilePicked(false);
-    }
-	};
-
   useEffect(() => {
 
     const handleSubmission = async () => {

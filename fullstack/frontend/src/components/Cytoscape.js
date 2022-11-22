@@ -17,7 +17,7 @@ function doStuffOnCy(cy) {
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
 
-function onMouseover(cy) {
+function mouseAction(cy) {
     function makePopper(ele) {
         ele.popperDiv = ele.popper({
             content: () => {
