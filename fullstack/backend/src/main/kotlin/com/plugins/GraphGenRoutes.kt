@@ -1,9 +1,14 @@
 package com.plugins
 
 import com.Export
+import com.attackAgent.RandomAttackAgent
+import com.attackAgent.RealAttackAgent
+import com.beust.klaxon.Klaxon
 import com.controller.MulvalController
 import com.controller.Neo4JController
-import com.graph.Graph
+import com.cytoscape.CytoDataWrapper
+import com.cytoscape.CytoEdge
+import com.cytoscape.CytoNode
 import com.model.AttackGraphOutput
 import com.model.MulvalInput
 import com.model.Neo4JMapping
@@ -14,13 +19,21 @@ import io.ktor.server.routing.*
 import io.ktor.http.content.*
 import com.example.model.PathCache
 import com.graph.AttackGraph
+
+import com.neo4j.Neo4JAdapter
+import com.neo4j.Node
+import com.neo4j.Rule
+import com.graph.TopologyGraph
+
 import com.graph.AttackNode
 import com.model.NetworkConfiguration
-import java.io.File
 
+import java.io.File
+import java.util.LinkedList
 
 fun Route.GraphGenRouting() {
     val cur = System.getProperty("user.dir") // cur = backend directory
+    var filePath: String = "";
 
     fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
         // upload the graph to Neo4j
@@ -28,8 +41,17 @@ fun Route.GraphGenRouting() {
             neo4JController.update()
         }
         // get the graph data from Neo4j
-        val graph: AttackGraph = Export.translateToGraph(Export.exportToJSON())
-        return graph.exportToCytoscapeJSON()
+
+        return exportToCytoscapeJSON()
+    }
+
+    route("/test") {
+        get {
+            val attack = RealAttackAgent()
+//            val attack = RandomAttackAgent()
+            attack.attack()
+            attack.printPath()
+        }
     }
 
     route("/submitInput") {
@@ -41,7 +63,7 @@ fun Route.GraphGenRouting() {
                 if (part is PartData.FileItem) {
                     // retrieve file name of upload
                     val name = part.originalFileName!!
-                    val filePath = "$cur/src/main/resources/uploads/$name"
+                    filePath = "$cur/src/main/resources/uploads/$name"
                     val file = File(filePath)
 
                     // use InputStream from part to save file
@@ -61,10 +83,34 @@ fun Route.GraphGenRouting() {
                 }
             }
             // generate the graph, move to Neo4j, and display it on frontend
-            val neo4JController = Neo4JController(mulvalOutput, PathCache(), "default")
+            val neo4JController = Neo4JController(mulvalOutput, PathCache(filePath), "default")
             Neo4JMapping.add(neo4JController)
-            val cytoscapeJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
-            call.respond(cytoscapeJson)
+            val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
+            TopologyGraph.topologyGraph = TopologyGraph.build(mulvalInput)
+            val topologyGraphJson = TopologyGraph.topologyGraph!!.exportToCytoscapeJSON()
+            println(attackGraphJson)
+            call.respond("{\"attackGraph\": $attackGraphJson, \"topologyGraph\": $topologyGraphJson}")
         }
     }
+}
+
+
+fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
+    val result : LinkedList<CytoDataWrapper> = LinkedList()
+    result.add(CytoDataWrapper(CytoNode("n${n.id}", n.permission)))
+    n.connections.forEach { rule -> result.add(CytoDataWrapper(CytoEdge("e${rule.id}", "n${n.id}", "n${rule.dest.id}", rule.rule))) }
+    return result
+}
+
+fun exportToCytoscapeJSON(): String {
+    val klaxon = Klaxon()
+    val adapter : Neo4JAdapter = Neo4JAdapter()
+    val nodestrlist: List<String> = adapter.nodes.values.map { n ->
+
+            val dataWrappers = nodeToCytoJSON(n)
+            val nodeStrs = dataWrappers.map { dw -> klaxon.toJsonString(dw) }
+            nodeStrs.joinToString()
+        }
+
+        return "[" + nodestrlist.joinToString() + "]"
 }

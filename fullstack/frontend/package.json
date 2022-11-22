@@ -9,11 +9,13 @@
     "axios": "^1.1.3",
     "bootstrap": "^5.2.2",
     "cytoscape": "^3.23.0",
+    "cytoscape-dagre": "^2.5.0",
     "cytoscape-popper": "^2.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
+    "react-reflex": "^4.0.9",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },

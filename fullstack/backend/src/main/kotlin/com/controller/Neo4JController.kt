@@ -113,12 +113,10 @@ class Neo4JController(private val dir: AttackGraphOutput, private val cache: Pat
 
     private fun generateRelations() {
         val session: Session = driver.session()
-        for (arc: List<String> in arcs) {
-            val query = """MATCH (dst {node_id: toInteger(${arc[0]})}) 
-                           MATCH (src {node_id: toInteger(${arc[1]})}) 
-                           CREATE (src) -[r:To {step: toInteger(${arc[2]})}]-> (dst)"""
-            session.writeTransaction { tx ->
-                tx.run(query, parameters())
+
+        session.writeTransaction { tx ->
+            for (arc: List<String> in arcs) {
+                tx.run("""MATCH (dst {node_id: toInteger(${arc[0]})}) MATCH (src {node_id: toInteger(${arc[1]})}) CREATE (src) -[r:To {step: toInteger(${arc[2]})}]-> (dst); """, parameters())
             }
         }
     }
