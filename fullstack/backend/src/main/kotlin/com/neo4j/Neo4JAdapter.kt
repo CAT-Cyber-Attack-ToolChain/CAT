@@ -146,8 +146,12 @@ class Rule(
     var easiness: Int = DEFAULT_EASINESS
 
     fun calculateEasinessScore() {
+        easiness = calculateScore(TECHNIQUE_EASYNESS_MAP)
+    }
+
+    fun calculateScore(scoreMap: Map<String, Int>): Int {
         val technique = getMitreTechnique(this)
-        easiness = TECHNIQUE_EASYNESS_MAP.getOrDefault(technique.technique, 0)
+        return scoreMap.getOrDefault(technique.technique, 0)
     }
 
     override fun equals(other: Any?): Boolean {
