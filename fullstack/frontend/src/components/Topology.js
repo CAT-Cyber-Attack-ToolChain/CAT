@@ -2,6 +2,8 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import CytoscapeComponent from "react-cytoscapejs"
 
+import { useLoading, Audio, ThreeDots, BallTriangle, Grid } from '@agney/react-loading';
+
 var styles = {
     height : "800px",
     backgroundColor: 'grey',
@@ -70,6 +72,12 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
     const [isCutting, setCutting] = useState(false)
     const [edgeToCut, setCutEdges] = useState([])
     const [nodeToCut, setCutNodes] = useState([])
+    const [loading, setLoading] = useState(false)
+
+    const { containerProps, indicatorEl } = useLoading({
+        loading: true,
+        indicator: <Grid width="50" class="center" />
+    })
 
     var topologyCyRef = undefined
 
@@ -157,6 +165,7 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
 
     async function submitHandler() {
         if (isCutting) {
+            setLoading(true)
             var nodes = new Set(nodeToCut)
             console.log("Edges strings (contain duplicates): " + edgeToCut)
             var edges = [...new Set(edgeToCut.map(JSON.stringify))].map(JSON.parse)
@@ -179,16 +188,22 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
             } catch (error) {
               console.error('Error:', error);
             }
+            setLoading(false)
         }
     }
 
 
     return (
+        
         <div style={{width: "100%",position: "relative", cursor : cursor}}>
+                {!loading ?
+                <>
             <button id="cut-button" style={{position: "absolute", zIndex: 1, left: 0, bottom: 0,  margin : "0 0 20px 20px"}} onClick={() => cutModeHandler()}> Cut mode </button>
             <button id="push-button" style={{position: "absolute", zIndex: 1, right: 0, bottom: 0,  margin : "0 20px 20px 0"}} onClick={() => submitHandler()}> Cut </button>
-            <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+                    <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} /> </> :
+            indicatorEl}
         </div>
+        
     )
 }
 
