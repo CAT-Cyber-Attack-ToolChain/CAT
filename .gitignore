@@ -11,3 +11,4 @@ KotlinClient/client.iml
 /fullstack/backend/.idea
 /fullstack/backend/build
 /fullstack/target/
+*.wxam
