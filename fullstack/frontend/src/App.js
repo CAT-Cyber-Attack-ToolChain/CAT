@@ -11,6 +11,8 @@ import NetworkGraph from './components/NetworkGraph';
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 
+import { useLoading, Audio, ThreeDots, BallTriangle } from '@agney/react-loading';
+
 //TODO: Add configurability for host and port for all requests being sent.
 
 function App() {
@@ -20,11 +22,20 @@ function App() {
   const [netGraph, setNetGraph] = useState(NetworkGraph(""))
   const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
+  const [loading, setLoading] = useState()
+  const { containerProps, indicatorEl } = useLoading({
+    loading: true,
+    indicator: <BallTriangle width="50" class="loader"/>
+  })
 
 
   const wrapperSetAtkGraph = useCallback(newAtkGraph => {
     setGraph(newAtkGraph);
   }, [setGraph])
+
+  const wrapperSetTopology = useCallback(newTopologyGraph => {
+    setTopology(newTopologyGraph);
+  }, [setTopology])
 
   const wrapperSetMetrics = useCallback(() => {
     setMets(getMetrics());
@@ -36,8 +47,10 @@ function App() {
 
     const handleSubmission = async () => {
       const formData = new FormData();
-
+      
       formData.append('File', selectedFile);
+      
+      setLoading(true)
 
       await fetch(
         `http://${host}:${port}/submitInput`,
@@ -51,6 +64,7 @@ function App() {
           setGraph(JSON.stringify(parsed['attackGraph']))
           setTopology(JSON.stringify(parsed['topologyGraph']))
           setMets(getMetrics())
+          setLoading(false)
         }).catch((error) => {
           console.error('Error:', error);
         });
@@ -118,6 +132,9 @@ const sample = `[
         </ReflexElement>
         {/* <button onClick={() => test()}>Test</button> */}
 
+        <ReflexSplitter style={{ width: '10px', backgroundColor: 'Snow' }} className='gutter-vertical' />
+
+
         <ReflexElement className='topology' minSize='250'>
           <NetworkGraph />
         </ReflexElement>
@@ -126,7 +143,7 @@ const sample = `[
 
       <ReflexElement className='attack-graph' minSize='250'>
         {atkGraph == null ?
-          <div className="no-item"> No graph displayed</div> :
+          <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
           <Cytoscape graph={atkGraph} key={atkGraph} />
         }
         <Metrics mets={mets} />
@@ -137,7 +154,6 @@ const sample = `[
     </ReflexContainer>
     
 
-      
     </>
 
   );
