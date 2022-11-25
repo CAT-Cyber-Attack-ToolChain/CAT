@@ -6,6 +6,7 @@ import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import { useEffect } from 'react';
 import Topology from './components/Topology';
+import NetworkGraph from './components/NetworkGraph';
 
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
@@ -16,6 +17,7 @@ function App() {
 
   const [atkGraph, setGraph] = useState()
   const [topology, setTopology] = useState()
+  const [netGraph, setNetGraph] = useState(NetworkGraph(""))
   const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
 
@@ -30,7 +32,6 @@ function App() {
 
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
-
   useEffect(() => {
 
     const handleSubmission = async () => {
@@ -125,6 +126,10 @@ const sample = `[
           <div className="no-item"> No graph displayed </div> :
           <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setMetrics = {wrapperSetMetrics} key={topology} />
         }
+      </ReflexElement>
+
+      <ReflexElement className='topology' minSize='250'>
+        <NetworkGraph />
       </ReflexElement>
       {/* <button onClick={() => test()}>Test</button> */}
     </ReflexContainer>
