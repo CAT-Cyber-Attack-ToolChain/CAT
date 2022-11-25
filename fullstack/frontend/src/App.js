@@ -110,6 +110,20 @@ const sample = `[
     <input className="input-button" type="file" name="file" onChange={changeHandler} />
     <ReflexContainer orientation="vertical" className='App'>
 
+        <ReflexElement className='topology' minSize='250'>
+          {topology == null ?
+            <div className="no-item"> No graph displayed </div> :
+            <Topology graph={topology} setAtkGraph={wrapperSetAtkGraph} setTopology={wrapperSetTopology} setMetrics={wrapperSetMetrics} key={topology} />
+          }
+        </ReflexElement>
+        {/* <button onClick={() => test()}>Test</button> */}
+
+        <ReflexElement className='topology' minSize='250'>
+          <NetworkGraph />
+        </ReflexElement>
+
+      <ReflexSplitter style={{ width: '10px', backgroundColor: 'Snow' }} className='gutter-vertical' />
+
       <ReflexElement className='attack-graph' minSize='250'>
         {atkGraph == null ?
           <div className="no-item"> No graph displayed</div> :
@@ -120,19 +134,10 @@ const sample = `[
 
       <ReflexSplitter style={{width: '10px', backgroundColor: 'Snow'}} className='gutter-vertical' />
 
-
-      <ReflexElement className='topology' minSize='250'>
-        {topology == null ?
-          <div className="no-item"> No graph displayed </div> :
-          <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setMetrics = {wrapperSetMetrics} key={topology} />
-        }
-      </ReflexElement>
-
-      <ReflexElement className='topology' minSize='250'>
-        <NetworkGraph />
-      </ReflexElement>
-      {/* <button onClick={() => test()}>Test</button> */}
     </ReflexContainer>
+    
+
+      
     </>
 
   );
