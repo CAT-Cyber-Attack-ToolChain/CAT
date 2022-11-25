@@ -63,10 +63,9 @@ var stylesheet = [
 ]
 
 
-const Topology = ({graph, setAtkGraph, setMetrics}) => {
+const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
 
     const [cursor, setCursor] = useState("default")
-    const [topology, setTopology] = useState(graph)
 
     const [isCutting, setCutting] = useState(false)
     const [edgeToCut, setCutEdges] = useState([])
@@ -171,11 +170,12 @@ const Topology = ({graph, setAtkGraph, setMetrics}) => {
                 edges: JSON.stringify(Array.from(edges))
               })
 
-              let data = response.data
-              // setAtkGraph(JSON.stringify(data['attackGraph']))
-              // setTopology(JSON.stringify(data['topologyGraph']))
-              // setMetrics()
-              console.log(data)
+              let data = JSON.parse(response.data)
+              console.log("Attack graph: ", data["attackGraph"])
+              setAtkGraph(JSON.stringify(data['attackGraph']))
+              setTopology(JSON.stringify(data['topologyGraph']))
+              setMetrics()
+              // console.log(data)
             } catch (error) {
               console.error('Error:', error);
             }
@@ -187,7 +187,7 @@ const Topology = ({graph, setAtkGraph, setMetrics}) => {
         <div style={{width: "100%",position: "relative", cursor : cursor}}>
             <button id="cut-button" style={{position: "absolute", zIndex: 1, left: 0, bottom: 0,  margin : "0 0 20px 20px"}} onClick={() => cutModeHandler()}> Cut mode </button>
             <button id="push-button" style={{position: "absolute", zIndex: 1, right: 0, bottom: 0,  margin : "0 20px 20px 0"}} onClick={() => submitHandler()}> Cut </button>
-            <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(topology)} style={styles} stylesheet={stylesheet} layout={layout} />
+            <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
 }

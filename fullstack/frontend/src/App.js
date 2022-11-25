@@ -24,6 +24,10 @@ function App() {
     setGraph(newAtkGraph);
   }, [setGraph])
 
+  const wrapperSetTopology = useCallback(newTopologyGraph => {
+    setTopology(newTopologyGraph);
+  }, [setTopology])
+
   const wrapperSetMetrics = useCallback(() => {
     setMets(getMetrics());
   }, [setMets])
@@ -123,7 +127,7 @@ const sample = `[
       <ReflexElement className='topology' minSize='250'>
         {topology == null ?
           <div className="no-item"> No graph displayed </div> :
-          <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setMetrics = {wrapperSetMetrics} key={topology} />
+          <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setTopology = {wrapperSetTopology} setMetrics = {wrapperSetMetrics} key={topology} />
         }
       </ReflexElement>
       {/* <button onClick={() => test()}>Test</button> */}
