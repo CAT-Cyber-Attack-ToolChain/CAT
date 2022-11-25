@@ -5,6 +5,7 @@ import axios from 'axios';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import { useEffect } from 'react';
+import Dropdown from "react-dropdown";
 import Topology from './components/Topology';
 import NetworkGraph from './components/NetworkGraph';
 
@@ -121,10 +122,30 @@ const sample = `[
   return (
     <>
     <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
-    <input className="input-button" type="file" name="file" onChange={changeHandler} />
+    {/* <input className="input-button" type="file" name="file" onChange={changeHandler} /> */}
     <ReflexContainer orientation="vertical" className='App'>
 
         <ReflexElement className='topology' minSize='250'>
+          <p className='no-margin-p'>Upload a new machine/router/firewall configuration:</p>
+          <input type="file" name="configuration" />
+
+          <div className='dropdown'>
+            <p className='no-margin-p'>Add a new device: </p>
+            <Dropdown
+              options={[
+                { label: "a", value: "a" },
+                { label: "b", value: "b" },
+                { label: "c", value: "c" },
+              ]}
+            />
+          </div>
+
+          <p className='no-margin-p'>Upload a topology file (for initialisation/network merging):</p>
+          <input type="file" name="merge-toppology" />
+          <br/><br/>
+          <button>Generate Attack Graph</button>
+
+          
           {topology == null ?
             <div className="no-item"> No graph displayed </div> :
             <Topology graph={topology} setAtkGraph={wrapperSetAtkGraph} setTopology={wrapperSetTopology} setMetrics={wrapperSetMetrics} key={topology} />

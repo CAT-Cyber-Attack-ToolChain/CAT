@@ -33,6 +33,7 @@ body {
 
 .input-button {
   position : absolute; 
+  display: inline-block;
   z-index : 1;
   margin-top: 20px;
   margin-left: 20px 
@@ -76,4 +77,12 @@ body {
 
 .center {
   margin: 40%;
+}
+
+.no-margin-p {
+  margin: 0;
+}
+
+.dropdown {
+  width: 80%;
 }
