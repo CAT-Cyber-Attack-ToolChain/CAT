@@ -7,15 +7,19 @@ abstract class PredefinedAttackAgent : AttackAgent() {
     // cloning the original map
     private val TECHNIQUE_LIKELIHOOD_MAP = TECHNIQUE_EASYNESS_MAP.toMutableMap()
 
-    protected lateinit var priorityTechniques: List<String>
-
     private fun changeOrAddScore(technique: String, score: Int) {
         TECHNIQUE_LIKELIHOOD_MAP.put(technique, score)
     }
 
-    fun updateScores() {
+    fun updateScores(priorityTechniques: List<String>) {
         for (technique in priorityTechniques) {
             changeOrAddScore(technique, HIGH_SCORE)
+        }
+    }
+
+    fun updateScoresWith(techniqueMap: Map<String, Int>) {
+        for (entry in techniqueMap.entries) {
+            changeOrAddScore(entry.key, entry.value)
         }
     }
 
@@ -43,11 +47,17 @@ abstract class PredefinedAttackAgent : AttackAgent() {
 class WannacryAttackAgent : PredefinedAttackAgent() {
 
     init {
-        priorityTechniques = listOf<String>("Exploit Public-Facing Application",
+        val priorityTechniques = listOf<String>("Exploit Public-Facing Application",
                                             "Active Scanning",
                                             "Encrypted Channel",
                                             "Data Encrypted for Impact")
 
-        updateScores()
+        updateScores(priorityTechniques)
+    }
+}
+
+class CustomAttackAgent(val techniqueMap: Map<String, Int>) : PredefinedAttackAgent() {
+    init {
+        updateScoresWith(techniqueMap)
     }
 }
