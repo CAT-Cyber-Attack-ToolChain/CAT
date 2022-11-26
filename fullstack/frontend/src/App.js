@@ -44,7 +44,7 @@ function App() {
 
     const handleSubmission = async () => {
       const formData = new FormData();
-      
+      console.log(selectedFile)
       formData.append('File', selectedFile);
       
       setLoading(true)
@@ -110,8 +110,19 @@ const sample = `[
 
   return (
     <>
-    <input className="input-button" type="file" name="file" onChange={changeHandler} />
+    <label for="input-p" className="input-p-custom">{selectedFile ? selectedFile.name : "Upload .P File"}</label>
+    <input id="input-p" type="file" name="file" onChange={changeHandler} />
     <ReflexContainer orientation="vertical" className='App'>
+
+      <ReflexElement className='topology' minSize='500'>
+          {topology == null ?
+            <div className="no-item"> No graph displayed </div> :
+            <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setTopology = {wrapperSetTopology} setMetrics = {wrapperSetMetrics} key={topology} />
+          }
+      </ReflexElement>
+
+      <ReflexSplitter style={{width: '10px', backgroundColor: '#696969'}} className='gutter-vertical' />
+
       <ReflexElement className='attack-graph' minSize='500'>
         {atkGraph == null ?
           <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
@@ -120,15 +131,6 @@ const sample = `[
         <Metrics mets={mets} />
       </ReflexElement>
 
-      <ReflexSplitter style={{width: '10px', backgroundColor: '#696969'}} className='gutter-vertical' />
-
-
-      <ReflexElement className='topology' minSize='500'>
-        {topology == null ?
-          <div className="no-item"> No graph displayed </div> :
-          <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setTopology = {wrapperSetTopology} setMetrics = {wrapperSetMetrics} key={topology} />
-        }
-      </ReflexElement>
       {/* <button onClick={() => test()}>Test</button> */}
     </ReflexContainer>
     </>

@@ -26,26 +26,25 @@ body {
   align-items: center;
 }
 
-/* .inner-button {
-  position : absolute; 
-  z-index : 1;
-} */
+input[type="file"] {
+  display: none;
+}
 
-.input-button {
+.input-p-custom {
   position : absolute; 
   z-index : 1;
-  margin-top: 20px;
-  margin-left: 20px 
+  margin-top: 40px;
+  margin-left: 40px;
+  border: 1px solid #ccc;
+  background-color: #C0C0C0;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
 }
 
 .generate-button {
   margin-top: 20px;
 }
-
-/* #toolchain-container {
-  display: flex;
-  height : 800px
-} */
 
 .attack-graph {
   flex: 1;
