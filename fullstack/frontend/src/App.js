@@ -6,11 +6,9 @@ import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import { useEffect } from 'react';
 import Topology from './components/Topology';
-
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
-
-import { useLoading, Audio, ThreeDots, BallTriangle } from '@agney/react-loading';
+import { useLoading, BallTriangle } from '@agney/react-loading';
 
 //TODO: Add configurability for host and port for all requests being sent.
 
@@ -110,19 +108,11 @@ const sample = `[
   {"data" : {"id" : "e14", "label" : "edge", "properties" : {}, "source" : "n7", "target" : "n7"}}
 ]`
 
-  // var elements = JSON.stringify(
-  //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
-  //    { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 50 } },
-  //    { data: { id: 'three', label: 'Node 3'}, position: { x: 50, y: 100 }}, 
-  //    { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
-  //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
-
   return (
     <>
-    <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
     <input className="input-button" type="file" name="file" onChange={changeHandler} />
     <ReflexContainer orientation="vertical" className='App'>
-      <ReflexElement className='attack-graph' minSize='250'>
+      <ReflexElement className='attack-graph' minSize='500'>
         {atkGraph == null ?
           <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
           <Cytoscape graph={atkGraph} key={atkGraph} />
@@ -130,10 +120,10 @@ const sample = `[
         <Metrics mets={mets} />
       </ReflexElement>
 
-      <ReflexSplitter style={{width: '10px', backgroundColor: 'Snow'}} className='gutter-vertical' />
+      <ReflexSplitter style={{width: '10px', backgroundColor: '#696969'}} className='gutter-vertical' />
 
 
-      <ReflexElement className='topology' minSize='250'>
+      <ReflexElement className='topology' minSize='500'>
         {topology == null ?
           <div className="no-item"> No graph displayed </div> :
           <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setTopology = {wrapperSetTopology} setMetrics = {wrapperSetMetrics} key={topology} />
