@@ -76,6 +76,7 @@ var stylesheet = [
 ];
 
 const NetworkGraph = () => {
+  // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
   const [selected, setSelected] = useState(undefined);
@@ -84,7 +85,7 @@ const NetworkGraph = () => {
     { label: "b", value: "b" },
     { label: "c", value: "c" },
   ]);
-  const defaultOption = machines[0];
+  const [curDevice, setCurDevice] = useState(undefined);
 
   const [nextId, setNextId] = useState(0);
 
@@ -158,30 +159,7 @@ const NetworkGraph = () => {
     });
   }
 
-  function addHandler(option) {
-    if (option) {
-      console.log(option);
-      console.log(netGraph);
-      setNetGraph([
-        ...netGraph,
-        {
-          data: {
-            id: nextId,
-            label: option.value,
-            properties: {
-              bool: 0,
-              text: option.value,
-              type: "OR",
-              node_id: nextId,
-            },
-          },
-        },
-      ]);
-      setNextId(nextId + 1);
-    }
-  }
-
-  function changeHandler(file) {
+  function addConfigurationHandler(file) {
     const fr = new FileReader();
     fr.addEventListener("load", (event) => {
       console.log(event.target.result);
@@ -193,27 +171,68 @@ const NetworkGraph = () => {
     fr.readAsText(file.target.files[0]);
   }
 
+  function setDeviceHandler(option) {
+    if (option) {
+      setCurDevice(option.value);
+    }
+  }
+
+  function addDeviceHandler() {
+    setNetGraph([
+      ...netGraph,
+      {
+        data: {
+          id: nextId,
+          label: curDevice,
+          properties: {
+            bool: 0,
+            text: curDevice,
+            type: "OR",
+            node_id: nextId,
+          },
+        },
+      },
+    ]);
+    setNextId(nextId + 1);
+  }
+
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor }}>
-      <Dropdown
-        options={machines}
-        onChange={addHandler}
-        value={defaultOption}
-        placeholder="Add Machine"
-      />
+      <p className='no-margin-p'>Upload a new machine/router/firewall configuration:</p>
       <input
-        className="input-button"
         type="file"
         name="Add Machine"
-        onChange={changeHandler}
+        onChange={addConfigurationHandler}
       />
-      <CytoscapeComponent
-        cy={(cy) => onMouseover(cy)}
-        elements={netGraph}
-        style={styles}
-        stylesheet={stylesheet}
-        layout={layout}
-      />
+
+      <div className='dropdown'>
+        <p className='no-margin-p'>Add a new device: </p>
+        <Dropdown
+          options={machines}
+          onChange={setDeviceHandler}
+        />
+        <button type="button" onClick={addDeviceHandler}>
+          <ion-icon name="add-outline"></ion-icon>
+        </button>
+      </div>
+
+      <p className='no-margin-p'>Upload a topology file (for initialisation/network merging):</p>
+      <input type="file" name="merge-toppology" />
+      <br/><br/>
+      <button>Generate Attack Graph</button>
+
+          
+      {netGraph.length === 0 ?
+        <div className="no-item" style={{height: "800px"}}> No graph displayed </div> :
+        <CytoscapeComponent
+          cy={(cy) => onMouseover(cy)}
+          elements={netGraph}
+          key={netGraph}
+          style={styles}
+          stylesheet={stylesheet}
+          layout={layout}
+        />
+      }
     </div>
   );
 };
