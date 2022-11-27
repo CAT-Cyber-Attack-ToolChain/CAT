@@ -113,8 +113,7 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
                 edges.addClass("toDelete")
 
                 var addedEdges = edges.map(edge => ({"first": edge.data("source"), "second": edge.data("target")}))
-                console.log(addedEdges)
-                
+
                 setCutEdges(prevState => [...prevState, ...addedEdges])
                 setCutNodes(prevState => [...prevState, nodeId])
             }
@@ -197,12 +196,14 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
         
         <div style={{width: "100%",position: "relative", cursor : cursor}}>
             {!loading ?
-            <>
-            <button id="cut-button" style={{position: "absolute", zIndex: 1, left: 0, bottom: 0,  margin : "0 0 20px 20px"}} onClick={() => cutModeHandler()}> Cut mode </button>
-            <button id="push-button" style={{position: "absolute", zIndex: 1, right: 0, bottom: 0,  margin : "0 20px 20px 0"}} onClick={() => submitHandler()}> Cut </button>
-            <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} /> 
-            </> :
-            indicatorEl}
+                <>
+                    <button id="cut-button" style={{position: "absolute", zIndex: 1, left: 0, bottom: 0,  margin : "0 0 20px 20px"}} onClick={() => cutModeHandler()}> Cut mode </button>
+                    <button id="push-button" style={{position: "absolute", zIndex: 1, right: 0, bottom: 0,  margin : "0 20px 20px 0"}} onClick={() => submitHandler()}> Cut </button>
+                    <CytoscapeComponent cy={(cy) => topologyCyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} /> 
+                </> 
+                :
+                indicatorEl
+            }
         </div>
         
     )
