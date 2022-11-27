@@ -4,12 +4,10 @@ import React from 'react';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import "react-dropdown/style.css";
-import NetworkGraph from './components/NetworkGraph';
-
+import TopologyBuilder from './components/TopologyBuilder';
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
-
-import { useLoading, Audio, ThreeDots, BallTriangle } from '@agney/react-loading';
+import { useLoading, BallTriangle } from '@agney/react-loading';
 
 //TODO: Add configurability for host and port for all requests being sent.
 
@@ -30,8 +28,8 @@ function App() {
     <>
     <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
     <ReflexContainer orientation="vertical" className='App'>
-      <ReflexElement className='topology' minSize='250'>
-        <NetworkGraph />
+      <ReflexElement className='topology-builder' minSize='250'>
+        <TopologyBuilder />
       </ReflexElement>
 
       <ReflexSplitter style={{ width: '10px', backgroundColor: 'Snow' }} className='gutter-vertical' />

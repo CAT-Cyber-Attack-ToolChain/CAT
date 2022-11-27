@@ -75,7 +75,7 @@ var stylesheet = [
   },
 ];
 
-const NetworkGraph = () => {
+const TopologyBuilder = () => {
   // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
@@ -237,4 +237,4 @@ const NetworkGraph = () => {
   );
 };
 
-export default NetworkGraph;
+export default TopologyBuilder;

@@ -6,7 +6,7 @@ import axios from 'axios';
 import {useEffect} from "react"
 
 cytoscape.use(popper);
-cytoscape.use( dagre );
+cytoscape.use(dagre);
 
 function doStuffOnCy(cy) {
     cy.ready(() => mouseAction(cy))
@@ -157,6 +157,7 @@ const Cytoscape = ({graph}) => {
         }
 
         window.addEventListener('resize', fitGraph)
+        return () => window.removeEventListener('resize', fitGraph)
     })
 
 
