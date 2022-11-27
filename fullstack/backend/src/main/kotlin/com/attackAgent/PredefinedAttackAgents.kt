@@ -56,6 +56,100 @@ class WannacryAttackAgent : PredefinedAttackAgent() {
     }
 }
 
+class REvilAttackAgent : PredefinedAttackAgent() {
+    init {
+        val priorityTechniques = listOf<String>("Access Token Manipulation: Token Impersonation/Theft",
+        "Access Token Manipulation: Create Process with Token", "Application Layer Protocol: Web Protocols",
+        "Command and Scripting Interpreter", "Data Destruction", "Data Encrypted for Impact", "Deobfuscate/Decode Files or Information",
+        "Drive-by Compromise", "Encrypted Channel: Asymmetric Cryptography",
+        "Exfiltration Over C2 Channel", "File and Directory Discovery", "Impair Defenses: Disable or Modify Tools",
+        "Impair Defenses: Safe Mode Boot", "Indicator Removal: File Deletion", "Ingress Tool Transfer",
+        "Inhibit System Recovery", "Masquerading: Match Legitimate Name or Location", "Modify Registry",
+        "Native API", "Obfuscated Files or Information", "Permission Groups Discovery: Domain Groups",
+        "Phishing: Spearphishing Attachment", "Process Injection", "Query Registry", "Service Stop", "System Information Discovery",
+        "System Location Discovery: System Language Discovery", "System Service Discovery", "User Execution: Malicious File", "Windows Management Instrumentation",
+        "Loss of Productivity and Revenue", "Masquerading", "Remote Services", "Scripting", "Service Stop",
+        "Standard Application Layer Protocol", "Theft of Operational Information", "User Execution")
+
+        /**
+        T1134
+        T1071
+        T1059
+        T1485
+        T1486
+        T1140
+        T1189
+        T1573
+        T1041
+        T1083
+        T1562
+        T1070
+        T1105
+        T1490
+        T1036
+        T1112
+        T1106
+        T1027
+        T1069
+        T1566
+        T1055
+        T1012
+        T1489
+        T1082
+        T1614
+        T1007
+        T1204
+        T1047
+        T0828
+        T0849
+        T0886
+        T0853
+        T0881
+        T0869
+        T0882
+        T0863
+         */
+
+        updateScores(priorityTechniques)
+    }
+}
+
+class SynAckAttackAgent : PredefinedAttackAgent() {
+    init {
+        val priorityTechniques = listOf("Data Encrypted for Impact", "File and Directory Discovery",
+            "Indicator Removal: Clear Windows Event Logs", "Modify Registry", "Native API", "Obfuscated Files or Information",
+        "Process Discovery", "Process Injection: Process Doppelganging", "Query Registry", "System Information Discovery",
+        "System Location Discovery: System Language Discovery", "System Owner/User Discovery",
+        "System Service Discovery", "Virtualization/Sandbox Evasion: System Checks")
+
+        // T1083, T1070, T1112, T1106, T1027, T1057, T1055, T1012, T1082, T1614, T1033, T1007, T1497
+
+        updateScores(priorityTechniques)
+    }
+}
+
+class T9000AttackAgent : PredefinedAttackAgent() {
+    init {
+        val priorityTechniques = listOf("Archive Collected Data: Archive via Custom Method", "Audio Capture",
+        "Automated Collection", "Event Triggered Execution: AppInit DLLs", "Hijack Execution Flow: DLL Side-Loading",
+        "Peripheral Device Discovery", "Screen Capture", "Software Discovery: Security Software Discovery",
+        "System Information Discovery", "System Network Configuration Discovery", "System Owner/User Discovery",
+        "System Time Discovery", "Video Capture")
+
+        // T1560, T1123, T1119, 12546, T1574, T1120, T1113, T1518, T1082, T1016, T1033, T1124, T1125
+
+        updateScores(priorityTechniques)
+    }
+}
+
+class WiperAttackAgent : PredefinedAttackAgent() {
+    init {
+        val priorityTechniques = listOf("Software Deployment Tools")
+        // T1072
+        updateScores(priorityTechniques)
+    }
+}
+
 class CustomAttackAgent(val techniqueMap: Map<String, Int>) : PredefinedAttackAgent() {
     init {
         updateScoresWith(techniqueMap)
