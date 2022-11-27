@@ -6,6 +6,7 @@ import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import { useEffect } from 'react';
 import Topology from './components/Topology';
+import ConfigurableAttackAgentForm from "./components/ConfigurableAttackAgent"
 
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
@@ -127,6 +128,7 @@ const sample = `[
         }
       </ReflexElement>
       {/* <button onClick={() => test()}>Test</button> */}
+      <ConfigurableAttackAgentForm></ConfigurableAttackAgentForm>
     </ReflexContainer>
     </>
 
