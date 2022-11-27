@@ -4,8 +4,12 @@ import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import { useState } from "react";
 
+const padding = 40
+const panelHeight = 250
+const builderHeight = window.innerHeight - padding - panelHeight
+
 var styles = {
-  height: "800px",
+  height: builderHeight,
   backgroundColor: "grey",
   zIndex: 0,
   position: "relative",
@@ -198,32 +202,37 @@ const TopologyBuilder = () => {
 
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor }}>
-      <p className='no-margin-p'>Upload a new machine/router/firewall configuration:</p>
-      <input
-        type="file"
-        name="Add Machine"
-        onChange={addConfigurationHandler}
-      />
-
-      <div className='dropdown'>
-        <p className='no-margin-p'>Add a new device: </p>
-        <Dropdown
-          options={machines}
-          onChange={setDeviceHandler}
-        />
-        <button type="button" onClick={addDeviceHandler}>
-          <ion-icon name="add-outline"></ion-icon>
-        </button>
+      <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`, backgroundColor : "#808080", borderBottom : "3px solid #778899"}}>
+        <div>
+          <input
+            type="file"
+            name="Add Machine"
+            id="add-machine"
+            onChange={addConfigurationHandler}
+          />
+          <label for="add-machine" className="input-custom">New machine/router/firewall configuration</label>
+        </div>  
+        <div className='dropdown'>
+          <p>Add to topology: </p>
+          <Dropdown
+            options={machines}
+            onChange={setDeviceHandler}
+          />
+          <button className="input-custom" onClick={addDeviceHandler}> + </button>
+        </div>
+        <div>
+          <input 
+            type="file" 
+            name="merge-toppology" 
+            id="merge-topology"
+          />
+          <label for="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
+        </div>
+        <button className="input-custom">Generate Attack Graph</button>
       </div>
-
-      <p className='no-margin-p'>Upload a topology file (for initialisation/network merging):</p>
-      <input type="file" name="merge-toppology" />
-      <br/><br/>
-      <button>Generate Attack Graph</button>
-
           
       {netGraph.length === 0 ?
-        <div className="no-item" style={{height: "800px"}}> No graph displayed </div> :
+        <div className="no-item" style={{height: builderHeight}}> No graph displayed </div> :
         <CytoscapeComponent
           cy={(cy) => onMouseover(cy)}
           elements={netGraph}

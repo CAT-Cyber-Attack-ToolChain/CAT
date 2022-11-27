@@ -26,26 +26,23 @@ function App() {
 
   return (
     <>
-    <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
-    <ReflexContainer orientation="vertical" className='App'>
-      <ReflexElement className='topology-builder' minSize='250'>
-        <TopologyBuilder />
-      </ReflexElement>
+      <ReflexContainer orientation="vertical" className='App'>
+        <ReflexElement className='topology-builder' minSize='450'>
+          <TopologyBuilder />
+        </ReflexElement>
 
-      <ReflexSplitter style={{ width: '10px', backgroundColor: 'Snow' }} className='gutter-vertical' />
+        <ReflexSplitter style={{ width: '10px', backgroundColor: '#696969' }} className='gutter-vertical' />
 
-      <ReflexElement className='attack-graph' minSize='250'>
-        {atkGraph == null ?
-          <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-          <Cytoscape graph={atkGraph} key={atkGraph} />
-        }
-        <Metrics mets={mets} />
-      </ReflexElement>
+        <ReflexElement className='attack-graph' minSize='450'>
+          {atkGraph == null ?
+            <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
+            <Cytoscape graph={atkGraph} key={atkGraph} />
+          }
+          <Metrics mets={mets} />
+        </ReflexElement>
 
-    </ReflexContainer>
-  
+      </ReflexContainer>
     </>
-
   );
 }
 

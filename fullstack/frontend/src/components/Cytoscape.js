@@ -123,7 +123,7 @@ async function simulateRandomAttack() {
 }
 
 async function simulateRealAttack() {
-    const response = await axios.get("http://localhost:8080/simulation/real")
+    const response = await axios.get(`http://${host}:${port}/simulation/real`)
     return response.data
 }
 
