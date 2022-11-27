@@ -1,13 +1,11 @@
 import './App.css';
 import { useCallback, useState } from 'react';
 import React from 'react';
-import axios from 'axios';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
-import { useEffect } from 'react';
 import Dropdown from "react-dropdown";
-import Topology from './components/Topology';
-import NetworkGraph from './components/NetworkGraph';
+import "react-dropdown/style.css";
+import CytoscapeComponent from "react-cytoscapejs";
 
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
@@ -16,11 +14,82 @@ import { useLoading, Audio, ThreeDots, BallTriangle } from '@agney/react-loading
 
 //TODO: Add configurability for host and port for all requests being sent.
 
+var styles = {
+  height: "800px",
+  backgroundColor: "grey",
+  zIndex: 0,
+  position: "relative",
+};
+
+var layout = {
+  name: "dagre",
+  spacingFactor: 3,
+};
+
+var stylesheet = [
+  {
+    selector: "node",
+    style: {
+      label: "data(label)",
+      fontSize: 200,
+      padding: 300,
+      width: "label",
+      height: "label",
+      textValign: "center",
+      textHalign: "center",
+      shape: "rectangle",
+      color: "black",
+      backgroundColor: "white",
+    },
+  },
+  {
+    selector: "edge",
+    style: {
+      width: 20,
+      lineColor: "#000",
+      targetArrowColor: "#000",
+      arrowScale: 5,
+      targetArrowShape: "triangle",
+      curveStyle: "bezier",
+      "control-point-step-size": "1000",
+    },
+  },
+  {
+    selector: ".highlightNode",
+    style: {
+      backgroundColor: "darkgrey",
+    },
+  },
+  {
+    selector: ".clickedNode",
+    style: {
+      borderStyle: "ridge",
+      borderWidth: "20px",
+      borderColor: "green"
+    },
+  },
+  {
+    selector: ".highlightEdge",
+    style: {
+      targetArrowColor: "red",
+      lineColor: "red",
+    },
+  },
+  {
+    selector: ".toDelete",
+    style: {
+      backgroundColor: "red",
+      targetArrowColor: "#ff0000",
+      lineColor: "#ff0000",
+    },
+  },
+];
+
 function App() {
 
+  // previous UI values
   const [atkGraph, setGraph] = useState()
   const [topology, setTopology] = useState()
-  const [netGraph, setNetGraph] = useState(NetworkGraph(""))
   const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
   const [loading, setLoading] = useState()
@@ -29,136 +98,170 @@ function App() {
     indicator: <BallTriangle width="50" class="loader"/>
   })
 
-
-  const wrapperSetAtkGraph = useCallback(newAtkGraph => {
-    setGraph(newAtkGraph);
-  }, [setGraph])
-
-  const wrapperSetTopology = useCallback(newTopologyGraph => {
-    setTopology(newTopologyGraph);
-  }, [setTopology])
-
-  const wrapperSetMetrics = useCallback(() => {
-    setMets(getMetrics());
-  }, [setMets])
-
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
-  useEffect(() => {
 
-    const handleSubmission = async () => {
-      const formData = new FormData();
-      
-      formData.append('File', selectedFile);
-      
-      setLoading(true)
+  // network graph values
+  const [cursor, setCursor] = useState("default");
+  const [netGraph, setNetGraph] = useState([]);
+  const [selected, setSelected] = useState(undefined);
+  const [machines, setMachines] = useState([
+    { label: "a", value: "a" },
+    { label: "b", value: "b" },
+    { label: "c", value: "c" },
+  ]);
+  const [curDevice, setCurDevice] = useState(undefined);
 
-      await fetch(
-        `http://${host}:${port}/submitInput`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      ).then((response) => response.json())
-        .then((result) => {
-          let parsed = JSON.parse(result)
-          setGraph(JSON.stringify(parsed['attackGraph']))
-          setTopology(JSON.stringify(parsed['topologyGraph']))
-          setMets(getMetrics())
-          setLoading(false)
-        }).catch((error) => {
-          console.error('Error:', error);
-        });
-    }
+  const [nextId, setNextId] = useState(0);
 
-    // skip the initial render
-    if (selectedFile !== null) {
-      handleSubmission()
-    }
-  }, [selectedFile])
+  function onMouseover(cy) {
+    cy.removeListener("click");
+    cy.on("click", "node", (event) => {
+      const nodeId = event.target.data("id");
+      if (selected) {
+        setNetGraph([
+          ...netGraph,
+          {
+            data: {
+              id: nextId,
+              label: "edge",
+              properties: {},
+              source: selected,
+              target: nodeId,
+            },
+          },
+        ]);
+        cy.$('#' + selected).removeClass("clickedNode");
+        cy.$('#' + nodeId).removeClass("clickedNode");
+        setNextId(nextId + 1);
+        setSelected(undefined);
+      } else {
+        setSelected(nodeId);
+        cy.$('#' + nodeId).addClass("clickedNode");
+      }
+    });
 
-  async function getMetrics() {
-    const response = await axios.get('http://localhost:8080/metrics')
-    setMets(JSON.parse(response.data))
+    cy.removeListener("cxttap");
+    cy.on("cxttap", "node", (event) => {
+      const nodeId = event.target.data("id");
+      console.log("Remove " + nodeId);
+      console.log(netGraph[0]);
+      console.log(netGraph);
+      setNetGraph(
+        netGraph.filter(
+          (x) =>
+            x["data"]["id"] !== nodeId &&
+            x["data"]["source"] !== nodeId &&
+            x["data"]["target"] !== nodeId
+        )
+      );
+    });
+
+    cy.on("click", "edge", (event) => {
+      setNetGraph(
+        netGraph.filter((x) => x["data"]["id"] !== event.target.data("id"))
+      );
+    });
+
+    cy.removeListener("mouseover");
+
+    cy.on("mouseover", "node", (event) => {
+      cy.$("#" + event.target.data("id")).addClass("highlightNode");
+    });
+
+    cy.on("mouseover", "edge", (event) => {
+      cy.$("#" + event.target.data("id")).addClass("highlightEdge");
+    });
+
+    cy.removeListener("mouseout");
+
+    cy.on("mouseout", "node", (event) => {
+      cy.$("#" + event.target.data("id")).removeClass("highlightNode");
+    });
+
+    cy.on("mouseout", "edge", (event) => {
+      cy.$("#" + event.target.data("id")).removeClass("highlightEdge");
+    });
   }
 
-  const changeHandler = (event) => {
-    if (event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
-
-  const test = async () => {
-    const response = await axios.get('http://localhost:8080/test')
-    console.log(response)
+  function addConfigurationHandler(file) {
+    const fr = new FileReader();
+    fr.addEventListener("load", (event) => {
+      console.log(event.target.result);
+      const obj = JSON.parse(event.target.result);
+      if (!machines.some((m) => m["label"] === obj["label"])) {
+        setMachines([...machines, JSON.parse(event.target.result)]);
+      }
+    });
+    fr.readAsText(file.target.files[0]);
   }
 
+  function setDeviceHandler(option) {
+    if (option) {
+      setCurDevice(option.value);
+    }
+  }
 
-const sample = `[
-  {"data" : {"id" : "n0", "label" : "internet", "properties" : {"bool": 0, "text": "internet", "type": "OR", "node_id": 0}}},
-  {"data" : {"id" : "n1", "label" : "webServer", "properties" : {"bool": 0, "text": "webServer", "type": "OR", "node_id": 1}}}, 
-  {"data" : {"id" : "n3", "label" : "fileServer", "properties" : {"bool": 0, "text": "fileServer", "type": "OR", "node_id": 3}}}, 
-  {"data" : {"id" : "n5", "label" : "workStation", "properties" : {"bool": 0, "text": "workStation", "type": "OR", "node_id": 5}}}, 
-  {"data" : {"id" : "n7", "label" : "H", "properties" : {"bool": 0, "text": "H", "type": "OR", "node_id": 7}}},
-  {"data" : {"id" : "e1", "label" : "edge", "properties" : {}, "source" : "n0", "target" : "n1"}}, 
-  {"data" : {"id" : "e2", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n0"}},
-  {"data" : {"id" : "e3", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n3"}},
-  {"data" : {"id" : "e4", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n5"}},
-  {"data" : {"id" : "e9", "label" : "edge", "properties" : {}, "source" : "n3", "target" : "n7"}}, 
-  {"data" : {"id" : "e10", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n0"}}, 
-  {"data" : {"id" : "e11", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n1"}}, 
-  {"data" : {"id" : "e12", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n3"}}, 
-  {"data" : {"id" : "e13", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n7"}}, 
-  {"data" : {"id" : "e14", "label" : "edge", "properties" : {}, "source" : "n7", "target" : "n7"}}
-]`
-
-  // var elements = JSON.stringify(
-  //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
-  //    { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 50 } },
-  //    { data: { id: 'three', label: 'Node 3'}, position: { x: 50, y: 100 }}, 
-  //    { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
-  //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
+  function addDeviceHandler() {
+    setNetGraph([
+      ...netGraph,
+      {
+        data: {
+          id: nextId,
+          label: curDevice,
+          properties: {
+            bool: 0,
+            text: curDevice,
+            type: "OR",
+            node_id: nextId,
+          },
+        },
+      },
+    ]);
+    setNextId(nextId + 1);
+  }
 
   return (
     <>
     <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
-    {/* <input className="input-button" type="file" name="file" onChange={changeHandler} /> */}
     <ReflexContainer orientation="vertical" className='App'>
+      <ReflexElement className='topology' minSize='250'>
+        <p className='no-margin-p'>Upload a new machine/router/firewall configuration:</p>
+        <input
+          type="file"
+          name="Add Machine"
+          onChange={addConfigurationHandler}
+        />
 
-        <ReflexElement className='topology' minSize='250'>
-          <p className='no-margin-p'>Upload a new machine/router/firewall configuration:</p>
-          <input type="file" name="configuration" />
+        <div className='dropdown'>
+          <p className='no-margin-p'>Add a new device: </p>
+          <Dropdown
+            options={machines}
+            onChange={setDeviceHandler}
+          />
+          <button type="button" onClick={addDeviceHandler}>
+            <ion-icon name="add-outline"></ion-icon>
+          </button>
+        </div>
 
-          <div className='dropdown'>
-            <p className='no-margin-p'>Add a new device: </p>
-            <Dropdown
-              options={[
-                { label: "a", value: "a" },
-                { label: "b", value: "b" },
-                { label: "c", value: "c" },
-              ]}
-            />
-          </div>
-
-          <p className='no-margin-p'>Upload a topology file (for initialisation/network merging):</p>
-          <input type="file" name="merge-toppology" />
-          <br/><br/>
-          <button>Generate Attack Graph</button>
+        <p className='no-margin-p'>Upload a topology file (for initialisation/network merging):</p>
+        <input type="file" name="merge-toppology" />
+        <br/><br/>
+        <button>Generate Attack Graph</button>
 
           
-          {topology == null ?
-            <div className="no-item"> No graph displayed </div> :
-            <Topology graph={topology} setAtkGraph={wrapperSetAtkGraph} setTopology={wrapperSetTopology} setMetrics={wrapperSetMetrics} key={topology} />
-          }
-        </ReflexElement>
-        {/* <button onClick={() => test()}>Test</button> */}
-
-        <ReflexSplitter style={{ width: '10px', backgroundColor: 'Snow' }} className='gutter-vertical' />
-
-
-        <ReflexElement className='topology' minSize='250'>
-          <NetworkGraph />
-        </ReflexElement>
+        {netGraph == null ?
+          <div className="no-item"> No graph displayed </div> :
+          <CytoscapeComponent
+            cy={(cy) => onMouseover(cy)}
+            elements={netGraph}
+            key={netGraph}
+            style={styles}
+            stylesheet={stylesheet}
+            layout={layout}
+          />
+        }
+      </ReflexElement>
 
       <ReflexSplitter style={{ width: '10px', backgroundColor: 'Snow' }} className='gutter-vertical' />
 
@@ -170,11 +273,8 @@ const sample = `[
         <Metrics mets={mets} />
       </ReflexElement>
 
-      <ReflexSplitter style={{width: '10px', backgroundColor: 'Snow'}} className='gutter-vertical' />
-
     </ReflexContainer>
-    
-
+  
     </>
 
   );
