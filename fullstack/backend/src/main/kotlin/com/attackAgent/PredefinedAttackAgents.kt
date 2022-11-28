@@ -26,7 +26,7 @@ abstract class PredefinedAttackAgent : AttackAgent() {
     override fun chooseRule(n: Node): Rule {
         var pickedRule: Rule? = null
         var maxScore = Int.MIN_VALUE
-        n.connections.forEach {rule ->
+        n.getConnections().forEach {rule ->
             val currentScore = rule.calculateScore(TECHNIQUE_LIKELIHOOD_MAP)
             if (pickedRule == null) {
                 pickedRule = rule

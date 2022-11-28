@@ -6,7 +6,7 @@ import com.neo4j.Rule
 class RandomAttackAgent : AttackAgent() {
 
     override fun chooseRule(n: Node): Rule {
-        return n.connections.random()
+        return n.getConnections().random()
     }
 }
 
