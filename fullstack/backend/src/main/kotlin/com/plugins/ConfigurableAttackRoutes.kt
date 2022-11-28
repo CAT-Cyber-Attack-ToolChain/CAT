@@ -8,14 +8,39 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 
+import com.beust.klaxon.JsonReader
+import java.io.StringReader
+import com.beust.klaxon.Klaxon
+
+
+
 
 fun Route.ConfigurableAttackRouting() {
 
     route("/attack/custom") {
             post {
-                val jsonText = call.receiveText().replace("\\", "")
-                println(jsonText.toString())
+                val jsonText = call.receiveText().replace("\\", "").replace("\"[", "[").replace("]\"", "]")
+                val jsonString = jsonText.toString()
+
+                val map = parseJsonMap(jsonString))
                 call.respond("{}")
             }
         }
+}
+
+private data class TechniqueScore(var technique: String, var score: Int)
+private data class TechniqueMap(val techniqueMap: ArrayList<ArrayList<String>>)
+
+private fun parseJsonMap(jsonMap: String): Map<String, Int> {
+    val klaxon = Klaxon()
+
+    val techniqueMap = klaxon.parse<TechniqueMap>(jsonMap)
+    val mapList = techniqueMap!!.techniqueMap
+
+    val map = mutableMapOf<String, Int>()
+    for (list in mapList) {
+        map.put(list[0], list[1].toInt())
+    }
+
+    return map
 }
