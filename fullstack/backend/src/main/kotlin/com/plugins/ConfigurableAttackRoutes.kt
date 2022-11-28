@@ -3,6 +3,7 @@ package com.plugins
 import com.attackAgent.AttackAgent
 import com.attackAgent.RandomAttackAgent
 import com.attackAgent.RealAttackAgent
+import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -17,12 +18,23 @@ import com.beust.klaxon.Klaxon
 
 fun Route.ConfigurableAttackRouting() {
 
+    route("/attack/defaults") {
+        get {
+            val sb = StringBuilder("{")
+            TECHNIQUE_EASYNESS_MAP.forEach {entry ->
+                sb.append("\"${entry.key}\": ${entry.value},")
+            }
+            sb.append("}")
+            call.respond(sb.toString())
+        }
+    }
+
     route("/attack/custom") {
             post {
                 val jsonText = call.receiveText().replace("\\", "").replace("\"[", "[").replace("]\"", "]")
                 val jsonString = jsonText.toString()
 
-                val map = parseJsonMap(jsonString))
+                val map = parseJsonMap(jsonString)
                 call.respond("{}")
             }
         }
