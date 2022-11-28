@@ -63,7 +63,7 @@ function App() {
   }, [selectedFile])
 
   async function getMetrics() {
-    const response = await axios.get('http://localhost:8080/metrics')
+    const response = await axios.get(`http://${host}:${port}/metrics`)
     setMets(JSON.parse(response.data))
   }
 
@@ -74,7 +74,7 @@ function App() {
   };
 
   const test = async () => {
-    const response = await axios.get('http://localhost:8080/test')
+    const response = await axios.get(`http://${host}:${port}/test`)
     console.log(response)
   }
 

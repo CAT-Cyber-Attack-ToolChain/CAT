@@ -63,3 +63,11 @@ body {
   background-position: 50%;
   cursor: pointer;
 }
+
+.input-width {
+  width: 5rem;
+  min-width: 150px;
+  max-width: 200px;
+  box-sizing: content-box;
+  margin: 1px 2px;
+}
