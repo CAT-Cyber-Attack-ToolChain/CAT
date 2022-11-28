@@ -200,6 +200,10 @@ const TopologyBuilder = () => {
     setNextId(nextId + 1);
   }
 
+  function printNetGraph() {
+    console.log(netGraph)
+  }
+
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor }}>
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`, backgroundColor : "#808080", borderBottom : "3px solid #778899"}}>
@@ -210,7 +214,7 @@ const TopologyBuilder = () => {
             id="add-machine"
             onChange={addConfigurationHandler}
           />
-          <label for="add-machine" className="input-custom">New machine/router/firewall configuration</label>
+          <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
         </div>  
         <div className='dropdown'>
           <p>Add to topology: </p>
@@ -226,9 +230,9 @@ const TopologyBuilder = () => {
             name="merge-toppology" 
             id="merge-topology"
           />
-          <label for="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
+          <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
         </div>
-        <button className="input-custom">Generate Attack Graph</button>
+        <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
       </div>
           
       {netGraph.length === 0 ?
