@@ -1,0 +1,11 @@
+{
+    "type": "machine",
+    "value": "webServer",
+    "label": "webServer",
+    "name": "webServer",
+    "accounts": [],
+    "services": [{"machine": "webServer", "application": "httpd", "protocol": "tcp", "port": "80", "user": "apache"}],
+    "programs": [],
+    "vulnerabilities": [{"machine": "webServer", "name": "'CAN-2002-0392'", "application":  "httpd", "locality": "remoteExploit", "type": "privEscalation", "cvss": "h"}],
+    "other": []
+}

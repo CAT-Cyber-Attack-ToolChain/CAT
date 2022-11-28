@@ -8,7 +8,6 @@ fun Application.configureRouting() {
 
     routing {
         GraphGenRouting()
-        GraphSeparationMergeRoutes()
         MetricsRouting()
         SimulationRouting()
     }

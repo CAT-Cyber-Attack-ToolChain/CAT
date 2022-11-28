@@ -86,10 +86,8 @@ fun Route.GraphGenRouting() {
             val neo4JController = Neo4JController(mulvalOutput, PathCache(filePath), "default")
             Neo4JMapping.add(neo4JController)
             val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
-            TopologyGraph.topologyGraph = TopologyGraph.build(mulvalInput)
-            val topologyGraphJson = TopologyGraph.topologyGraph!!.exportToCytoscapeJSON()
             println(attackGraphJson)
-            call.respond("{\"attackGraph\": $attackGraphJson, \"topologyGraph\": $topologyGraphJson}")
+            call.respond("{\"attackGraph\": $attackGraphJson}")
         }
     }
 }

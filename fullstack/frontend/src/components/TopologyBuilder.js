@@ -166,10 +166,9 @@ const TopologyBuilder = () => {
   function addConfigurationHandler(file) {
     const fr = new FileReader();
     fr.addEventListener("load", (event) => {
-      console.log(event.target.result);
       const obj = JSON.parse(event.target.result);
       if (!machines.some((m) => m["label"] === obj["label"])) {
-        setMachines([...machines, JSON.parse(event.target.result)]);
+        setMachines([...machines, obj]);
       }
     });
     fr.readAsText(file.target.files[0]);
