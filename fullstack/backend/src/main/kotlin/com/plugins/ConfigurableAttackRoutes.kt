@@ -3,6 +3,7 @@ package com.plugins
 import com.attackAgent.AttackAgent
 import com.attackAgent.RandomAttackAgent
 import com.attackAgent.RealAttackAgent
+import com.attackAgent.CustomAttackAgent
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -35,6 +36,8 @@ fun Route.ConfigurableAttackRouting() {
                 val jsonString = jsonText.toString()
 
                 val map = parseJsonMap(jsonString)
+                CustomAttackAgent.AGENT = CustomAttackAgent(map)
+
                 call.respond("{}")
             }
         }

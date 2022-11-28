@@ -6,6 +6,8 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+import com.attackAgent.CustomAttackAgent
+
 fun Route.SimulationRouting() {
 
     route("/simulation/random") {
@@ -47,6 +49,12 @@ fun Route.SimulationRouting() {
     route("/simulation/wiper") {
         get {
             call.respond(attackAndGetPath(WiperAttackAgent()))
+        }
+    }
+
+    route("/simulation/custom") {
+        get {
+            call.respond(attackAndGetPath(CustomAttackAgent.AGENT))
         }
     }
 }

@@ -150,8 +150,12 @@ class WiperAttackAgent : PredefinedAttackAgent() {
     }
 }
 
-class CustomAttackAgent(val techniqueMap: Map<String, Int>) : PredefinedAttackAgent() {
+class CustomAttackAgent(val techniqueMap: Map<String, Int> = mapOf()) : PredefinedAttackAgent() {
     init {
         updateScoresWith(techniqueMap)
+    }
+
+    companion object {
+        var AGENT = CustomAttackAgent()
     }
 }
