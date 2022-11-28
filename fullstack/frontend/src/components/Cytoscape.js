@@ -51,10 +51,6 @@ function mouseAction(cy) {
         event.target.popperDiv.state.elements.popper.style.display = "flex";
     });
 
-    cy.on('mouseover', 'edge', (event) => {
-      console.log(event.target.data("id"))
-    });
-
     cy.removeListener('mouseout');
     cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
 }
@@ -144,7 +140,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph}) => {
+const Cytoscape = ({graph,map,toHighlight}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -160,6 +156,21 @@ const Cytoscape = ({graph}) => {
         return () => window.removeEventListener('resize', fitGraph)
     })
 
+    /* TO IMPLEMENT
+       toHighlight gets data from Atk graph (Mapping here)
+       This is called whenever toHighlight changes
+    */    
+    useEffect(() => {
+        console.log("from topologybuilder " + toHighlight)
+    },[toHighlight])
+
+
+    /* Set mapping for higlighting Topology */
+    useEffect(() => {
+        cyRef.on('click','node', (event) => {
+            map(event.target.data("id"))
+        })
+    }, [cyRef])
 
     /*
         Find id of edge on graph with corresponding src and dst

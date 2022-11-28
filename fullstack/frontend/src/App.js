@@ -17,6 +17,11 @@ function App() {
   const [atkGraph, setGraph] = useState()
   const [mets, setMets] = useState()
   const [loading, setLoading] = useState()
+
+  /* Mapping */
+  const [mapAtkGraph, setMapAtk] = useState([])
+  const [mapTopology, setMapTop] = useState([])
+
   const { containerProps, indicatorEl } = useLoading({
     loading: true,
     indicator: <BallTriangle width="50" class="loader"/>
@@ -27,18 +32,18 @@ function App() {
 
   return (
     <>
-      <SimulationSidebar />
+      <SimulationSidebar/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
-          <TopologyBuilder />
+          <TopologyBuilder map={setMapAtk} toHighlight={mapTopology}/>
         </ReflexElement>
 
-        <ReflexSplitter style={{ width: '10px', backgroundColor: '#696969' }} className='gutter-vertical' />
+        <ReflexSplitter style={{width: '10px', backgroundColor: '#696969'}} className='gutter-vertical' />
 
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape graph={atkGraph} key={atkGraph} />
+            <Cytoscape graph={atkGraph} key={atkGraph} map={setMapTop} toHighlight={mapAtkGraph}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
