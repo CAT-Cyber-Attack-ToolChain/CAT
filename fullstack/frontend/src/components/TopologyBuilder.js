@@ -182,6 +182,9 @@ const TopologyBuilder = () => {
   }
 
   function addDeviceHandler() {
+    if (!curDevice) {
+      return;
+    }
     setNetGraph([
       ...netGraph,
       {
