@@ -1,0 +1,39 @@
+.simulationSidebar {
+  height: 20px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.menu-icons {
+  margin-right: 1rem;
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  background: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.menu-content {
+  background-color: #060b26;
+  color: #f5f5f5;
+  width: 500px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: -100%;
+  transition: 850ms;
+  z-index: 2;
+}
+
+.menu-content.active {
+  right: 0;
+  transition: 350ms;
+}
+
+.menu-content-items {
+  width: 100%;
+}
+

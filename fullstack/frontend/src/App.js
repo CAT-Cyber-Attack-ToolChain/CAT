@@ -8,6 +8,7 @@ import TopologyBuilder from './components/TopologyBuilder';
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 import { useLoading, BallTriangle } from '@agney/react-loading';
+import SimulationSidebar from './components/SimulationSidebar';
 
 //TODO: Add configurability for host and port for all requests being sent.
 
@@ -26,6 +27,7 @@ function App() {
 
   return (
     <>
+      <SimulationSidebar />
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
           <TopologyBuilder />
