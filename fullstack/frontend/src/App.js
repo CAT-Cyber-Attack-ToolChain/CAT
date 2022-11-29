@@ -38,7 +38,7 @@ function App() {
           <TopologyBuilder map={setMapAtk} toHighlight={mapTopology}/>
         </ReflexElement>
 
-        <ReflexSplitter style={{width: '10px', backgroundColor: '#696969'}} className='gutter-vertical' />
+        <ReflexSplitter style={{width: '10px', backgroundColor: '#696969', zIndex: '1'}} className='gutter-vertical' />
 
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
