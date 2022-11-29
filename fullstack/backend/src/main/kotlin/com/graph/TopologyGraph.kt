@@ -146,9 +146,7 @@ data class Router(val type: String, val label: String, val value: String, val na
     for (machine in subnet!!) {
       sb.append("inSubnet($machine, ${name}Subnet).\n")
     }
-    println(routers)
     for (rule in rules) {
-      println(rule)
       if (rule.direction == "out") {
         val machines = mutableSetOf<String>()
         if (rule.source == "*") {
@@ -216,8 +214,6 @@ class TopologyGraph {
       val routerList = Json.decodeFromString<List<Router>>(routers)
       val linkList = Json.decodeFromString<List<Link>>(links)
       val routerComponents = findRoutes(routerList, linkList)
-      println(routerList)
-      println(linkList)
       val subnetMaps = findSubnets(routerList, linkList)
       for (router in routerList) {
         router.subnet = subnetMaps.first[router]!!
@@ -272,10 +268,9 @@ class TopologyGraph {
       var currentComponent = mutableSetOf<Router>()
       while (stack.isNotEmpty()) {
         val node = stack.removeFirst()
-        if(visited[node.name] == true) {
+        if (visited[node.name] == true) {
           continue
         }
-        println(node.name)
         visited[node.name] = true
         if (node !in currentComponent) {
           components.add(currentComponent)
@@ -286,8 +281,7 @@ class TopologyGraph {
           if (visited[routers[i].name] == true) {
             continue
           }
-          if (graph[indexMap[node.name]!!][i]) {
-            println("Adding ${routers[i]}")
+          if (graph[indexMap[node.name]!!][i] || graph[i][indexMap[node.name]!!]) {
             currentComponent.add(routers[i])
             stack.add(routers[i])
             routerMap[routers[i]] = components.size
@@ -297,7 +291,6 @@ class TopologyGraph {
       if (currentComponent.isNotEmpty()) {
         components.add(currentComponent)
       }
-      println(components)
       return Pair(components, routerMap)
     }
   }

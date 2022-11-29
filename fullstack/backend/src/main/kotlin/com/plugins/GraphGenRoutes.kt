@@ -37,7 +37,6 @@ fun Route.GraphGenRouting() {
 
     fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
         // upload the graph to Neo4j
-        println("upload graph")
         if (mulvalController.generateGraph()) {
             neo4JController.update()
         }
@@ -57,15 +56,12 @@ fun Route.GraphGenRouting() {
     route("/submitInput") {
         post {
             val upload = call.receive<TopologyInput>()
-            println(upload)
-
             val mulvalInput = MulvalInput("$cur/input.P")
             val mulvalOutput = AttackGraphOutput("$cur/../../output")
             TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
             // generate the graph, move to Neo4j, and display it on frontend
             val neo4JController = Neo4JController(mulvalOutput, PathCache("$cur/input.P"), "default")
             Neo4JMapping.add(neo4JController)
-            println("foobar")
             val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
             println(attackGraphJson)
             call.respond("{\"attackGraph\": $attackGraphJson}")
@@ -86,15 +82,12 @@ fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
 
 fun exportToCytoscapeJSON(): String {
     val klaxon = Klaxon()
-    println("exporting")
     val adapter : Neo4JAdapter = Neo4JAdapter()
-    println("got adapter")
     val nodestrlist: List<String> = adapter.nodes.values.map { n ->
 
             val dataWrappers = nodeToCytoJSON(n)
             val nodeStrs = dataWrappers.map { dw -> klaxon.toJsonString(dw) }
             nodeStrs.joinToString()
         }
-    println("Hello World")
         return "[" + nodestrlist.joinToString() + "]"
 }

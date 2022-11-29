@@ -125,9 +125,8 @@ const TopologyBuilder = ({setAtkGraph}) => {
     cy.on("cxttap", "node", (event) => {
       const nodeId = event.target.data("id");
       console.log("Remove " + nodeId);
-      console.log(netGraph[0]);
-      console.log(netGraph);
-      created[curDevice] = false;
+      created[event.target.data("label")] = false;
+      setCreated(created);
       setNetGraph(
         netGraph.filter(
           (x) =>
@@ -210,6 +209,7 @@ const TopologyBuilder = ({setAtkGraph}) => {
     ]);
     setNextId(nextId + 1);
     created[curDevice] = true;
+    setCreated(created)
   }
 
   function printNetGraph() {

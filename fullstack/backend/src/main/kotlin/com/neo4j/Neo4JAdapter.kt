@@ -27,13 +27,9 @@ class Neo4JAdapter {
         for (rule: Int in connectedRule(attackerLocatedNode())) {
             ruleNodeIds.add(rule)
         }
-        println("created ruleNodeIds")
-        println(ruleNodeIds)
         val connections: Set<Rule> = buildRules(ruleNodeIds)
-        println("build rules")
         val node = Node(0, "start", connections)
         nodes[0] = node
-        println("create rule")
         return node
     }
 
@@ -68,7 +64,6 @@ class Neo4JAdapter {
     /* id required to be id of a rule node */
     private fun connectedPermission(id: Int): Int {
         val session: Session = driver.session()
-        println("connecting permission $id")
         return session.writeTransaction { tx ->
             val result: Result = tx.run(
                 "MATCH(start {node_id: $id})-[:To]->(end:Permission) RETURN end.node_id", parameters()
