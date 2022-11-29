@@ -146,7 +146,9 @@ data class Router(val type: String, val label: String, val value: String, val na
     for (machine in subnet!!) {
       sb.append("inSubnet($machine, ${name}Subnet).\n")
     }
+    println(routers)
     for (rule in rules) {
+      println(rule)
       if (rule.direction == "out") {
         val machines = mutableSetOf<String>()
         if (rule.source == "*") {
@@ -273,26 +275,29 @@ class TopologyGraph {
         if(visited[node.name] == true) {
           continue
         }
+        println(node.name)
         visited[node.name] = true
         if (node !in currentComponent) {
           components.add(currentComponent)
-          currentComponent = mutableSetOf()
-          routerMap[node] = components.size - 1
+          currentComponent = mutableSetOf(node)
+          routerMap[node] = components.size
         }
         for (i in routers.indices) {
           if (visited[routers[i].name] == true) {
             continue
           }
           if (graph[indexMap[node.name]!!][i]) {
+            println("Adding ${routers[i]}")
             currentComponent.add(routers[i])
             stack.add(routers[i])
-            routerMap[routers[i]] = components.size - 1
+            routerMap[routers[i]] = components.size
           }
         }
       }
       if (currentComponent.isNotEmpty()) {
         components.add(currentComponent)
       }
+      println(components)
       return Pair(components, routerMap)
     }
   }

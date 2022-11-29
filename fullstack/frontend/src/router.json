@@ -1,7 +1,14 @@
-{
+[{
     "type": "router",
     "value": "router",
     "label": "router",
     "name": "router",
-    "rules": [{"source": "internet", "dest": "webserver", "protocol": "tcp", "port": "80", "direction": "in"}]
-}
+    "rules": [{"source": "internet", "dest": "webServer", "protocol": "tcp", "port": "80", "direction": "in"}]
+},
+{
+    "type": "router",
+    "value": "internetRouter",
+    "label": "internetRouter",
+    "name": "internetRouter",
+    "rules": [{"source": "*", "dest": "*", "protocol": "*", "port": "*", "direction": "out"}]
+}]
