@@ -1,0 +1,11 @@
+{
+    "type": "machine",
+    "value": "workStation",
+    "label": "workStation",
+    "name": "workStation",
+    "accounts": [],
+    "services": [],
+    "programs": [],
+    "vulnerabilities": [],
+    "other": [{"name":  "nfsMounted", "args": ["workStation", "'/usr/local/share'", "fileServer", "'/export'", "read"]}]
+}

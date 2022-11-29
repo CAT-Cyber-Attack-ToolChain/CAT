@@ -23,13 +23,16 @@ import java.io.File
 import java.util.*
 
 fun Route.GraphGenRouting() {
-  val cur = System.getProperty("user.dir") // cur = backend directory
-  var filePath: String = "";
+    val cur = System.getProperty("user.dir") // cur = backend directory
+    var filePath: String = "";
 
-  fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
-    // upload the graph to Neo4j
-    if (mulvalController.generateGraph()) {
-      neo4JController.update()
+    fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
+        // upload the graph to Neo4j
+        if (mulvalController.generateGraph()) {
+            neo4JController.update()
+        }
+        // get the graph data from Neo4j
+        return exportToCytoscapeJSON()
     }
     // get the graph data from Neo4j
 
@@ -66,11 +69,18 @@ fun Route.GraphGenRouting() {
             }
           }
 
-          //
-          mulvalInput = MulvalInput(filePath)
-          mulvalOutput = AttackGraphOutput("$cur/../../output")
-
-          return@forEachPart
+    route("/submitInput") {
+        post {
+            val upload = call.receive<TopologyInput>()
+            val mulvalInput = MulvalInput("$cur/input.P")
+            val mulvalOutput = AttackGraphOutput("$cur/../../output")
+            TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
+            // generate the graph, move to Neo4j, and display it on frontend
+            val neo4JController = Neo4JController(mulvalOutput, PathCache("$cur/input.P"), "default")
+            Neo4JMapping.add(neo4JController)
+            val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
+            println(attackGraphJson)
+            call.respond("{\"attackGraph\": $attackGraphJson}")
         }
       }
       // generate the graph, move to Neo4j, and display it on frontend
@@ -84,6 +94,9 @@ fun Route.GraphGenRouting() {
     }
   }
 }
+
+@kotlinx.serialization.Serializable
+data class TopologyInput(val machines: String, val routers: String, val links: String)
 
 
 fun nodeToCytoJSON(n: Node): List<CytoDataWrapper> {

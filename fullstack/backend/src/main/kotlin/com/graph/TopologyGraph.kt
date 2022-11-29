@@ -1,76 +1,64 @@
 package com.graph
 
-import com.beust.klaxon.Klaxon
-import com.cytoscape.CytoDataWrapper
-import com.cytoscape.CytoEdge
-import com.cytoscape.CytoNode
-import com.lordcodes.turtle.shellRun
-import com.model.MulvalInput
-import kotlinx.serialization.json.jsonArray
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.io.FileWriter
+import java.io.FileReader
+import java.lang.Exception
+import javax.crypto.Mac
 
-data class Hacl(val m1: Machine, val m2: Machine, val protocol: String, val port: String) {
+data class Hacl(val m1: String, val m2: String, val protocol: String, val port: String) {
   override fun toString(): String {
     return "hacl($m1, $m2, $protocol, $port)."
   }
 }
 
-data class HasAccount(val user: User, val machine: Machine, val privilege: String) {
+@kotlinx.serialization.Serializable
+data class Account(val user: String, val machine: String, val privilege: String) {
   override fun toString(): String {
-    return "hasAccount($user, $machine, $privilege)."
+    return "hasAccount($user, $machine, $privilege).\ninCompetent($user)."
   }
 }
 
-data class NetworkServiceInfo(
-        val machine: Machine,
-        val application: Application,
+@kotlinx.serialization.Serializable
+data class Service(
+        val machine: String,
+        val application: String,
         val protocol: String,
         val port: String,
-        val privilege: String
+        val user: String
 ) {
   override fun toString(): String {
-    return "networkServiceInfo($machine, $application, $protocol, $port, $privilege)."
+    return "networkServiceInfo($machine, $application, $protocol, $port, $user)."
   }
 }
 
-class Machine : GraphNode {
-  val haclList: MutableList<Hacl> = mutableListOf()
-  val accountList: MutableList<HasAccount> = mutableListOf()
-  val services: MutableList<NetworkServiceInfo> = mutableListOf()
-  val name: String
-  val id: Int
-  var subnet: String = ""
-
-  constructor(_name: String, _id: Int) {
-    name = _name
-    id = _id
-  }
-
-  constructor(name: String) : this(name, next++)
-
-  override fun id(): Int = id
-
-  companion object {
-    var next: Int = 0
-  }
-
+@kotlinx.serialization.Serializable
+data class Clause(val name: String, val args: List<String>) {
   override fun toString(): String {
-    return name
+    val sb = StringBuilder()
+    sb.append(name)
+    sb.append("(")
+    if (args.isNotEmpty()) {
+      sb.append(args[0])
+    }
+    for (i in 1 until args.size) {
+      sb.append(",")
+      sb.append(args[i])
+    }
+    sb.append(").")
+    return sb.toString()
   }
+}
 
-  fun build(): String {
+@kotlinx.serialization.Serializable
+data class Machine(val type: String, val value: String, val label: String, val name: String, val accounts: List<Account>, val services: List<Service>, val programs: List<Program>, val vulnerabilities: List<Vulnerability>, val other: List<Clause>) {
+  override fun toString(): String {
     val sb = StringBuilder()
     var flag = false
-    if (haclList.isNotEmpty()) {
-      sb.append(haclList.joinToString("\n") { x -> x.toString() })
-      sb.append("\n")
-      flag = true
-    }
-    if (accountList.isNotEmpty()) {
-      sb.append(accountList.joinToString("\n"))
+    if (accounts.isNotEmpty()) {
+      sb.append(accounts.joinToString("\n"))
       sb.append("\n")
       flag = true
     }
@@ -79,8 +67,19 @@ class Machine : GraphNode {
       sb.append("\n")
       flag = true
     }
-    if (subnet != "") {
-      sb.append("inSubnet($name, $subnet)\n")
+    if (programs.isNotEmpty()) {
+      sb.append(programs.joinToString("\n"))
+      sb.append("\n")
+      flag = true
+    }
+    if (vulnerabilities.isNotEmpty()) {
+      sb.append(vulnerabilities.joinToString("\n"))
+      sb.append("\n")
+      flag = true
+    }
+    if (other.isNotEmpty()) {
+      sb.append(other.joinToString("\n"))
+      sb.append("\n")
       flag = true
     }
     if (flag) {
@@ -90,338 +89,213 @@ class Machine : GraphNode {
   }
 }
 
-class Application(val name: String) {
-  val programInfo: MutableList<SetuidProgramInfo> = mutableListOf()
-  var client: Boolean = false
+@kotlinx.serialization.Serializable
+data class Program(val machine: String, val application: String, val privilege: String) {
   override fun toString(): String {
-    return name
-  }
-
-  fun build(): String {
     val sb = StringBuilder()
-    if (client) {
-      sb.append("clientApplication($name)\n")
-    }
-    for (p in programInfo) {
-      sb.append(sb)
-    }
+    sb.append("clientApplication($application).\n")
+    sb.append("setuidProgramInfo($machine, $application, $privilege).\n")
     return sb.toString()
   }
 }
 
-class User(val name: String) {
-  var inCompetent = false
+@kotlinx.serialization.Serializable
+data class Vulnerability(val name: String, val machine: String, val application: String, val locality: String, val type: String, val cvss: String) {
   override fun toString(): String {
-    return name
-  }
-
-  fun build(): String {
     val sb = StringBuilder()
-    if (inCompetent) {
-      sb.append("inCompetent($name)\n")
-    }
-
+    sb.append("vulProperty($name, $locality, $type).\n")
+    sb.append("cvss($name, $cvss).\n")
+    sb.append("vulExists($machine, $name, $application).")
     return sb.toString()
   }
 }
 
-class Vulnerability(val name: String) {
-  val exists: MutableSet<VulExists> = mutableSetOf()
-  var cvss: CVSS = CVSS.UNDEFINED
-  var locality: String = "localExploit"
-  var type: String = "privEscalation"
-
-  override fun toString(): String {
-    return name
+@kotlinx.serialization.Serializable
+data class FirewallRule(val source: String, val dest: String, val protocol: String, val port: String, val direction: String) {
+  fun accept(m1: String, m2: String, protocol: String, port: String): String {
+    val m1 = restrict(m1, source) ?: return ""
+    val m2 = restrict(m2, dest) ?: return ""
+    val protocol = restrict(protocol, this.protocol) ?: return ""
+    val port = restrict(port, this.port) ?: return ""
+    return "hacl($m1, $m2, $protocol, $port).\n"
   }
 
-  fun build(): String {
-    return "vulProperty($name, $locality, $type).\ncvss($name, $cvss).\n" + exists.joinToString("") + "\n"
-  }
-}
-
-data class SetuidProgramInfo(val machine: Machine, val application: Application, val privilege: String) {
-  override fun toString(): String {
-    return "setuidProgramInfo($machine, $application, $privilege).\n"
-  }
-}
-
-data class VulExists(val machine: Machine, val vulnerability: Vulnerability, val application: Application) {
-  override fun toString(): String {
-    return "vulExists($machine, $vulnerability, $application).\n"
+  private fun restrict(x: String, y: String): String? {
+    return if (x == "*" && y == "*") {
+      "_"
+    } else if (x == "*") {
+      y
+    } else if (y == "*") {
+      x
+    } else if (x == y) {
+      x
+    } else {
+      null
+    }
   }
 }
 
-enum class CVSS {
-  UNDEFINED,
-  LOW,
-  MEDIUM,
-  HIGH
-}
-
-class TopologyGraph(
-        nodes: MutableMap<Int, Machine>,
-        arcs: MutableMap<Int, MutableSet<Int>>,
-        val machines: MutableMap<String, Machine>,
-        val applications: MutableMap<String, Application>,
-        val vulnerabilities: MutableMap<String, Vulnerability>,
-        val users: MutableMap<String, User>
-) : Graph<Machine>(nodes, arcs) {
-  companion object {
-    var topologyGraph: TopologyGraph? = null
-    fun build(input: MulvalInput): TopologyGraph {
-      val filepath = input.getPath()
-      val machines = mutableMapOf<String, Machine>()
-      val applications = mutableMapOf<String, Application>()
-      val vulnerabilities = mutableMapOf<String, Vulnerability>()
-      val users = mutableMapOf<String, User>()
-      val reader = BufferedReader(FileReader(filepath))
-      for (line in reader.lines()) {
-        if (line == "") {
-          continue
+@kotlinx.serialization.Serializable
+data class Router(val type: String, val label: String, val value: String, val name: String, val rules: List<FirewallRule>) {
+  var subnet: Set<String>? = null
+  fun build(routers: Set<Router>, machineMap: Map<String, Router>): String {
+    if (subnet == null) {
+      throw Exception("Failed To Create Subnet $name")
+    }
+    val sb = StringBuilder()
+    for (machine in subnet!!) {
+      sb.append("inSubnet($machine, ${name}Subnet).\n")
+    }
+    for (rule in rules) {
+      if (rule.direction == "out") {
+        val machines = mutableSetOf<String>()
+        if (rule.source == "*") {
+          machines.addAll(subnet!!)
+        } else {
+          machines.add(rule.source)
         }
-        val props = line.replace(Regex("\\s"), "").replace('(', ',').dropLast(2).split(",")
-        when (props[0]) {
-          /*"hacl" -> {
-            val m1 = getMachine(props[1], machines)
-            val m2 = if (props[2] == "_") {
-              Machine("_")
-            } else {
-              getMachine(props[2], machines)
+        if (rule.dest == "*") {
+          for (r2 in routers) {
+            if (r2 == this) {
+              continue
             }
-            m1.haclList.add(Hacl(m1, m2, props[3], props[4]))
-          }*/
-
-          "inSubnet" -> {
-            val m1 = getMachine(props[1], machines)
-            m1.subnet = props[2]
-          }
-
-          "inCompetent" -> {
-            val u = getUser(props[1], users)
-            u.inCompetent = true
-          }
-
-          "vulExists" -> {
-            val m = getMachine(props[1], machines)
-            val v = getVulnerability(props[2], vulnerabilities)
-            val a = getApplication(props[3], applications)
-            v.exists.add(VulExists(m, v, a))
-          }
-
-          "vulProperty" -> {
-            val v = getVulnerability(props[1], vulnerabilities)
-            v.locality = props[2]
-            v.type = props[3]
-          }
-
-          "isClient" -> {
-            val app = getApplication(props[1], applications)
-            app.client = true
-          }
-
-          "setuidProgramInfo" -> {
-            val m = getMachine(props[1], machines)
-            val a = getApplication(props[2], applications)
-            a.programInfo.add(SetuidProgramInfo(m, a, props[3]))
-          }
-
-          "cvss" -> {
-            val v = getVulnerability(props[1], vulnerabilities)
-            when (props[2]) {
-              "l" -> {
-                v.cvss = CVSS.LOW
-              }
-
-              "m" -> {
-                v.cvss = CVSS.MEDIUM
-              }
-
-              "h" -> {
-                v.cvss = CVSS.HIGH
-              }
+            for (m in machines) {
+              sb.append(r2.acceptAll(m, rule.protocol, rule.port))
             }
-          }
-
-          "hasAccount" -> {
-            val u = getUser(props[1], users)
-            val m = getMachine(props[2], machines)
-            m.accountList.add(HasAccount(u, m, props[3]))
-          }
-
-          "networkServiceInfo" -> {
-            val m = getMachine(props[1], machines)
-            val a = getApplication(props[2], applications)
-            m.services.add(NetworkServiceInfo(m, a, props[3], props[4], props[5]))
-          }
-
-          else -> continue
-        }
-      }
-
-      val writer = FileWriter("xsbParse")
-      writer.write("xsb -e \"consult(command),consult('${input.getPath()}'),start1,halt.\"")
-      writer.close()
-      shellRun("chmod", listOf("+x", "xsbParse"))
-      shellRun("./xsbParse")
-      File("xsbParse").delete()
-
-      val haclReader = BufferedReader(FileReader("output.txt"))
-      val haclText: String = haclReader.readText()
-      haclReader.close()
-      val obj = kotlinx.serialization.json.Json.parseToJsonElement(haclText)
-      for (props in obj.jsonArray) {
-        if (props.jsonArray[0].toString()[0] != '_') {
-          getMachine(props.jsonArray[0].toString(), machines)
-        }
-        if (props.jsonArray[1].toString()[0] != '_') {
-          getMachine(props.jsonArray[1].toString(), machines)
-        }
-      }
-      for (props in obj.jsonArray) {
-        if (props.jsonArray[0].toString() == props.jsonArray[1].toString() && props.jsonArray[0].toString()[0] == '_') {
-          for (m in machines.values) {
-            m.haclList.add(Hacl(m, m, props.jsonArray[2].toString(), props.jsonArray[3].toString()))
           }
         } else {
-          val m1set = mutableSetOf<Machine>()
-          val m2set = mutableSetOf<Machine>()
-          if (props.jsonArray[0].toString()[0] == '_') {
-            m1set.addAll(machines.values)
-          } else {
-            m1set.add(getMachine(props.jsonArray[0].toString(), machines))
-          }
-          if (props.jsonArray[1].toString()[0] == '_') {
-            m2set.addAll(machines.values)
-          } else {
-            m2set.add(getMachine(props.jsonArray[1].toString(), machines))
-          }
-          for (m in m1set) {
-            for (n in m2set) {
-              m.haclList.add(Hacl(m, n, props.jsonArray[2].toString(), props.jsonArray[3].toString()))
-            }
+          for (m in machines) {
+            sb.append(machineMap[rule.dest]!!.accept(m, rule.dest, rule.protocol, rule.port))
           }
         }
       }
-
-      val nodes = mutableMapOf<Int, Machine>()
-      val arcs = mutableMapOf<Int, MutableSet<Int>>()
-      for (m in machines.values) {
-        nodes[m.id()] = m
-        arcs[m.id()] = mutableSetOf()
-        for (h in m.haclList) {
-          if (h.m2.name == "_") {
-            addWildcardConnections(m, machines, arcs)
-          } else {
-            arcs[m.id()]!!.add(h.m2.id())
-            // println("Added arc from ${m.name} to ${h.m2.name}")
-          }
-        }
-
-      }
-      return TopologyGraph(nodes, arcs, machines, applications, vulnerabilities, users)
-    }
-
-    private fun addWildcardConnections(
-            m: Machine,
-            machines: MutableMap<String, Machine>,
-            arcs: MutableMap<Int, MutableSet<Int>>
-    ) {
-      for (m2 in machines.values) {
-        if (m != m2) {
-          arcs[m.id()]!!.add(m2.id())
-          // println("Added arc from ${m.name} to ${m2.name}")
-        }
-      }
-    }
-
-    private fun getMachine(
-            name: String,
-            machines: MutableMap<String, Machine>,
-    ): Machine {
-      if (!machines.containsKey(name)) {
-        machines[name] = Machine(name)
-      }
-      return machines[name]!!
-    }
-
-    private fun getApplication(name: String, map: MutableMap<String, Application>): Application {
-      if (!map.containsKey(name)) {
-        map[name] = Application(name)
-      }
-      return map[name]!!
-    }
-
-    private fun getVulnerability(name: String, map: MutableMap<String, Vulnerability>): Vulnerability {
-      if (!map.containsKey(name)) {
-        map[name] = Vulnerability(name)
-      }
-      return map[name]!!
-    }
-
-    private fun getUser(name: String, map: MutableMap<String, User>): User {
-      if (!map.containsKey(name)) {
-        map[name] = User(name)
-      }
-      return map[name]!!
-    }
-  }
-
-  override fun toString(): String {
-    val sb = StringBuilder()
-    for (m in machines.values) {
-      sb.append(m.build())
-    }
-    for (v in vulnerabilities.values) {
-      sb.append(v.build())
-    }
-    for (u in users.values) {
-      sb.append(u.build())
-    }
-    for (a in applications.values) {
-      sb.append(a.build())
     }
     return sb.toString()
   }
 
-  fun exportToCytoscapeJSON(): String {
-    val klaxon = Klaxon()
-    val nodestrlist: MutableList<String> = mutableListOf()
-    val arcstrlist: MutableList<String> = mutableListOf()
-
-    for (m in nodes.values) {
-      val cytoNode = CytoNode("n${m.id()}", m.name)
-      cytoNode.addProperty("bool", 0)
-      cytoNode.addProperty("node_id", m.id())
-      cytoNode.addProperty("text", m.toString())
-      cytoNode.addProperty("type", "OR")
-      nodestrlist.add(klaxon.toJsonString(CytoDataWrapper(cytoNode)))
-    }
-
-    var counter = 0
-    for ((k, v) in arcs) {
-      for (n in v) {
-        counter++
-        val cytoEdge = CytoEdge("e$counter", "n$k", "n$n", "edge")
-        arcstrlist.add(klaxon.toJsonString(CytoDataWrapper(cytoEdge)))
+  private fun accept(m1: String, m2: String, protocol: String, port: String): String {
+    val sb = StringBuilder()
+    for (rule in rules) {
+      if (rule.direction == "out") {
+        continue
       }
+      sb.append(rule.accept(m1, m2, protocol, port))
     }
-    return "[" + nodestrlist.joinToString() + "," + arcstrlist.joinToString() + "]"
+    return sb.toString()
   }
 
-  fun separateGraph(removeNodes: List<Int>, removeEdges: List<Pair<Int, Int>>) {
-    for (i in removeNodes) {
-      nodes.remove(i)
-      arcs.remove(i)
-      for ((_, s) in arcs) {
-        s.remove(i)
-      }
+  private fun acceptAll(m1: String, protocol: String, port: String): String {
+    val sb = StringBuilder()
+    for (m2 in subnet!!) {
+      sb.append(accept(m1, m2, protocol, port))
     }
-    for ((i, j) in removeEdges) {
-      if (arcs.containsKey(i)) {
-        arcs[i]!!.remove(j)
-        nodes[i]!!.haclList.filterNot { h -> h.m1.id() == i && h.m2.id() == j }
+    return sb.toString()
+  }
+}
+
+@kotlinx.serialization.Serializable
+data class Link(val source: String, val dest: String)
+
+class TopologyGraph {
+  companion object {
+    fun build(machines: String, routers: String, links: String, outputFile: String) {
+      val writer = FileWriter(outputFile)
+      val sb = StringBuilder()
+      sb.append("attackerLocated(internet).\n")
+      sb.append("attackGoal(execCode(_,_)).\n")
+      sb.append("hacl(X,Y,_,_):-\n\tinSubnet(X,S),\n\tinSubnet(Y,S).\n")
+      //Parse machines and construct machine objects
+      //Parse routers and construct router objects
+      //Parse edges and add connections to routers
+      //Build input.P from machines and routers
+      for (m in Json.decodeFromString<List<Machine>>(machines)) {
+        sb.append(m)
       }
+      val routerList = Json.decodeFromString<List<Router>>(routers)
+      val linkList = Json.decodeFromString<List<Link>>(links)
+      val routerComponents = findRoutes(routerList, linkList)
+      val subnetMaps = findSubnets(routerList, linkList)
+      for (router in routerList) {
+        router.subnet = subnetMaps.first[router]!!
+      }
+      for (router in routerList) {
+        sb.append(router.build(routerComponents.first[routerComponents.second[router]!!], subnetMaps.second))
+      }
+      println(sb.toString())
+      writer.write(sb.toString())
+      writer.close()
+    }
+
+    private fun findSubnets(routers: List<Router>, links: List<Link>): Pair<Map<Router, Set<String>>, Map<String, Router>> {
+      val subnetMap = mutableMapOf<Router, MutableSet<String>>()
+      val routerMap = mutableMapOf<String, Router>()
+      for (router in routers) {
+        subnetMap[router] = mutableSetOf()
+        routerMap[router.name] = router
+      }
+      val machineMap = mutableMapOf<String, Router>()
+      for (link in links) {
+        if (routerMap[link.source] in subnetMap && routerMap[link.dest] in subnetMap) {
+          continue
+        } else if (routerMap[link.source] in subnetMap){
+          subnetMap[routerMap[link.source]]!!.add(link.dest)
+          machineMap[link.dest] = routerMap[link.source]!!
+        } else {
+          subnetMap[routerMap[link.dest]]!!.add(link.source)
+          machineMap[link.source] = routerMap[link.dest]!!
+        }
+      }
+      return Pair(subnetMap, machineMap)
+    }
+
+    //Calculates the connected components in the topology
+    private fun findRoutes(routers: List<Router>, links: List<Link>): Pair<List<Set<Router>>, Map<Router, Int>> {
+      val components = mutableListOf<Set<Router>>()
+      val graph = Array(routers.size) {Array(routers.size) {false}}
+      val routerMap = mutableMapOf<Router, Int>()
+      val indexMap = mutableMapOf<String, Int>()
+      for (i in routers.indices) {
+        indexMap[routers[i].name] = i
+      }
+      for (link in links) {
+        if (link.source in indexMap && link.dest in indexMap) {
+          graph[indexMap[link.source]!!][indexMap[link.dest]!!] = true
+        }
+      }
+      val stack = mutableListOf<Router>()
+      stack.addAll(routers)
+      val visited = mutableMapOf<String, Boolean>()
+      var currentComponent = mutableSetOf<Router>()
+      while (stack.isNotEmpty()) {
+        val node = stack.removeFirst()
+        if (visited[node.name] == true) {
+          continue
+        }
+        visited[node.name] = true
+        if (node !in currentComponent) {
+          components.add(currentComponent)
+          currentComponent = mutableSetOf(node)
+          routerMap[node] = components.size
+        }
+        for (i in routers.indices) {
+          if (visited[routers[i].name] == true) {
+            continue
+          }
+          if (graph[indexMap[node.name]!!][i] || graph[i][indexMap[node.name]!!]) {
+            currentComponent.add(routers[i])
+            stack.add(routers[i])
+            routerMap[routers[i]] = components.size
+          }
+        }
+      }
+      if (currentComponent.isNotEmpty()) {
+        components.add(currentComponent)
+      }
+      return Pair(components, routerMap)
     }
   }
+}
+
+fun main() {
+  TopologyGraph.build("[${FileReader("machine.json").readText()}, ${FileReader("webServer.json").readText()}, ${FileReader("workStation.json").readText()}]", "[${FileReader("router.json").readText()}]", "[{\"source\": \"workStation\", \"dest\": \"router\"}, {\"source\": \"router\", \"dest\": \"webServer\"}, {\"source\": \"router\", \"dest\": \"fileServer\"}]", "output.txt")
 }
