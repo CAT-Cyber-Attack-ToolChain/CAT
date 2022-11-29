@@ -28,7 +28,7 @@ function App() {
     <>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
-          <TopologyBuilder />
+          <TopologyBuilder setAtkGraph={setGraph}/>
         </ReflexElement>
 
         <ReflexSplitter style={{ width: '10px', backgroundColor: '#696969' }} className='gutter-vertical' />

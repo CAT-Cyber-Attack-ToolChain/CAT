@@ -79,7 +79,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = () => {
+const TopologyBuilder = ({setAtkGraph}) => {
   // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
@@ -92,6 +92,7 @@ const TopologyBuilder = () => {
   const [curDevice, setCurDevice] = useState(undefined);
 
   const [nextId, setNextId] = useState(0);
+  const [created, setCreated] = useState({});
 
   function onMouseover(cy) {
     cy.removeListener("click");
@@ -126,6 +127,7 @@ const TopologyBuilder = () => {
       console.log("Remove " + nodeId);
       console.log(netGraph[0]);
       console.log(netGraph);
+      created[curDevice] = false;
       setNetGraph(
         netGraph.filter(
           (x) =>
@@ -163,25 +165,30 @@ const TopologyBuilder = () => {
     });
   }
 
-  function addConfigurationHandler(file) {
+  function addConfiguration(file) {
     const fr = new FileReader();
     fr.addEventListener("load", (event) => {
       const obj = JSON.parse(event.target.result);
-      if (!machines.some((m) => m["label"] === obj["label"])) {
+      if (Array.isArray(obj)) {
+        setMachines([...machines, ...obj.filter((o) => !machines.some((m) => m["label"] === o["label"]))])
+      } else if (!machines.some((m) => m["label"] === obj["label"])) {
         setMachines([...machines, obj]);
       }
     });
     fr.readAsText(file.target.files[0]);
   }
 
-  function setDeviceHandler(option) {
+  function setDevice(option) {
     if (option) {
       setCurDevice(option.value);
     }
   }
 
-  function addDeviceHandler() {
+  function addDevice() {
     if (!curDevice) {
+      return;
+    }
+    if (created[curDevice]) {
       return;
     }
     setNetGraph([
@@ -196,14 +203,44 @@ const TopologyBuilder = () => {
             type: "OR",
             node_id: nextId,
           },
+          type: machines.filter((x) => x.label === curDevice)[0].type,
+          machine: {...machines.filter((x) => x.label === curDevice)[0]} 
         },
       },
     ]);
     setNextId(nextId + 1);
+    created[curDevice] = true;
   }
 
   function printNetGraph() {
     console.log(netGraph)
+    submitHandler()
+  }
+
+  async function submitHandler() {
+    var edges = netGraph.filter((x) => x.data.label === "edge").map((x) => {return {source: netGraph.filter((y) => y.data.id === x.data.source.toString())[0].data.label, dest: netGraph.filter((y) => y.data.id === x.data.target.toString())[0].data.label}})
+    var machines = netGraph.filter((x) => x.data.type === "machine").map((x) => x.data.machine)
+    var routers = netGraph.filter((x) => x.data.type === "router").map((x) => x.data.machine)
+    /*var nodes = new Set(nodeToCut)
+    var edges = [...new Set(edgeToCut.map(JSON.stringify))].map(JSON.parse)
+    await axios.post('http://localhost:8080/graph/separate', {
+      machines: JSON.stringify(Array.from(nodes)),
+      routers: JSON.stringify(Array.from(nodes)),
+      links: JSON.stringify(Array.from(edges))
+    });*/
+    try {
+      var response = await axios.post('http://localhost:8080/submitInput', {
+        machines: JSON.stringify(Array.from(machines)),
+        routers: JSON.stringify(Array.from(routers)),
+        links: JSON.stringify(Array.from(edges))
+      });
+
+      let data = JSON.parse(response.data)
+      console.log("Attack graph: ", data["attackGraph"])
+      setAtkGraph(JSON.stringify(data["attackGraph"]))
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 
   return (
@@ -214,7 +251,7 @@ const TopologyBuilder = () => {
             type="file"
             name="Add Machine"
             id="add-machine"
-            onChange={addConfigurationHandler}
+            onChange={addConfiguration}
           />
           <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
         </div>  
@@ -222,9 +259,9 @@ const TopologyBuilder = () => {
           <p>Add to topology: </p>
           <Dropdown
             options={machines}
-            onChange={setDeviceHandler}
+            onChange={setDevice}
           />
-          <button className="input-custom" onClick={addDeviceHandler}> + </button>
+          <button className="input-custom" onClick={addDevice}> + </button>
         </div>
         <div>
           <input 

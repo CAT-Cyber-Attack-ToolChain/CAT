@@ -16,6 +16,8 @@ class MulvalController(private val inputP: MulvalInput, private val outputDir: A
         print("Generating attack graph using MulVAL...")
 
         val workingDir = File(path)
+        println(inputP.getPath())
+        println(path)
         generated = try {
             shellRun("graph_gen.sh", listOf(inputP.getPath(), "-v", "-p"), workingDir)
             true

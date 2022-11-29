@@ -111,21 +111,27 @@ data class Vulnerability(val name: String, val machine: String, val application:
 }
 
 @kotlinx.serialization.Serializable
-data class FirewallRule(val source: String, val dest: String, val protocol: String, val port: String) {
-  fun accept(m1: String, m2: String, protocol: String, port: String): Boolean {
-    if (source != "*" && source != m1) {
-      return false
+data class FirewallRule(val source: String, val dest: String, val protocol: String, val port: String, val direction: String) {
+  fun accept(m1: String, m2: String, protocol: String, port: String): String {
+    val m1 = restrict(m1, source) ?: return ""
+    val m2 = restrict(m2, dest) ?: return ""
+    val protocol = restrict(protocol, this.protocol) ?: return ""
+    val port = restrict(port, this.port) ?: return ""
+    return "hacl($m1, $m2, $protocol, $port).\n"
+  }
+
+  private fun restrict(x: String, y: String): String? {
+    return if (x == "*" && y == "*") {
+      "_"
+    } else if (x == "*") {
+      y
+    } else if (y == "*") {
+      x
+    } else if (x == y) {
+      x
+    } else {
+      null
     }
-    if (dest != "*" && dest != m2) {
-      return false
-    }
-    if (this.protocol != "*" && this.protocol != protocol) {
-      return false
-    }
-    if (this.port != "*" && this.port != port) {
-      return false
-    }
-    return true
   }
 }
 
@@ -141,70 +147,49 @@ data class Router(val type: String, val label: String, val value: String, val na
       sb.append("inSubnet($machine, ${name}Subnet).\n")
     }
     for (rule in rules) {
-      if (rule.source == "*" && rule.dest == "*") {
-        val m1 = getRepresentative() ?: break
-        for (r2 in routers) {
-          val m2 = r2.getRepresentative() ?: continue
-          if (r2.accept(m1, m2, rule.protocol, rule.port)) {
-            sb.append("hacl($m1, $m2, ${rule.protocol}, ${rule.port}).\n")
-          }
+      if (rule.direction == "out") {
+        val machines = mutableSetOf<String>()
+        if (rule.source == "*") {
+          machines.addAll(subnet!!)
+        } else {
+          machines.add(rule.source)
         }
-      } else if (rule.source == "*") {
-        if (rule.dest in subnet!!) {
+        if (rule.dest == "*") {
           for (r2 in routers) {
-            val m2 = r2.getRepresentative() ?: continue
-            if (r2.accept(m2, rule.dest, rule.protocol, rule.port)) {
-              sb.append("hacl($m2, ${rule.dest}, ${rule.protocol}, ${rule.port}).\n")
+            if (r2 == this) {
+              continue
+            }
+            for (m in machines) {
+              sb.append(r2.acceptAll(m, rule.protocol, rule.port))
             }
           }
         } else {
-          val m1 = getRepresentative() ?: break
-          val r2 = machineMap[rule.dest]!!
-          val m2 = r2.getRepresentative() ?: continue
-          if (r2.accept(m1, m2, rule.protocol, rule.port)) {
-            sb.append("hacl($m1, $m2, ${rule.protocol}, ${rule.port}).\n")
+          for (m in machines) {
+            sb.append(machineMap[rule.dest]!!.accept(m, rule.dest, rule.protocol, rule.port))
           }
-        }
-      } else if (rule.dest == "*") {
-        if (rule.source in subnet!!) {
-          for (r2 in routers) {
-            val m2 = r2.getRepresentative() ?: continue
-            if (r2.accept(rule.source, m2, rule.protocol, rule.port)) {
-              sb.append("hacl(${rule.source}, $m2, ${rule.protocol}, ${rule.port}).\n")
-            }
-          }
-        } else {
-          val m1 = getRepresentative() ?: break
-          val r2 = machineMap[rule.source]!!
-          val m2 = r2.getRepresentative() ?: continue
-          if (r2.accept(m2, m1, rule.protocol, rule.port)) {
-            sb.append("hacl($m2, $m1, ${rule.protocol}, ${rule.port}).\n")
-          }
-        }
-      } else {
-        var r2 = machineMap[rule.source]!!
-        if (rule.source in subnet!!) {
-          r2 = machineMap[rule.dest]!!
-        }
-        if (r2.accept(rule.source, rule.dest, rule.protocol, rule.port)) {
-          sb.append("hacl(${rule.source}, ${rule.dest}, ${rule.protocol}, ${rule.port}).\n")
         }
       }
     }
     return sb.toString()
   }
 
-  private fun getRepresentative(): String? {
-    return subnet?.firstOrNull()
+  private fun accept(m1: String, m2: String, protocol: String, port: String): String {
+    val sb = StringBuilder()
+    for (rule in rules) {
+      if (rule.direction == "out") {
+        continue
+      }
+      sb.append(rule.accept(m1, m2, protocol, port))
+    }
+    return sb.toString()
   }
 
-  private fun accept(m1: String, m2: String, protocol: String, port: String): Boolean {
-    for (rule in rules) {
-      if (rule.accept(m1, m2, protocol, port) || rule.accept(m2, m1, protocol, port)) {
-        return true
-      }
+  private fun acceptAll(m1: String, protocol: String, port: String): String {
+    val sb = StringBuilder()
+    for (m2 in subnet!!) {
+      sb.append(accept(m1, m2, protocol, port))
     }
-    return false
+    return sb.toString()
   }
 }
 
@@ -229,12 +214,13 @@ class TopologyGraph {
       val routerList = Json.decodeFromString<List<Router>>(routers)
       val linkList = Json.decodeFromString<List<Link>>(links)
       val routerComponents = findRoutes(routerList, linkList)
+      println(routerList)
+      println(linkList)
       val subnetMaps = findSubnets(routerList, linkList)
       for (router in routerList) {
         router.subnet = subnetMaps.first[router]!!
       }
       for (router in routerList) {
-
         sb.append(router.build(routerComponents.first[routerComponents.second[router]!!], subnetMaps.second))
       }
       println(sb.toString())

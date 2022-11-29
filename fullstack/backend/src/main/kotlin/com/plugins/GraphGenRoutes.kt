@@ -37,11 +37,11 @@ fun Route.GraphGenRouting() {
 
     fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
         // upload the graph to Neo4j
+        println("upload graph")
         if (mulvalController.generateGraph()) {
             neo4JController.update()
         }
         // get the graph data from Neo4j
-
         return exportToCytoscapeJSON()
     }
 
@@ -56,41 +56,25 @@ fun Route.GraphGenRouting() {
 
     route("/submitInput") {
         post {
-            val upload = call.receiveMultipart()
-            lateinit var mulvalInput: MulvalInput
-            lateinit var mulvalOutput: AttackGraphOutput
-            upload.forEachPart { part ->
-                if (part is PartData.FileItem) {
-                    // retrieve file name of upload
-                    val name = part.originalFileName!!
-                    filePath = "$cur/src/main/resources/uploads/$name"
-                    val file = File(filePath)
+            val upload = call.receive<TopologyInput>()
+            println(upload)
 
-                    // use InputStream from part to save file
-                    part.streamProvider().use { its ->
-                        // copy the stream to the file with buffering
-                        file.outputStream().buffered().use {
-                            // note that this is blocking
-                            its.copyTo(it)
-                        }
-                    }
-
-                    //
-                    mulvalInput = MulvalInput(filePath)
-                    mulvalOutput = AttackGraphOutput("$cur/../../output")
-
-                    return@forEachPart
-                }
-            }
+            val mulvalInput = MulvalInput("$cur/input.P")
+            val mulvalOutput = AttackGraphOutput("$cur/../../output")
+            TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
             // generate the graph, move to Neo4j, and display it on frontend
-            val neo4JController = Neo4JController(mulvalOutput, PathCache(filePath), "default")
+            val neo4JController = Neo4JController(mulvalOutput, PathCache("$cur/input.P"), "default")
             Neo4JMapping.add(neo4JController)
+            println("foobar")
             val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
             println(attackGraphJson)
             call.respond("{\"attackGraph\": $attackGraphJson}")
         }
     }
 }
+
+@kotlinx.serialization.Serializable
+data class TopologyInput(val machines: String, val routers: String, val links: String)
 
 
 fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
@@ -102,13 +86,15 @@ fun nodeToCytoJSON(n : Node): List<CytoDataWrapper> {
 
 fun exportToCytoscapeJSON(): String {
     val klaxon = Klaxon()
+    println("exporting")
     val adapter : Neo4JAdapter = Neo4JAdapter()
+    println("got adapter")
     val nodestrlist: List<String> = adapter.nodes.values.map { n ->
 
             val dataWrappers = nodeToCytoJSON(n)
             val nodeStrs = dataWrappers.map { dw -> klaxon.toJsonString(dw) }
             nodeStrs.joinToString()
         }
-
+    println("Hello World")
         return "[" + nodestrlist.joinToString() + "]"
 }
