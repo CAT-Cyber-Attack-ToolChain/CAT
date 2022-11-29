@@ -123,6 +123,11 @@ async function simulateRealAttack() {
     return response.data
 }
 
+async function simulateAttack(attackAgent) {
+    const response = await axios.get(`http://${host}:${port}/simulation/${attackAgent}`)
+    return response.data
+}
+
 /*
     Convert array of path into set of node
     arr : [{ first: nodeFrom, second: nodeTo}]
@@ -140,7 +145,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,map,toHighlight}) => {
+const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -213,7 +218,7 @@ const Cytoscape = ({graph,map,toHighlight}) => {
             })
         }
         
-        const attacked = await simulateRealAttack().then(path=> {
+        const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
         prevAttackPath = attacked;

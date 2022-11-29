@@ -20,6 +20,8 @@ function App() {
   const [mets, setMets] = useState()
   const [loading, setLoading] = useState()
 
+  const [attackAgent, setAttackAgent] = useState()
+
   /* Mapping */
   const [mapAtkGraph, setMapAtk] = useState([])
   const [mapTopology, setMapTop] = useState([])
@@ -32,9 +34,10 @@ function App() {
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
 
+
   return (
     <>
-      <SimulationSidebar/>
+      <SimulationSidebar setAttackAgent={setAttackAgent}/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
           <TopologyBuilder setAtkGraph={setGraph} map={setMapAtk} toHighlight={mapTopology}/>
@@ -45,7 +48,7 @@ function App() {
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape graph={atkGraph} key={atkGraph} map={setMapTop} toHighlight={mapAtkGraph}/>
+            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} map={setMapTop} toHighlight={mapAtkGraph}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
