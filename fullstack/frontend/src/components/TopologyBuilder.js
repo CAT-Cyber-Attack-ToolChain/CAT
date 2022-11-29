@@ -2,7 +2,7 @@ import axios from "axios";
 import CytoscapeComponent from "react-cytoscapejs";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const padding = 40
 const panelHeight = 250
@@ -79,7 +79,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph}) => {
+const TopologyBuilder = ({setAtkGraph, map, toHighlight}) => {
   // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
@@ -90,9 +90,16 @@ const TopologyBuilder = ({setAtkGraph}) => {
     { label: "c", value: "c" },
   ]);
   const [curDevice, setCurDevice] = useState(undefined);
-
   const [nextId, setNextId] = useState(0);
   const [created, setCreated] = useState({});
+
+  /* TO IMPLEMENT
+     toHighlight gets data from topology builder (Mapping here)
+     This is called whenever toHighlight changes
+  */
+  useEffect(() => {
+    console.log("from atkgraph " + toHighlight)
+  },[toHighlight])
 
   function onMouseover(cy) {
     cy.removeListener("click");
@@ -162,6 +169,11 @@ const TopologyBuilder = ({setAtkGraph}) => {
     cy.on("mouseout", "edge", (event) => {
       cy.$("#" + event.target.data("id")).removeClass("highlightEdge");
     });
+
+    /* Set mapping for higlighting Attack graph */
+    cy.on('click', 'node', (event) => {
+      map(event.target.data("id"))
+    })
   }
 
   function addConfiguration(file) {

@@ -10,5 +10,6 @@ fun Application.configureRouting() {
         GraphGenRouting()
         MetricsRouting()
         SimulationRouting()
+        ConfigurableAttackRouting()
     }
 }

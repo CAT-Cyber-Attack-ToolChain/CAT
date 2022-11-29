@@ -3,7 +3,9 @@ package com.neo4j
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
 import com.controller.Neo4JController
-import org.neo4j.driver.*
+import org.neo4j.driver.Driver
+import org.neo4j.driver.Result
+import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 
 class Neo4JAdapter {
@@ -120,48 +122,76 @@ val adapter: Neo4JAdapter = Neo4JAdapter()
 
 fun main(args: Array<String>) {
 
-    for (n: Node in adapter.nodes.values) {
-        println(String.format("Node: ${n.permission}"))
-        for (r : Rule in n.connections) {
-            println(String.format("    - ${r.rule}"))
-        }
+  for (n: Node in adapter.nodes.values) {
+    println(String.format("Node: ${n.getPermission()}"))
+    for (r: Rule in n.getConnections()) {
+      println(String.format("    - ${r.getText()}"))
     }
+  }
 }
 
 class Node(
-    val id: Int,
-    val permission: String,
-    val connections: Set<Rule>
-) {}
+        private val id: Int,
+        private val permission: String,
+        private val connections: Set<Rule>
+) {
+  fun getId(): Int {
+    return id
+  }
+
+  fun getPermission(): String {
+    return permission
+  }
+
+  fun getConnections(): Set<Rule> {
+    return connections
+  }
+}
 
 class Rule(
-    val id: Int,
-    val rule: String,
-    val dest: Node
+        private val id: Int,
+        private val text: String,
+        private val dest: Node
 ) {
 
-    companion object {
-        const val DEFAULT_EASINESS = Int.MAX_VALUE
-    }
+  companion object {
+    const val DEFAULT_EASINESS = Int.MAX_VALUE
+  }
 
-    var easiness: Int = DEFAULT_EASINESS
+  var easiness: Int = DEFAULT_EASINESS
 
-    fun calculateEasinessScore() {
-        val technique = getMitreTechnique(this)
-        easiness = TECHNIQUE_EASYNESS_MAP.getOrDefault(technique.technique, 0)
-    }
+  fun getId(): Int{
+    return id
+  }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Rule) return false
-        if (rule == other.rule) return true
-        return false
-    }
+  fun getText(): String{
+    return text
+  }
 
-    override fun hashCode(): Int {
-        var result = rule.hashCode()
-        result = 31 * result + dest.hashCode()
-        return result
-    }
+  fun getDest(): Node {
+    return dest
+  }
+
+  fun calculateEasinessScore() {
+    easiness = calculateScore(TECHNIQUE_EASYNESS_MAP)
+  }
+
+  fun calculateScore(scoreMap: Map<String, Int>): Int {
+    val technique = getMitreTechnique(this)
+    return scoreMap.getOrDefault(technique.technique, 0)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Rule) return false
+    if (text == other.text) return true
+    return false
+  }
+
+  override fun hashCode(): Int {
+    var result = text.hashCode()
+    result = 31 * result + dest.hashCode()
+    return result
+  }
 
 }

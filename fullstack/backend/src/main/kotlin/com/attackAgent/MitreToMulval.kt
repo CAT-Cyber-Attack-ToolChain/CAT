@@ -22,7 +22,7 @@ fun readCsv(inputStream: InputStream): List<MulvalMitreRecord> =
 val mulval_mitre_map = readCsv(Files.newInputStream(Paths.get(pathToCSV)))
 
 fun getMitreTechnique(rule: Rule): MitreTechnique {
-    val index = searchMap(rule.rule)
+    val index = searchMap(rule.getText())
     if (index != -1)
         return MitreTechnique(getTechniqueString(index))
     return MitreTechnique.nullTechnique
