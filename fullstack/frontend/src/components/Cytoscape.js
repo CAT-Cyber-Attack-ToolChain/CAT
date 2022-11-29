@@ -140,7 +140,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,map,toHighlight}) => {
+const Cytoscape = ({graph,toHighlight}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -162,15 +162,11 @@ const Cytoscape = ({graph,map,toHighlight}) => {
     */    
     useEffect(() => {
         console.log("from topologybuilder " + toHighlight)
+        if (!cyRef) {
+    
+        }
     },[toHighlight])
 
-
-    /* Set mapping for higlighting Topology */
-    useEffect(() => {
-        cyRef.on('click','node', (event) => {
-            map(event.target.data("id"))
-        })
-    }, [cyRef])
 
     /*
         Find id of edge on graph with corresponding src and dst

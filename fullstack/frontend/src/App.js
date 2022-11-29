@@ -22,7 +22,6 @@ function App() {
 
   /* Mapping */
   const [mapAtkGraph, setMapAtk] = useState([])
-  const [mapTopology, setMapTop] = useState([])
 
   const { containerProps, indicatorEl } = useLoading({
     loading: true,
@@ -37,7 +36,7 @@ function App() {
       <SimulationSidebar/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
-          <TopologyBuilder setAtkGraph={setGraph} map={setMapAtk} toHighlight={mapTopology}/>
+          <TopologyBuilder setAtkGraph={setGraph} map={setMapAtk}/>
         </ReflexElement>
 
         <ReflexSplitter style={{width: '10px', backgroundColor: '#696969', zIndex: '1'}} className='gutter-vertical' />
@@ -45,7 +44,7 @@ function App() {
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape graph={atkGraph} key={atkGraph} map={setMapTop} toHighlight={mapAtkGraph}/>
+            <Cytoscape graph={atkGraph} key={atkGraph} toHighlight={mapAtkGraph}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
