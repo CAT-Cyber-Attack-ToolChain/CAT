@@ -1,0 +1,11 @@
+{
+    "type": "machine",
+    "value": "fileServer",
+    "label": "fileServer",
+    "name": "fileServer",
+    "accounts": [],
+    "services": [{"machine": "fileServer", "application": "mountd", "protocol": "rpc", "port": "100005", "user": "root"}],
+    "programs": [],
+    "vulnerabilities": [{"machine": "fileServer", "name": "'1337h4X0r'", "application":  "mountd", "locality": "remoteExploit", "type": "privEscalation", "cvss": "h"}],
+    "other": [{"name":  "nfsExportInfo", "args": ["fileServer", "'/export'", "_anyAccess", "workStation"]},{"name":  "nfsExportInfo", "args": ["fileServer", "'/export'", "_anyAccess", "webServer"]}]
+}

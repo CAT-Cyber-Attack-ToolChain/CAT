@@ -1,0 +1,46 @@
+[
+{
+    "type": "machine",
+    "value": "fileServer",
+    "label": "fileServer",
+    "name": "fileServer",
+    "accounts": [],
+    "services": [{"machine": "fileServer", "application": "mountd", "protocol": "rpc", "port": "100005", "user": "root"}],
+    "programs": [],
+    "vulnerabilities": [{"machine": "fileServer", "name": "'1337h4X0r'", "application":  "mountd", "locality": "remoteExploit", "type": "privEscalation", "cvss": "h"}],
+    "other": [{"name":  "nfsExportInfo", "args": ["fileServer", "'/export'", "_anyAccess", "workStation"]},{"name":  "nfsExportInfo", "args": ["fileServer", "'/export'", "_anyAccess", "webServer"]}]
+},
+{
+    "type": "machine",
+    "value": "webServer",
+    "label": "webServer",
+    "name": "webServer",
+    "accounts": [],
+    "services": [{"machine": "webServer", "application": "httpd", "protocol": "tcp", "port": "80", "user": "apache"}],
+    "programs": [],
+    "vulnerabilities": [{"machine": "webServer", "name": "'CAN-2002-0392'", "application":  "httpd", "locality": "remoteExploit", "type": "privEscalation", "cvss": "h"}],
+    "other": []
+},
+{
+    "type": "machine",
+    "value": "workStation",
+    "label": "workStation",
+    "name": "workStation",
+    "accounts": [],
+    "services": [],
+    "programs": [],
+    "vulnerabilities": [],
+    "other": [{"name":  "nfsMounted", "args": ["workStation", "'/usr/local/share'", "fileServer", "'/export'", "read"]}]
+},
+{
+    "type": "machine",
+    "value": "internet",
+    "label": "internet",
+    "name": "internet",
+    "accounts": [],
+    "services": [],
+    "programs": [],
+    "vulnerabilities": [],
+    "other": []
+}
+]
