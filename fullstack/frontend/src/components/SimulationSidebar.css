@@ -37,3 +37,27 @@
   width: 100%;
 }
 
+.radio-group {
+  color: white!important;
+}
+
+.radio-button {
+   color: white;
+}
+
+.radio-button.Mui-checked {
+            color: lightblue,
+}
+
+.center-children {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+#sim-submit-button.position-bottom {
+    display: flex;
+    position: absolute;
+    right: 0.25rem;
+    bottom: 3rem;
+}
