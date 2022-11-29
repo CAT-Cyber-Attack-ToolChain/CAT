@@ -7,7 +7,7 @@ class RealAttackAgent : AttackAgent() {
 
     override fun chooseRule(n : Node): Rule {
         var pickedRule: Rule? = null
-        n.connections.forEach {rule ->
+        n.getConnections().forEach {rule ->
             rule.calculateEasinessScore()
             if (pickedRule == null) {
                 pickedRule = rule

@@ -11,5 +11,6 @@ fun Application.configureRouting() {
         GraphSeparationMergeRoutes()
         MetricsRouting()
         SimulationRouting()
+        ConfigurableAttackRouting()
     }
 }

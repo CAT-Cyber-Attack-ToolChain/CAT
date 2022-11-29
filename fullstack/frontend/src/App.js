@@ -5,6 +5,8 @@ import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import "react-dropdown/style.css";
 import TopologyBuilder from './components/TopologyBuilder';
+import ConfigurableAttackAgentForm from "./components/ConfigurableAttackAgent"
+
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 import { useLoading, BallTriangle } from '@agney/react-loading';
