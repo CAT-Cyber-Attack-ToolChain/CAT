@@ -3,6 +3,7 @@ import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import dagre from 'cytoscape-dagre';
 import axios from 'axios';
+import prevAttackPath from './PreviousPath';
 import {useEffect} from "react"
 
 cytoscape.use(popper);
@@ -149,8 +150,6 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
-    // set in every attack simulation (used for removing previous attack path)
-    var prevAttackPath = undefined;
     
     useEffect(() => {
         function fitGraph() {
@@ -209,7 +208,8 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
         //disable simulate button
         document.getElementById('simulate-button').disabled = true
     
-        if (typeof prevAttackPath !== 'undefined') {
+        // check if previous attack path exists
+        if (Object.keys(prevAttackPath).length !== 0) {
             prevAttackPath.nodes.forEach((id) => {
                 cyRef.$('#' + id).removeClass("attackedNode")
             })
@@ -221,7 +221,8 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
         const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
-        prevAttackPath = attacked;
+        prevAttackPath.nodes = attacked.nodes;
+        prevAttackPath.edges = attacked.edges;
 
         function highlightNode(index) {
           cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
