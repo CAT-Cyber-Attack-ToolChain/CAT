@@ -79,7 +79,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, map, toHighlight}) => {
+const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
   // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
@@ -169,11 +169,6 @@ const TopologyBuilder = ({setAtkGraph, map, toHighlight}) => {
     cy.on("mouseout", "edge", (event) => {
       cy.$("#" + event.target.data("id")).removeClass("highlightEdge");
     });
-
-    /* Set mapping for higlighting Attack graph */
-    cy.on('click', 'node', (event) => {
-      map(event.target.data("id"))
-    })
   }
 
   function addConfiguration(file) {

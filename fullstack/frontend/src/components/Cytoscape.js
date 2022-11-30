@@ -140,7 +140,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,map,toHighlight}) => {
+const Cytoscape = ({graph,map}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -155,15 +155,6 @@ const Cytoscape = ({graph,map,toHighlight}) => {
         window.addEventListener('resize', fitGraph)
         return () => window.removeEventListener('resize', fitGraph)
     })
-
-    /* TO IMPLEMENT
-       toHighlight gets data from Atk graph (Mapping here)
-       This is called whenever toHighlight changes
-    */    
-    useEffect(() => {
-        console.log("from topologybuilder " + toHighlight)
-    },[toHighlight])
-
 
     /* Set mapping for higlighting Topology */
     useEffect(() => {
