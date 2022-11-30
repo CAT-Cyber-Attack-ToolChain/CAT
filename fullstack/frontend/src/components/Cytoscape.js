@@ -101,7 +101,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,setMapTop}) => {
+const Cytoscape = ({graph,setMapTop,attackAgent}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -123,7 +123,10 @@ const Cytoscape = ({graph,setMapTop}) => {
             })
             cyRef.on('mouseout', 'node', () => setMapTop([]))
         })
-        
+
+        cyRef.minZoom(cyRef.zoom() - 0.01)
+        cyRef.maxZoom(0.1)
+
     }, [cyRef])
 
     /*

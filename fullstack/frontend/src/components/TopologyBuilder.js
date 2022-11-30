@@ -80,7 +80,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
+const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
 
   //initialised once component renders
   var cyRef = undefined
@@ -105,7 +105,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     if (cyRef) {
       if (toHighlight.length !== 0) {
         toHighlight.forEach(machine => {
-          cyRef.$(machine).addClass('highlightNode')
+          cyRef.$(ele => ele.data('label') === machine).addClass('highlightNode')
         });
       } else {
         cyRef.$('.highlightNode').removeClass('highlightNode')
@@ -251,6 +251,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
 
       let data = JSON.parse(response.data)
       setAtkGraph(JSON.stringify(data["attackGraph"]))
+      setMets(getMetrics())
     } catch (error) {
       console.error('Error:', error);
     }
@@ -287,6 +288,11 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
       setCreated(created);
     });
     fr.readAsText(file.target.files[0]);
+  }
+
+  async function getMetrics() {
+    const response = await axios.get('http://localhost:8080/metrics')
+    setMets(JSON.parse(response.data))
   }
 
   return (
