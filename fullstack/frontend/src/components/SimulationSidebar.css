@@ -1,5 +1,5 @@
 .simulationSidebar {
-  height: 100%px;
+  height: 100%;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -10,7 +10,7 @@
   font-size: 1.25rem;
   background: none;
   cursor: pointer;
-  display: inline-block;
+  display: block;
 }
 
 .menu-content {
