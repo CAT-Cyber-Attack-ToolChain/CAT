@@ -20,7 +20,7 @@ function App() {
   const [mets, setMets] = useState()
   const [loading, setLoading] = useState()
 
-  const [attackAgent, setAttackAgent] = useState()
+  const [attackAgent, setAttackAgent] = useState('custom')
 
   /* Mapping */
   const [mapTopology, setMapTop] = useState([])
@@ -47,7 +47,7 @@ function App() {
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
+            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
