@@ -74,6 +74,12 @@ function ConfigurableAttackAgentForm() {
     )
   }
 
+  function callWithoutSubmit(event, func) {
+    // to prevent form submission
+    event.preventDefault()
+    func()
+  }
+
   function addFormField() {
     setFormElements(prevState => [...prevState, generateFormField(true)])
   }
@@ -102,8 +108,8 @@ function ConfigurableAttackAgentForm() {
         }
       </form>
       <div style={{display: "flex", justifyContent: "space-evenly"}}>
-        <button id="add-button" onClick={() => addFormField()}> Add new technique </button>
-        <button id="submit-button" onClick={() => sendTechniquesToBackend()}> Submit </button>
+        <button id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
+        <button id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
       </div>
     </div>
   )
