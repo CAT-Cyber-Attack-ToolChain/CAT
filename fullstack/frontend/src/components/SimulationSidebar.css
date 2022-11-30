@@ -1,13 +1,12 @@
 .simulationSidebar {
-  height: 20px;
+  height: 100%px;
   display: flex;
   justify-content: end;
   align-items: center;
 }
 
 .menu-icons {
-  margin-right: 1rem;
-  margin-top: 1rem;
+  padding : 10px;
   font-size: 1.25rem;
   background: none;
   cursor: pointer;
