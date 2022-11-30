@@ -3,6 +3,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import { useState, useEffect } from "react";
+import fileDownload from "js-file-download";
 
 const padding = 40
 const panelHeight = 250
@@ -241,13 +242,6 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     var edges = netGraph.filter((x) => x.data.label === "edge").map((x) => {return {source: netGraph.filter((y) => y.data.id === x.data.source.toString())[0].data.label, dest: netGraph.filter((y) => y.data.id === x.data.target.toString())[0].data.label}})
     var machines = netGraph.filter((x) => x.data.type === "machine").map((x) => x.data.machine)
     var routers = netGraph.filter((x) => x.data.type === "router").map((x) => x.data.machine)
-    /*var nodes = new Set(nodeToCut)
-    var edges = [...new Set(edgeToCut.map(JSON.stringify))].map(JSON.parse)
-    await axios.post('http://localhost:8080/graph/separate', {
-      machines: JSON.stringify(Array.from(nodes)),
-      routers: JSON.stringify(Array.from(nodes)),
-      links: JSON.stringify(Array.from(edges))
-    });*/
     try {
       var response = await axios.post('http://localhost:8080/submitInput', {
         machines: JSON.stringify(Array.from(machines)),
@@ -260,6 +254,39 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     } catch (error) {
       console.error('Error:', error);
     }
+  }
+
+  async function saveGraph() {
+    fileDownload(JSON.stringify(netGraph), "output.json")
+  }
+
+  function mergeTopology(file) {
+    const fr = new FileReader();
+    fr.addEventListener("load", (event) => {
+      var obj = JSON.parse(event.target.result);
+      const n = obj.length
+      console.log(obj);
+      obj = obj.filter((x) => x.data.label === "edge" || !netGraph.some((y) => y.data.label === x.data.label));
+      console.log(obj);
+      obj = obj.filter((x) => x.data.label !== "edge" || (obj.some((y) => y.data.id === x.data.source) && obj.some((y) => y.data.id === x.data.target)));
+      console.log(obj);
+      for (var i = 0; i < obj.length; ++i) {
+        console.log(obj[i]);
+        obj[i].data.id = String(Number(obj[i].data.id) + nextId);
+        if (obj[i].data.label === "edge") {
+          obj[i].data.source = String(Number(obj[i].data.source) + nextId);
+          obj[i].data.target = String(Number(obj[i].data.target) + nextId);
+        }
+        created[obj[i].data.label] = true;
+        console.log(created);
+        netGraph.push(obj[i]);
+        console.log(netGraph)
+      }
+      setNetGraph(netGraph);
+      setNextId(nextId + n);
+      setCreated(created);
+    });
+    fr.readAsText(file.target.files[0]);
   }
 
   return (
@@ -287,10 +314,12 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
             type="file" 
             name="merge-toppology" 
             id="merge-topology"
+            onChange={mergeTopology}
           />
           <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
         </div>
         <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
+        <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
       </div>
           
       {netGraph.length === 0 ?
