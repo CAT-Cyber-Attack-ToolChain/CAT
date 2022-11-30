@@ -8,8 +8,10 @@ import com.cytoscape.CytoDataWrapper
 import com.cytoscape.CytoEdge
 import com.cytoscape.CytoNode
 import com.example.model.PathCache
+import com.graph.Machine
 import com.graph.TopologyGraph
 import com.model.AttackGraphOutput
+import com.model.MachineExtractor
 import com.model.MulvalInput
 import com.model.Neo4JMapping
 import com.neo4j.Neo4JAdapter
@@ -66,7 +68,9 @@ data class TopologyInput(val machines: String, val routers: String, val links: S
 
 fun nodeToCytoJSON(n: Node): List<CytoDataWrapper> {
   val result: LinkedList<CytoDataWrapper> = LinkedList()
-  result.add(CytoDataWrapper(CytoNode("n${n.getId()}", n.getPermission())))
+  val node = CytoNode("n${n.getId()}", n.getPermission())
+  node.addProperty("machines", MachineExtractor.extract(n.getPermission()))
+  result.add(CytoDataWrapper(node))
   n.getConnections().forEach { rule -> result.add(CytoDataWrapper(CytoEdge("e${rule.getId()}", "n${n.getId()}", "n${rule.getDest().getId()}", rule.getText()))) }
   return result
 }
