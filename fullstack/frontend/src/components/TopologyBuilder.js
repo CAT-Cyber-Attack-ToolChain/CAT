@@ -319,11 +319,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
   }
 
   return (
-<<<<<<< HEAD
-    <div style={{ width: "100%", position: "relative", cursor: cursor, overflow: "hidden" }}>
-=======
     <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box"}}>
->>>>>>> 0ee944e (fix : make cytoscape graph use percentage in height + adjust style)
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
         <div>
           <input
