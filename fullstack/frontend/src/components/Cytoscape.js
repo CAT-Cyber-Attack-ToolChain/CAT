@@ -174,6 +174,12 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
         cyRef.on('click','node', (event) => {
             map(event.target.data("id"))
         })
+
+        cyRef.on('zoom', (event) => console.log(event.target.zoom()))
+
+        cyRef.minZoom(cyRef.zoom() - 0.01)
+        cyRef.maxZoom(0.1)
+
     }, [cyRef])
 
     /*
