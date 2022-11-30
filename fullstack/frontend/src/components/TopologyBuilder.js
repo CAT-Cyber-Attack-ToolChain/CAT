@@ -44,7 +44,7 @@ var stylesheet = [
       lineColor: "#000",
       targetArrowColor: "#000",
       arrowScale: 5,
-      targetArrowShape: "triangle",
+      targetArrowShape: "line",
       curveStyle: "bezier",
       "control-point-step-size": "1000",
     },
@@ -118,6 +118,17 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
     cy.on("click", "node", (event) => {
       const nodeId = event.target.data("id");
       if (selected) {
+        if (selected === nodeId) {
+          cy.$('#' + selected).removeClass("clickedNode");
+          setSelected(undefined);
+          return
+        }
+        if (netGraph.some((x) => x.data.label === "edge" && ((x.data.source === nodeId && x.data.target === selected) || (x.data.source === selected && x.data.target === nodeId)))) {
+          cy.$('#' + selected).removeClass("clickedNode");
+          cy.$('#' + nodeId).removeClass("clickedNode");
+          setSelected(undefined);
+          return;
+        }
         setNetGraph([
           ...netGraph,
           {
