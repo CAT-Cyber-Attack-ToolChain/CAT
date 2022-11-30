@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Dropdown from "react-dropdown";
 import axios from "axios";
 
 function ConfigurableAttackAgentForm() {
@@ -11,22 +12,60 @@ function ConfigurableAttackAgentForm() {
   const [formElements, setFormElements] = useState([])
   const [count, setCount] = useState(0)
 
-  function generateFormField() {
+  const [defaultTechniqueMap, setDefaultTechniqueMap] = useState({})
+
+  useEffect(() => {
+    async function populatesDefaultTechniqueMap() {
+      try {
+         await axios.get(`http://${host}:${port}/attack/defaults`).then((result) => {
+          var obj = JSON.parse(result.data)
+          setDefaultTechniqueMap(obj)
+        })
+        
+      } catch (error) {
+        console.error("Error: ", error)
+      }
+    }
+
+    populatesDefaultTechniqueMap()
+  }, [])
+
+  function setDefaultScore(technique, dropdownId) {
+    const ele = document.getElementById(`score-${dropdownId}`)
+    var event = new Event('input', {
+      'bubbles': true,
+      'cancelable': true
+    })
+    ele.value = defaultTechniqueMap[technique]
+    ele.dispatchEvent(event)
+  }
+
+  function generateFormField(dropdown=false) {
     var techniqueScore = {
       "technique": null,
       "score": 0
     }
+    setCount(prevState => prevState + 1)
+    console.log(count)
     return (
-      <label style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <label key={count}  style={{ display: "flex", justifyContent: "space-evenly" }}>
+
+        {dropdown ?
+        <Dropdown className="input-width" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
+          techniqueScore.technique = option.value
+          setDefaultScore(option.value, count)
+        }}/>
+        :
         <input className="input-width"
           type="text"
           value={techniqueMap[count]}
-          onChange={(e) => techniqueScore.technique = e.target.value}
-        />
+          onInput={(e) => techniqueScore.technique = e.target.value}
+        />}
         <input className="input-width"
+          id={`score-${count}`}
           type="number"
           value={techniqueMap[count]}
-          onChange={((e) => setTechniqueMap(prevState => {
+          onInput={((e) => setTechniqueMap(prevState => {
             techniqueScore.score = e.target.value
             return prevState.set(techniqueScore.technique, techniqueScore.score)
           }))}
@@ -36,8 +75,7 @@ function ConfigurableAttackAgentForm() {
   }
 
   function addFormField() {
-    setCount(prevState => prevState + 1)
-    setFormElements(prevState => [...prevState, generateFormField()])
+    setFormElements(prevState => [...prevState, generateFormField(true)])
   }
 
   async function sendTechniquesToBackend() {
@@ -50,6 +88,7 @@ function ConfigurableAttackAgentForm() {
     }
   }
 
+  
   return (
     <div style={{display: "flex", flexDirection:"column"}}>
       <form style={{ display: "flex", flexDirection: "column"}}>
@@ -57,11 +96,9 @@ function ConfigurableAttackAgentForm() {
           <label className='input-width'>Technique Name</label>
           <label className='input-width'>Score</label>
         </label>
-        
-        {generateFormField()}
 
         {
-          formElements.map((item) => <>{item}</>)
+          formElements.map((item) => item)
         }
       </form>
       <div style={{display: "flex", justifyContent: "space-evenly"}}>

@@ -79,6 +79,11 @@ async function simulateRealAttack() {
     return response.data
 }
 
+async function simulateAttack(attackAgent) {
+    const response = await axios.get(`http://${host}:${port}/simulation/${attackAgent}`)
+    return response.data
+}
+
 /*
     Convert array of path into set of node
     arr : [{ first: nodeFrom, second: nodeTo}]
@@ -100,8 +105,6 @@ const Cytoscape = ({graph,setMapTop}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
-    // set in every attack simulation (used for removing previous attack path)
-    var prevAttackPath = undefined;
     
     useEffect(() => {
         function fitGraph() {
@@ -155,19 +158,13 @@ const Cytoscape = ({graph,setMapTop}) => {
         //disable simulate button
         document.getElementById('simulate-button').disabled = true
     
-        if (typeof prevAttackPath !== 'undefined') {
-            prevAttackPath.nodes.forEach((id) => {
-                cyRef.$('#' + id).removeClass("attackedNode")
-            })
-            prevAttackPath.edges.forEach((id) => {
-                cyRef.$('#' + id).removeClass("attackedEdge")
-            })
-        }
+        // remove previous attack path (if exists)
+        cyRef.$('.attackedNode').removeClass("attackedNode")
+        cyRef.$('.attackedEdge').removeClass("attackedEdge")
         
-        const attacked = await simulateRealAttack().then(path=> {
+        const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
-        prevAttackPath = attacked;
 
         function highlightNode(index) {
           cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")

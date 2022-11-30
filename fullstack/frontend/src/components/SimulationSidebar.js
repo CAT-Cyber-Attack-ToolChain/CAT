@@ -13,19 +13,14 @@ import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
 
 
-function SimulationSidebar() {
+const SimulationSidebar = ({setAttackAgent}) => {
   const [sidebar, setSidebar] = useState(false)
   const [value, setValue] = React.useState('custom');
 
   const handleSimulationSelect = (event) => {
     setValue(event.target.value)
+    setAttackAgent(event.target.value)
   };
-
-  const submitSimulationSelect = (event) => {
-    event.preventDefault()
-
-    console.log(`Sending ${value}`)
-  }
 
   const showSidebar = () => setSidebar(!sidebar)
 
@@ -52,7 +47,7 @@ function SimulationSidebar() {
               <AiIcons.AiOutlineClose />
             </li>
             <p>Hiya!</p>
-            <form onSubmit={submitSimulationSelect}>
+            <form>
                 <FormControl>
                   <FormLabel id="simulation-agent-radio-group" className="radio-group">Simulation Attack Agent</FormLabel>
                   <RadioGroup
@@ -71,11 +66,6 @@ function SimulationSidebar() {
                   </RadioGroup>
                 </FormControl>
                 <ConfigurableAttackAgentForm />
-                <div className="center-children radio-button position-bottom" id="sim-submit-button">
-                  <Button sx={{ mt: 1, mr: 1, ml: 1, mb: 1, alignItems: "center" }} type="submit" variant="outlined">
-                    Submit
-                  </Button>
-                </div>
               
             </form>
 
