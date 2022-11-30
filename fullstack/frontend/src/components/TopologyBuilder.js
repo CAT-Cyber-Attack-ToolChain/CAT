@@ -3,6 +3,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import { useState, useEffect } from "react";
+import fileDownload from "js-file-download";
 
 const padding = 40
 const panelHeight = 250
@@ -262,6 +263,10 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     }
   }
 
+  async function saveGraph() {
+    fileDownload(JSON.stringify(netGraph), "output.json")
+  }
+
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor }}>
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`, backgroundColor : "#808080", borderBottom : "3px solid #778899"}}>
@@ -291,6 +296,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
           <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
         </div>
         <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
+        <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
       </div>
           
       {netGraph.length === 0 ?
