@@ -6,7 +6,7 @@ import axios from 'axios';
 import {useEffect} from "react"
 
 cytoscape.use(popper);
-cytoscape.use(dagre);
+cytoscape.use( dagre );
 
 function doStuffOnCy(cy) {
     cy.ready(() => mouseAction(cy))
@@ -49,6 +49,10 @@ function mouseAction(cy) {
 
     cy.on('mouseover', 'node', (event) => {
         event.target.popperDiv.state.elements.popper.style.display = "flex";
+    });
+
+    cy.on('mouseover', 'edge', (event) => {
+      console.log(event.target.data("id"))
     });
 
     cy.removeListener('mouseout');
@@ -119,7 +123,7 @@ async function simulateRandomAttack() {
 }
 
 async function simulateRealAttack() {
-    const response = await axios.get(`http://${host}:${port}/simulation/real`)
+    const response = await axios.get("http://localhost:8080/simulation/real")
     return response.data
 }
 
@@ -140,7 +144,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,map,toHighlight}) => {
+const Cytoscape = ({graph}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -153,24 +157,8 @@ const Cytoscape = ({graph,map,toHighlight}) => {
         }
 
         window.addEventListener('resize', fitGraph)
-        return () => window.removeEventListener('resize', fitGraph)
     })
 
-    /* TO IMPLEMENT
-       toHighlight gets data from Atk graph (Mapping here)
-       This is called whenever toHighlight changes
-    */    
-    useEffect(() => {
-        console.log("from topologybuilder " + toHighlight)
-    },[toHighlight])
-
-
-    /* Set mapping for higlighting Topology */
-    useEffect(() => {
-        cyRef.on('click','node', (event) => {
-            map(event.target.data("id"))
-        })
-    }, [cyRef])
 
     /*
         Find id of edge on graph with corresponding src and dst
