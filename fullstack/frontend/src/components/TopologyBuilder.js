@@ -316,7 +316,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
   }
 
   return (
-    <div style={{ width: "100%", position: "relative", cursor: cursor }}>
+    <div style={{ width: "100%", position: "relative", cursor: cursor, overflow: "hidden" }}>
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
         <div>
           <input
