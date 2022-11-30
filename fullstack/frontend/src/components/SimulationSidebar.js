@@ -37,8 +37,8 @@ const SimulationSidebar = ({setAttackAgent}) => {
       <IconContext.Provider value={{color: '#fff'}}>
         <div>
         <div className='simulationSidebar'>
-          <div className='menu-icons'>
-            <FaIcons.FaBars onClick={showSidebar}/>
+          <div className='menu-icons' onClick={showSidebar}>
+            <FaIcons.FaBars/>
           </div>
         </div>
         <div className={sidebar ? 'menu-content active' : 'menu-content'}>

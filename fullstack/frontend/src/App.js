@@ -35,7 +35,7 @@ function App() {
 
 
   return (
-    <>
+    <div className="fill">
       <SimulationSidebar setAttackAgent={setAttackAgent}/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
@@ -53,7 +53,7 @@ function App() {
         </ReflexElement>
 
       </ReflexContainer>
-    </>
+    </div>
   );
 }
 
