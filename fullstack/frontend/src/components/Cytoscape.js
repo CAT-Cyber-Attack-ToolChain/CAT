@@ -191,8 +191,8 @@ const Cytoscape = ({graph,setMapTop,attackAgent}) => {
     }
 
     return(
-        <div style={{width: "100%", position: "relative"}}>
-            <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
+        <div style={{width: "100%", position: "relative", overflow: "hidden"}}>
+            <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
             <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
