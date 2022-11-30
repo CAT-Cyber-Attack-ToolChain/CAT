@@ -9,12 +9,14 @@ class MachineExtractor {
             when (props[0]) {
                 "netAccess" -> {
                     machines.add(props[1])
-                    machines.add(props[2])
+                }
+
+                "accessFile" -> {
+                    machines.add(props[1])
                 }
 
                 "execCode" -> {
                     machines.add(props[1])
-                    machines.add(props[2])
                 }
 
                 "hacl" -> {
