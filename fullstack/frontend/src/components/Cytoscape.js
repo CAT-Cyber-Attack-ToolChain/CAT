@@ -3,58 +3,13 @@ import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import dagre from 'cytoscape-dagre';
 import axios from 'axios';
-import prevAttackPath from './PreviousPath';
 import {useEffect} from "react"
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
 
-function doStuffOnCy(cy) {
-    cy.ready(() => mouseAction(cy))
-
-    return cy
-}
-
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
-
-function mouseAction(cy) {
-    function makePopper(ele) {
-        ele.popperDiv = ele.popper({
-            content: () => {
-                let div = document.createElement('div');
-
-                div.innerHTML = ele.data('id');
-                div.setAttribute("role", "tooltip")
-                div.classList.add("my-tooltip")
-
-                div.style.display = 'none'
-
-                document.body.appendChild(div);
-
-                return div;
-            },
-            popper: {
-                placement: 'auto'
-            }
-        })
-    }
-
-    cy.ready(function () {
-        cy.nodes().forEach(function (ele) {
-            makePopper(ele);
-        });
-    });
-
-    cy.removeListener('mouseover');
-
-    cy.on('mouseover', 'node', (event) => {
-        event.target.popperDiv.state.elements.popper.style.display = "flex";
-    });
-
-    cy.removeListener('mouseout');
-    cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
-}
     
 
 var styles = {
@@ -146,7 +101,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
+const Cytoscape = ({graph,setMapTop,attackAgent}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -160,22 +115,14 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
         return () => window.removeEventListener('resize', fitGraph)
     })
 
-    /* TO IMPLEMENT
-       toHighlight gets data from Atk graph (Mapping here)
-       This is called whenever toHighlight changes
-    */    
-    useEffect(() => {
-        console.log("from topologybuilder " + toHighlight)
-    },[toHighlight])
-
-
     /* Set mapping for higlighting Topology */
     useEffect(() => {
-        cyRef.on('click','node', (event) => {
-            map(event.target.data("id"))
+        cyRef.ready(() => {
+            cyRef.on('mouseover','node', (event) => {
+                setMapTop(event.target.data("properties")["machines"])
+            })
+            cyRef.on('mouseout', 'node', () => setMapTop([]))
         })
-
-        cyRef.on('zoom', (event) => console.log(event.target.zoom()))
 
         cyRef.minZoom(cyRef.zoom() - 0.01)
         cyRef.maxZoom(0.1)
@@ -214,21 +161,13 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
         //disable simulate button
         document.getElementById('simulate-button').disabled = true
     
-        // check if previous attack path exists
-        if (Object.keys(prevAttackPath).length !== 0) {
-            prevAttackPath.nodes.forEach((id) => {
-                cyRef.$('#' + id).removeClass("attackedNode")
-            })
-            prevAttackPath.edges.forEach((id) => {
-                cyRef.$('#' + id).removeClass("attackedEdge")
-            })
-        }
+        // remove previous attack path (if exists)
+        cyRef.$('.attackedNode').removeClass("attackedNode")
+        cyRef.$('.attackedEdge').removeClass("attackedEdge")
         
         const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
-        prevAttackPath.nodes = attacked.nodes;
-        prevAttackPath.edges = attacked.edges;
 
         function highlightNode(index) {
           cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
@@ -253,7 +192,7 @@ const Cytoscape = ({graph,map,toHighlight,attackAgent}) => {
     return(
         <div style={{width: "100%", position: "relative"}}>
             <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
-            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+            <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
 }
