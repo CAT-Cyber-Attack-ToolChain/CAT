@@ -17,7 +17,8 @@ class MulvalController(private val inputP: MulvalInput, private val outputDir: A
 
         val workingDir = File(path)
         generated = try {
-            shellRun("graph_gen.sh", listOf(inputP.getPath(), "-v", "-p"), workingDir)
+            val output = shellRun("graph_gen.sh", listOf(inputP.getPath(), "-v", "-p"), workingDir)
+            println(output)
             true
         } catch (e: Exception) {
             print("MulVal has encountered an error...")
