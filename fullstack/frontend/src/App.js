@@ -45,9 +45,9 @@ function App() {
         <ReflexSplitter style={{width: '10px', backgroundColor: '#696969', zIndex: '1'}} className='gutter-vertical' />
 
         <ReflexElement className='attack-graph' minSize='450'>
-          {example == null ?
+          {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape attackAgent={attackAgent} graph={example} key={atkGraph} setMapTop={setMapTop}/>
+            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
