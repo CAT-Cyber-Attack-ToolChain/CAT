@@ -8,52 +8,8 @@ import {useEffect} from "react"
 cytoscape.use(popper);
 cytoscape.use(dagre);
 
-function doStuffOnCy(cy) {
-    cy.ready(() => mouseAction(cy))
-
-    return cy
-}
-
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
-
-function mouseAction(cy) {
-    function makePopper(ele) {
-        ele.popperDiv = ele.popper({
-            content: () => {
-                let div = document.createElement('div');
-
-                div.innerHTML = ele.data('id');
-                div.setAttribute("role", "tooltip")
-                div.classList.add("my-tooltip")
-
-                div.style.display = 'none'
-
-                document.body.appendChild(div);
-
-                return div;
-            },
-            popper: {
-                placement: 'auto'
-            }
-        })
-    }
-
-    cy.ready(function () {
-        cy.nodes().forEach(function (ele) {
-            makePopper(ele);
-        });
-    });
-
-    cy.removeListener('mouseover');
-
-    cy.on('mouseover', 'node', (event) => {
-        event.target.popperDiv.state.elements.popper.style.display = "flex";
-    });
-
-    cy.removeListener('mouseout');
-    cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
-}
     
 
 var styles = {
@@ -140,7 +96,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,map}) => {
+const Cytoscape = ({graph,setMapTop}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -158,9 +114,13 @@ const Cytoscape = ({graph,map}) => {
 
     /* Set mapping for higlighting Topology */
     useEffect(() => {
-        cyRef.on('click','node', (event) => {
-            map(event.target.data("id"))
+        cyRef.ready(() => {
+            cyRef.on('mouseover','node', (event) => {
+                setMapTop(event.target.data("properties")["machines"])
+            })
+            cyRef.on('mouseout', 'node', () => setMapTop([]))
         })
+        
     }, [cyRef])
 
     /*
@@ -232,7 +192,7 @@ const Cytoscape = ({graph,map}) => {
     return(
         <div style={{width: "100%", position: "relative"}}>
             <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
-            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+            <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
 }

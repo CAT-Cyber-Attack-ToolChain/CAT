@@ -80,6 +80,9 @@ var stylesheet = [
 ];
 
 const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
+
+  //initialised once component renders
+  var cyRef = undefined
   // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
@@ -98,8 +101,16 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
      This is called whenever toHighlight changes
   */
   useEffect(() => {
-    console.log("from atkgraph " + toHighlight)
-  },[toHighlight])
+    if (cyRef) {
+      if (toHighlight.length !== 0) {
+        toHighlight.forEach(machine => {
+          cyRef.$(machine).addClass('highlightNode')
+        });
+      } else {
+        cyRef.$('.highlightNode').removeClass('highlightNode')
+      }
+    }
+  },[toHighlight, cyRef])
 
   function onMouseover(cy) {
     cy.removeListener("click");
@@ -169,6 +180,8 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     cy.on("mouseout", "edge", (event) => {
       cy.$("#" + event.target.data("id")).removeClass("highlightEdge");
     });
+
+    return cy
   }
 
   function addConfiguration(file) {
@@ -243,7 +256,6 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
       });
 
       let data = JSON.parse(response.data)
-      console.log("Attack graph: ", data["attackGraph"])
       setAtkGraph(JSON.stringify(data["attackGraph"]))
     } catch (error) {
       console.error('Error:', error);
@@ -284,7 +296,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
       {netGraph.length === 0 ?
         <div className="no-item" style={{height: builderHeight}}> No graph displayed </div> :
         <CytoscapeComponent
-          cy={(cy) => onMouseover(cy)}
+          cy={(cy) => cyRef = onMouseover(cy)}
           elements={netGraph}
           key={netGraph}
           style={styles}
