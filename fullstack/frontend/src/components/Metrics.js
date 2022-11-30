@@ -1,6 +1,6 @@
 const metricsContainerStyle = {
   width : "100%",
-  backgroundColor : "#C0C0C0",
+  backgroundColor: "#0a111f",
   padding: "20px",
   height: "200px",
   display : "flex",

@@ -27,7 +27,7 @@ const SimulationSidebar = ({setAttackAgent}) => {
   const radioButtonStyle = {
     color: "white",
     '&.Mui-checked': {
-      color: "red",
+      color: "#0aa689",
     },
   }
 

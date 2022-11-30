@@ -13,7 +13,7 @@ const port = process.env.REACT_APP_PORT
     
 
 var styles = {
-    backgroundColor: 'grey',
+    backgroundColor: '#0a111f',
     zIndex:  0,
     position: "relative",
     height : "600px"
@@ -36,16 +36,16 @@ var stylesheet = [
             textValign: "center",
             textHalign: "center",
             shape: 'rectangle',
-            color: 'black',
-            backgroundColor: 'white'
+            color: '#fca311',
+            backgroundColor: '#14213d'
         }
     },
     {
         selector: 'edge',
         style: {
-            width: 20,
-            lineColor: '#000',
-            targetArrowColor: '#000',
+            width: 40,
+            lineColor: '#fca311',
+            targetArrowColor: '#fca311',
             arrowScale : 5,
             targetArrowShape: 'triangle',
             curveStyle : 'taxi',
@@ -54,15 +54,16 @@ var stylesheet = [
     },
     {   selector : '.attackedNode',
         style: {
-            backgroundColor : "red",
+            backgroundColor: "green",
             transitionProperty: 'background-color, shape',
             transitionDuration: '0.5s'
         }
     },
     {   selector : '.attackedEdge',
         style: {
-            targetArrowColor: '#ff0000',
-            lineColor: '#ff0000',
+            width: 40,
+            targetArrowColor: 'green',
+            lineColor: 'green',
             transitionProperty: 'line-color, target-arrow-color',
             transitionDuration: '0.5s'
         }
