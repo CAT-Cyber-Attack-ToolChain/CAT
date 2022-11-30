@@ -47,7 +47,7 @@ function App() {
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape graph={atkGraph} key={atkGraph} map={setMapTop}/>
+            <Cytoscape graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
