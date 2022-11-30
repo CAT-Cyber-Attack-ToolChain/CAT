@@ -43,7 +43,7 @@ var stylesheet = [
       lineColor: "#000",
       targetArrowColor: "#000",
       arrowScale: 5,
-      targetArrowShape: "triangle",
+      targetArrowShape: "none",
       curveStyle: "bezier",
       "control-point-step-size": "1000",
     },
@@ -109,6 +109,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
       } else {
         cyRef.$('.highlightNode').removeClass('highlightNode')
       }
+      
     }
   },[toHighlight, cyRef])
 
@@ -164,6 +165,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     cy.removeListener("mouseover");
 
     cy.on("mouseover", "node", (event) => {
+      console.log(cy.minZoom())
       cy.$("#" + event.target.data("id")).addClass("highlightNode");
     });
 
@@ -230,10 +232,17 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     setNextId(nextId + 1);
     created[curDevice] = true;
     setCreated(created)
+    
   }
 
   function printNetGraph() {
     console.log(netGraph)
+    // setting zoom
+    if (cyRef) {
+
+      cyRef.fit()
+      cyRef.minZoom(cyRef.zoom() - 0.01)
+    }
     submitHandler()
   }
 
