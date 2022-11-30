@@ -5,15 +5,18 @@ import "react-dropdown/style.css";
 import { useState, useEffect } from "react";
 import fileDownload from "js-file-download";
 
-const padding = 40
 const panelHeight = 250
-const builderHeight = window.innerHeight - padding - panelHeight
 
 var styles = {
-  height: builderHeight,
   backgroundColor: "#0a111f",
   zIndex: 0,
   position: "relative",
+  height: "100%",
+  display: "flex",
+  width: "100%",
+  justifyContent: "center",
+  alignItems: "center",
+  maxHeight: "100%"
 };
 
 var layout = {
@@ -316,7 +319,11 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
   }
 
   return (
+<<<<<<< HEAD
     <div style={{ width: "100%", position: "relative", cursor: cursor, overflow: "hidden" }}>
+=======
+    <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box"}}>
+>>>>>>> 0ee944e (fix : make cytoscape graph use percentage in height + adjust style)
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
         <div>
           <input
@@ -350,9 +357,10 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
         <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
         <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
       </div>
-          
+      
+  
       {netGraph.length === 0 ?
-        <div className="no-item" style={{height: builderHeight}}> No graph displayed </div> :
+        <div className="no-item" style={{height: "100%"}}> No graph displayed </div> :
         <CytoscapeComponent
           cy={(cy) => cyRef = onMouseover(cy)}
           elements={netGraph}
@@ -362,6 +370,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
           layout={layout}
         />
       }
+   
     </div>
   );
 };

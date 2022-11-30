@@ -16,7 +16,7 @@ var styles = {
     backgroundColor: '#0a111f',
     zIndex:  0,
     position: "relative",
-    height : "600px"
+    height : "100%"
   }
 
 var layout = {

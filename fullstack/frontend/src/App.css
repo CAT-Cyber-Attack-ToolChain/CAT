@@ -13,9 +13,9 @@ body {
 }
 
 .App {
-  padding : 20px;
   display: flex;
-  height : 800px;
+  height: 100%;
+  box-sizing: border-box;
   color: #05b2dc;
   /* color: #0aa689; */
 }

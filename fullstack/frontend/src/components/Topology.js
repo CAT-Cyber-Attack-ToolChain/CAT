@@ -5,7 +5,7 @@ import CytoscapeComponent from "react-cytoscapejs"
 import { useLoading, Audio, ThreeDots, BallTriangle, Grid } from '@agney/react-loading';
 
 var styles = {
-    height : "800px",
+    height : "100%",
     backgroundColor: 'grey',
     zIndex:  0,
     position: "relative",

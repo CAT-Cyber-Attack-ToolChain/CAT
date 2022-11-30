@@ -33,9 +33,9 @@ function App() {
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
 
-
+  const example =`[{"data" : {"id" : "n8", "label" : "netAccess(webServer,tcp,80)", "properties" : {"machines": ["webServer", "tcp"]}}}, {"data" : {"id" : "e7", "label" : "RULE 2 (remote exploit of a server program)", "properties" : {}, "source" : "n8", "target" : "n6"}}, {"data" : {"id" : "n6", "label" : "execCode(webServer,apache)", "properties" : {"machines": ["webServer", "apache"]}}}, {"data" : {"id" : "e4", "label" : "RULE 5 (multi-hop access)", "properties" : {}, "source" : "n6", "target" : "n3"}}, {"data" : {"id" : "e21", "label" : "RULE 17 (NFS shell)", "properties" : {}, "source" : "n6", "target" : "n20"}}, {"data" : {"id" : "n3", "label" : "netAccess(fileServer,rpc,100005)", "properties" : {"machines": ["fileServer", "rpc"]}}}, {"data" : {"id" : "e2", "label" : "RULE 2 (remote exploit of a server program)", "properties" : {}, "source" : "n3", "target" : "n1"}}, {"data" : {"id" : "n1", "label" : "execCode(fileServer,root)", "properties" : {"machines": ["fileServer", "root"]}}}, {"data" : {"id" : "n20", "label" : "accessFile(fileServer,write,'/export')", "properties" : {"machines": []}}}, {"data" : {"id" : "e27", "label" : "RULE 4 (Trojan horse installation)", "properties" : {}, "source" : "n20", "target" : "n1"}}, {"data" : {"id" : "e19", "label" : "RULE 16 (NFS semantics)", "properties" : {}, "source" : "n20", "target" : "n18"}}, {"data" : {"id" : "n18", "label" : "accessFile(workStation,write,'/usr/local/share')", "properties" : {"machines": []}}}, {"data" : {"id" : "e17", "label" : "RULE 4 (Trojan horse installation)", "properties" : {}, "source" : "n18", "target" : "n16"}}, {"data" : {"id" : "n16", "label" : "execCode(workStation,root)", "properties" : {"machines": ["workStation", "root"]}}}, {"data" : {"id" : "e14", "label" : "RULE 5 (multi-hop access)", "properties" : {}, "source" : "n16", "target" : "n3"}}, {"data" : {"id" : "n0", "label" : "start", "properties" : {"machines": []}}}, {"data" : {"id" : "e9", "label" : "RULE 6 (direct network access)", "properties" : {}, "source" : "n0", "target" : "n8"}}]`
   return (
-    <div className="fill">
+    <div className="fill" style={{display: "flex", boxSizing: "border-box", flexDirection: "column"}}>
       <SimulationSidebar setAttackAgent={setAttackAgent}/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
@@ -45,9 +45,9 @@ function App() {
         <ReflexSplitter style={{width: '10px', backgroundColor: '#696969', zIndex: '1'}} className='gutter-vertical' />
 
         <ReflexElement className='attack-graph' minSize='450'>
-          {atkGraph == null ?
+          {example == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
+            <Cytoscape attackAgent={attackAgent} graph={example} key={atkGraph} setMapTop={setMapTop}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
