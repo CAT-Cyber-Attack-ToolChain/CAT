@@ -79,7 +79,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, map}) => {
+const TopologyBuilder = ({setAtkGraph, map, toHighlight}) => {
   // network graph values
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
@@ -92,6 +92,14 @@ const TopologyBuilder = ({setAtkGraph, map}) => {
   const [curDevice, setCurDevice] = useState(undefined);
   const [nextId, setNextId] = useState(0);
   const [created, setCreated] = useState({});
+
+  /* TO IMPLEMENT
+     toHighlight gets data from topology builder (Mapping here)
+     This is called whenever toHighlight changes
+  */
+  useEffect(() => {
+    console.log("from atkgraph " + toHighlight)
+  },[toHighlight])
 
   function onMouseover(cy) {
     cy.removeListener("click");
@@ -164,7 +172,7 @@ const TopologyBuilder = ({setAtkGraph, map}) => {
 
     /* Set mapping for higlighting Attack graph */
     cy.on('click', 'node', (event) => {
-      map(event.target.data("label"))
+      map(event.target.data("id"))
     })
   }
 
@@ -233,7 +241,7 @@ const TopologyBuilder = ({setAtkGraph, map}) => {
       links: JSON.stringify(Array.from(edges))
     });*/
     try {
-      var response = await axios.post('http://localhost:8081/submitInput', {
+      var response = await axios.post('http://localhost:8080/submitInput', {
         machines: JSON.stringify(Array.from(machines)),
         routers: JSON.stringify(Array.from(routers)),
         links: JSON.stringify(Array.from(edges))
