@@ -104,7 +104,7 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
     if (cyRef) {
       if (toHighlight.length !== 0) {
         toHighlight.forEach(machine => {
-          cyRef.$(machine).addClass('highlightNode')
+          cyRef.$(ele => ele.data('label') === machine).addClass('highlightNode')
         });
       } else {
         cyRef.$('.highlightNode').removeClass('highlightNode')
