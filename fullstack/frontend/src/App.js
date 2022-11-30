@@ -39,7 +39,7 @@ function App() {
       <SimulationSidebar setAttackAgent={setAttackAgent}/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
-          <TopologyBuilder setAtkGraph={setGraph} toHighlight={mapTopology}/>
+          <TopologyBuilder setAtkGraph={setGraph} setMets={setMets} toHighlight={mapTopology}/>
         </ReflexElement>
 
         <ReflexSplitter style={{width: '10px', backgroundColor: '#696969', zIndex: '1'}} className='gutter-vertical' />

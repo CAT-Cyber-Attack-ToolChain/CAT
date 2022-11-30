@@ -79,7 +79,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
+const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
 
   //initialised once component renders
   var cyRef = undefined
@@ -257,9 +257,15 @@ const TopologyBuilder = ({setAtkGraph, toHighlight}) => {
 
       let data = JSON.parse(response.data)
       setAtkGraph(JSON.stringify(data["attackGraph"]))
+      setMets(getMetrics())
     } catch (error) {
       console.error('Error:', error);
     }
+  }
+
+  async function getMetrics() {
+    const response = await axios.get('http://localhost:8080/metrics')
+    setMets(JSON.parse(response.data))
   }
 
   return (
