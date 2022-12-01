@@ -53,16 +53,17 @@ var stylesheet = [
     },
     {   selector : '.attackedNode',
         style: {
-            backgroundColor: "green",
+            backgroundColor: '#05b2dc',
             transitionProperty: 'background-color, shape',
-            transitionDuration: '0.5s'
+            transitionDuration: '0.5s',
+            color: '#060A12'
         }
     },
     {   selector : '.attackedEdge',
         style: {
             width: 40,
-            targetArrowColor: 'green',
-            lineColor: 'green',
+            targetArrowColor: '#05b2dc',
+            lineColor: '#05b2dc',
             transitionProperty: 'line-color, target-arrow-color',
             transitionDuration: '0.5s'
         }
