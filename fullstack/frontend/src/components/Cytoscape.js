@@ -8,63 +8,14 @@ import {useEffect} from "react"
 cytoscape.use(popper);
 cytoscape.use( dagre );
 
-function doStuffOnCy(cy) {
-    cy.ready(() => mouseAction(cy))
-
-    return cy
-}
-
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
-
-function mouseAction(cy) {
-    function makePopper(ele) {
-        ele.popperDiv = ele.popper({
-            content: () => {
-                let div = document.createElement('div');
-
-                div.innerHTML = ele.data('id');
-                div.setAttribute("role", "tooltip")
-                div.classList.add("my-tooltip")
-
-                div.style.display = 'none'
-
-                document.body.appendChild(div);
-
-                return div;
-            },
-            popper: {
-                placement: 'auto'
-            }
-        })
-    }
-
-    cy.ready(function () {
-        cy.nodes().forEach(function (ele) {
-            makePopper(ele);
-        });
-    });
-
-    cy.removeListener('mouseover');
-
-    cy.on('mouseover', 'node', (event) => {
-        event.target.popperDiv.state.elements.popper.style.display = "flex";
-    });
-
-    cy.on('mouseover', 'edge', (event) => {
-      console.log(event.target.data("id"))
-    });
-
-    cy.removeListener('mouseout');
-    cy.on('mouseout', 'node', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
-}
     
-
 var styles = {
-    backgroundColor: 'grey',
+    backgroundColor: '#0a111f',
     zIndex:  0,
     position: "relative",
-    height : "600px"
+    height : "100%"
   }
 
 var layout = {
@@ -84,16 +35,16 @@ var stylesheet = [
             textValign: "center",
             textHalign: "center",
             shape: 'rectangle',
-            color: 'black',
-            backgroundColor: 'white'
+            color: '#fca311',
+            backgroundColor: '#14213d'
         }
     },
     {
         selector: 'edge',
         style: {
-            width: 20,
-            lineColor: '#000',
-            targetArrowColor: '#000',
+            width: 40,
+            lineColor: '#fca311',
+            targetArrowColor: '#fca311',
             arrowScale : 5,
             targetArrowShape: 'triangle',
             curveStyle : 'taxi',
@@ -102,15 +53,16 @@ var stylesheet = [
     },
     {   selector : '.attackedNode',
         style: {
-            backgroundColor : "red",
+            backgroundColor: "green",
             transitionProperty: 'background-color, shape',
             transitionDuration: '0.5s'
         }
     },
     {   selector : '.attackedEdge',
         style: {
-            targetArrowColor: '#ff0000',
-            lineColor: '#ff0000',
+            width: 40,
+            targetArrowColor: 'green',
+            lineColor: 'green',
             transitionProperty: 'line-color, target-arrow-color',
             transitionDuration: '0.5s'
         }
@@ -124,6 +76,11 @@ async function simulateRandomAttack() {
 
 async function simulateRealAttack() {
     const response = await axios.get("http://localhost:8080/simulation/real")
+    return response.data
+}
+
+async function simulateAttack(attackAgent) {
+    const response = await axios.get(`http://${host}:${port}/simulation/${attackAgent}`)
     return response.data
 }
 
@@ -144,12 +101,10 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph}) => {
+const Cytoscape = ({graph,setMapTop,attackAgent}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
-    // set in every attack simulation (used for removing previous attack path)
-    var prevAttackPath = undefined;
     
     useEffect(() => {
         function fitGraph() {
@@ -159,6 +114,19 @@ const Cytoscape = ({graph}) => {
         window.addEventListener('resize', fitGraph)
     })
 
+    /* Set mapping for higlighting Topology */
+    useEffect(() => {
+        cyRef.ready(() => {
+            cyRef.on('mouseover','node', (event) => {
+                setMapTop(event.target.data("properties")["machines"])
+            })
+            cyRef.on('mouseout', 'node', () => setMapTop([]))
+        })
+
+        cyRef.minZoom(cyRef.zoom() - 0.01)
+        cyRef.maxZoom(0.1)
+
+    }, [cyRef])
 
     /*
         Find id of edge on graph with corresponding src and dst
@@ -192,19 +160,13 @@ const Cytoscape = ({graph}) => {
         //disable simulate button
         document.getElementById('simulate-button').disabled = true
     
-        if (typeof prevAttackPath !== 'undefined') {
-            prevAttackPath.nodes.forEach((id) => {
-                cyRef.$('#' + id).removeClass("attackedNode")
-            })
-            prevAttackPath.edges.forEach((id) => {
-                cyRef.$('#' + id).removeClass("attackedEdge")
-            })
-        }
+        // remove previous attack path (if exists)
+        cyRef.$('.attackedNode').removeClass("attackedNode")
+        cyRef.$('.attackedEdge').removeClass("attackedEdge")
         
-        const attacked = await simulateRealAttack().then(path=> {
+        const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
-        prevAttackPath = attacked;
 
         function highlightNode(index) {
           cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
@@ -227,9 +189,9 @@ const Cytoscape = ({graph}) => {
     }
 
     return(
-        <div style={{width: "100%", position: "relative"}}>
-            <button id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
-            <CytoscapeComponent cy={(cy) => cyRef = doStuffOnCy(cy)} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+        <div style={{width: "100%", position: "relative", height: "100%"}}>
+            <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
+            <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
         </div>
     )
 }

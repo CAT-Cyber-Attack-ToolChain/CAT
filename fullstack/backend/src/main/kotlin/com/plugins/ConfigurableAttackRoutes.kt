@@ -21,12 +21,13 @@ fun Route.ConfigurableAttackRouting() {
 
     route("/attack/defaults") {
         get {
-            val sb = StringBuilder("{")
+
+            val list = mutableListOf<String>()
             TECHNIQUE_EASYNESS_MAP.forEach {entry ->
-                sb.append("\"${entry.key}\": ${entry.value},")
+                list.add("\"${entry.key}\": ${entry.value}")
             }
-            sb.append("}")
-            call.respond(sb.toString())
+            val jsonString = list.joinToString(",","{", "}")
+            call.respond(jsonString)
         }
     }
 
@@ -36,6 +37,7 @@ fun Route.ConfigurableAttackRouting() {
                 val jsonString = jsonText.toString()
 
                 val map = parseJsonMap(jsonString)
+
                 CustomAttackAgent.AGENT = CustomAttackAgent(map)
 
                 call.respond("{}")
@@ -59,3 +61,4 @@ private fun parseJsonMap(jsonMap: String): Map<String, Int> {
 
     return map
 }
+

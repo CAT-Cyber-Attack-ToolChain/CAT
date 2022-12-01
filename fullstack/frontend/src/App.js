@@ -1,16 +1,17 @@
 import './App.css';
 import { useCallback, useState } from 'react';
 import React from 'react';
-import axios from 'axios';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
-import { useEffect } from 'react';
-import Topology from './components/Topology';
+import "react-dropdown/style.css";
+import TopologyBuilder from './components/TopologyBuilder';
+import ConfigurableAttackAgentForm from "./components/ConfigurableAttackAgent"
 
 import 'react-reflex/styles.css'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
+import { useLoading, BallTriangle } from '@agney/react-loading';
+import SimulationSidebar from './components/SimulationSidebar';
 
-import { useLoading, Audio, ThreeDots, BallTriangle } from '@agney/react-loading';
 
 //TODO: Add configurability for host and port for all requests being sent.
 
@@ -21,128 +22,41 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [mets, setMets] = useState()
   const [loading, setLoading] = useState()
+
+  const [attackAgent, setAttackAgent] = useState('custom')
+
+  /* Mapping */
+  const [mapTopology, setMapTop] = useState([])
+
   const { containerProps, indicatorEl } = useLoading({
     loading: true,
     indicator: <BallTriangle width="50" class="loader"/>
   })
 
-
-  const wrapperSetAtkGraph = useCallback(newAtkGraph => {
-    setGraph(newAtkGraph);
-  }, [setGraph])
-
-  const wrapperSetTopology = useCallback(newTopologyGraph => {
-    setTopology(newTopologyGraph);
-  }, [setTopology])
-
-  const wrapperSetMetrics = useCallback(() => {
-    setMets(getMetrics());
-  }, [setMets])
-
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
 
-  useEffect(() => {
-
-    const handleSubmission = async () => {
-      const formData = new FormData();
-      
-      formData.append('File', selectedFile);
-      
-      setLoading(true)
-
-      await fetch(
-        `http://${host}:${port}/submitInput`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      ).then((response) => response.json())
-        .then((result) => {
-          let parsed = JSON.parse(result)
-          setGraph(JSON.stringify(parsed['attackGraph']))
-          setTopology(JSON.stringify(parsed['topologyGraph']))
-          setMets(getMetrics())
-          setLoading(false)
-        }).catch((error) => {
-          console.error('Error:', error);
-        });
-    }
-
-    // skip the initial render
-    if (selectedFile !== null) {
-      handleSubmission()
-    }
-  }, [selectedFile])
-
-  async function getMetrics() {
-    const response = await axios.get('http://localhost:8080/metrics')
-    setMets(JSON.parse(response.data))
-  }
-
-  const changeHandler = (event) => {
-    if (event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
-
-  const test = async () => {
-    const response = await axios.get('http://localhost:8080/test')
-    console.log(response)
-  }
-
-
-const sample = `[
-  {"data" : {"id" : "n0", "label" : "internet", "properties" : {"bool": 0, "text": "internet", "type": "OR", "node_id": 0}}},
-  {"data" : {"id" : "n1", "label" : "webServer", "properties" : {"bool": 0, "text": "webServer", "type": "OR", "node_id": 1}}}, 
-  {"data" : {"id" : "n3", "label" : "fileServer", "properties" : {"bool": 0, "text": "fileServer", "type": "OR", "node_id": 3}}}, 
-  {"data" : {"id" : "n5", "label" : "workStation", "properties" : {"bool": 0, "text": "workStation", "type": "OR", "node_id": 5}}}, 
-  {"data" : {"id" : "n7", "label" : "H", "properties" : {"bool": 0, "text": "H", "type": "OR", "node_id": 7}}},
-  {"data" : {"id" : "e1", "label" : "edge", "properties" : {}, "source" : "n0", "target" : "n1"}}, 
-  {"data" : {"id" : "e2", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n0"}},
-  {"data" : {"id" : "e3", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n3"}},
-  {"data" : {"id" : "e4", "label" : "edge", "properties" : {}, "source" : "n1", "target" : "n5"}},
-  {"data" : {"id" : "e9", "label" : "edge", "properties" : {}, "source" : "n3", "target" : "n7"}}, 
-  {"data" : {"id" : "e10", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n0"}}, 
-  {"data" : {"id" : "e11", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n1"}}, 
-  {"data" : {"id" : "e12", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n3"}}, 
-  {"data" : {"id" : "e13", "label" : "edge", "properties" : {}, "source" : "n5", "target" : "n7"}}, 
-  {"data" : {"id" : "e14", "label" : "edge", "properties" : {}, "source" : "n7", "target" : "n7"}}
-]`
-
-  // var elements = JSON.stringify(
-  //   [{ data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 30 } },
-  //    { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 50 } },
-  //    { data: { id: 'three', label: 'Node 3'}, position: { x: 50, y: 100 }}, 
-  //    { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } },
-  //    { data: { source: 'one', target: 'three', label: 'Edge from Node1 to Node3' } }]);
-
+  const example =`[{"data" : {"id" : "n8", "label" : "netAccess(webServer,tcp,80)", "properties" : {"machines": ["webServer", "tcp"]}}}, {"data" : {"id" : "e7", "label" : "RULE 2 (remote exploit of a server program)", "properties" : {}, "source" : "n8", "target" : "n6"}}, {"data" : {"id" : "n6", "label" : "execCode(webServer,apache)", "properties" : {"machines": ["webServer", "apache"]}}}, {"data" : {"id" : "e4", "label" : "RULE 5 (multi-hop access)", "properties" : {}, "source" : "n6", "target" : "n3"}}, {"data" : {"id" : "e21", "label" : "RULE 17 (NFS shell)", "properties" : {}, "source" : "n6", "target" : "n20"}}, {"data" : {"id" : "n3", "label" : "netAccess(fileServer,rpc,100005)", "properties" : {"machines": ["fileServer", "rpc"]}}}, {"data" : {"id" : "e2", "label" : "RULE 2 (remote exploit of a server program)", "properties" : {}, "source" : "n3", "target" : "n1"}}, {"data" : {"id" : "n1", "label" : "execCode(fileServer,root)", "properties" : {"machines": ["fileServer", "root"]}}}, {"data" : {"id" : "n20", "label" : "accessFile(fileServer,write,'/export')", "properties" : {"machines": []}}}, {"data" : {"id" : "e27", "label" : "RULE 4 (Trojan horse installation)", "properties" : {}, "source" : "n20", "target" : "n1"}}, {"data" : {"id" : "e19", "label" : "RULE 16 (NFS semantics)", "properties" : {}, "source" : "n20", "target" : "n18"}}, {"data" : {"id" : "n18", "label" : "accessFile(workStation,write,'/usr/local/share')", "properties" : {"machines": []}}}, {"data" : {"id" : "e17", "label" : "RULE 4 (Trojan horse installation)", "properties" : {}, "source" : "n18", "target" : "n16"}}, {"data" : {"id" : "n16", "label" : "execCode(workStation,root)", "properties" : {"machines": ["workStation", "root"]}}}, {"data" : {"id" : "e14", "label" : "RULE 5 (multi-hop access)", "properties" : {}, "source" : "n16", "target" : "n3"}}, {"data" : {"id" : "n0", "label" : "start", "properties" : {"machines": []}}}, {"data" : {"id" : "e9", "label" : "RULE 6 (direct network access)", "properties" : {}, "source" : "n0", "target" : "n8"}}]`
   return (
-    <>
-    <h1 style={{ paddingTop: '10px', paddingLeft: '20px' }}>Cyber Attack Tool Chain</h1>
-    <input className="input-button" type="file" name="file" onChange={changeHandler} />
-    <ReflexContainer orientation="vertical" className='App'>
-      <ReflexElement className='attack-graph' minSize='250'>
-        {atkGraph == null ?
-          <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-          <Cytoscape graph={atkGraph} key={atkGraph} />
-        }
-        <Metrics mets={mets} />
-      </ReflexElement>
+    <div className="fill" style={{display: "flex", boxSizing: "border-box", flexDirection: "column"}}>
+      <SimulationSidebar setAttackAgent={setAttackAgent}/>
+      <ReflexContainer orientation="vertical" className='App'>
+        <ReflexElement className='topology-builder' minSize='450'>
+          <TopologyBuilder setAtkGraph={setGraph} setMets={setMets} toHighlight={mapTopology}/>
+        </ReflexElement>
 
-      <ReflexSplitter style={{width: '10px', backgroundColor: 'Snow'}} className='gutter-vertical' />
+        <ReflexSplitter style={{width: '10px', zIndex: '1'}} className='gutter-vertical' />
 
+        <ReflexElement className='attack-graph' minSize='450'>
+          {atkGraph == null ?
+            <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
+            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
+          }
+          <Metrics mets={mets} />
+        </ReflexElement>
 
-      <ReflexElement className='topology' minSize='250'>
-        {topology == null ?
-          <div className="no-item"> No graph displayed </div> :
-          <Topology graph={topology} setAtkGraph = {wrapperSetAtkGraph} setTopology = {wrapperSetTopology} setMetrics = {wrapperSetMetrics} key={topology} />
-        }
-      </ReflexElement>
-      {/* <button onClick={() => test()}>Test</button> */}
-    </ReflexContainer>
-    </>
-
+      </ReflexContainer>
+    </div>
   );
 }
 
