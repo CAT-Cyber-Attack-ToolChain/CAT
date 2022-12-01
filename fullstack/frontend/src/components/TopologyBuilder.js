@@ -83,7 +83,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
+const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
 
   //initialised once component renders
   var cyRef = undefined
@@ -266,17 +266,19 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
     var machines = netGraph.filter((x) => x.data.type === "machine").map((x) => x.data.machine)
     var routers = netGraph.filter((x) => x.data.type === "router").map((x) => x.data.machine)
     try {
+      setLoading(true)
       var response = await axios.post('http://localhost:8080/submitInput', {
         machines: JSON.stringify(Array.from(machines)),
         routers: JSON.stringify(Array.from(routers)),
         links: JSON.stringify(Array.from(edges))
       });
-
       let data = JSON.parse(response.data)
       setAtkGraph(JSON.stringify(data["attackGraph"]))
+      setLoading(false) 
       setMets(getMetrics())
     } catch (error) {
       console.error('Error:', error);
+      setLoading(false) 
     }
   }
 
@@ -289,22 +291,16 @@ const TopologyBuilder = ({setAtkGraph, setMets, toHighlight}) => {
     fr.addEventListener("load", (event) => {
       var obj = JSON.parse(event.target.result);
       const n = obj.length
-      console.log(obj);
       obj = obj.filter((x) => x.data.label === "edge" || !netGraph.some((y) => y.data.label === x.data.label));
-      console.log(obj);
       obj = obj.filter((x) => x.data.label !== "edge" || (obj.some((y) => y.data.id === x.data.source) && obj.some((y) => y.data.id === x.data.target)));
-      console.log(obj);
       for (var i = 0; i < obj.length; ++i) {
-        console.log(obj[i]);
         obj[i].data.id = String(Number(obj[i].data.id) + nextId);
         if (obj[i].data.label === "edge") {
           obj[i].data.source = String(Number(obj[i].data.source) + nextId);
           obj[i].data.target = String(Number(obj[i].data.target) + nextId);
         }
         created[obj[i].data.label] = true;
-        console.log(created);
         netGraph.push(obj[i]);
-        console.log(netGraph)
       }
       setNetGraph(netGraph);
       setNextId(nextId + n);
