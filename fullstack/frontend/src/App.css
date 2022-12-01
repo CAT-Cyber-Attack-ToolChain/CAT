@@ -63,6 +63,12 @@ input[type="file"] {
   cursor: pointer;
 }
 
+.App.reflex-container.vertical > .reflex-splitter {
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  background-color: #121F38;
+}
+
 .loader {
   position: fixed;
   position: 10rem;

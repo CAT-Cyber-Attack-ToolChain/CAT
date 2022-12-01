@@ -46,7 +46,6 @@ const SimulationSidebar = ({setAttackAgent}) => {
             <li className='menu-icons' onClick={showSidebar}>
               <AiIcons.AiOutlineClose />
             </li>
-            <p>Hiya!</p>
             <form>
                 <FormControl>
                   <FormLabel id="simulation-agent-radio-group" className="radio-group">Simulation Attack Agent</FormLabel>
