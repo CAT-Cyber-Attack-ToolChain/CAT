@@ -31,10 +31,6 @@ body {
   align-items: center;
 }
 
-/* .inner-button {
-  position : absolute; 
-  z-index : 1;
-} */
 .input-button {
   position : absolute; 
   z-index : 1;
@@ -49,22 +45,23 @@ body {
 .input-custom {
   display: inline-block;
   z-index : 1;
-  border: 1px solid #ccc;
-  background-color: #C0C0C0;
+  border: 1px solid #121F38;
+  background-color: #060A12;
+  color: #05b2dc;
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
 }
 
 
+input[type="file"] {
+  display: none;
+}
+
+
 .generate-button {
   margin-top: 20px;
 }
-
-/* #toolchain-container {
-  display: flex;
-  height : 800px
-} */
 
 .attack-graph {
   flex: 1;
