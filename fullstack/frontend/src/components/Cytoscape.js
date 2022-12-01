@@ -10,6 +10,30 @@ cytoscape.use( dagre );
 
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
+
+function makePopper(ele) {
+  ele.popperDiv = ele.popper({
+      content: () => {
+          let div = document.createElement('div');
+
+          div.innerHTML = ele.data('label');
+          div.setAttribute("role", "tooltip")
+          div.classList.add("my-tooltip")
+
+          div.style.display = 'none'
+
+          document.body.appendChild(div);
+
+          return div;
+      },
+      popper: {
+          placement: 'auto'
+      }
+  })
+}
+
+
+
     
 var styles = {
     backgroundColor: '#0a111f',
@@ -119,10 +143,23 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
     useEffect(() => {
         cyRef.ready(() => {
             cyRef.on('mouseover','node', (event) => {
-                setMapTop(event.target.data("properties")["machines"])
+              setMapTop(event.target.data("properties")["machines"])
             })
             cyRef.on('mouseout', 'node', () => setMapTop([]))
+
+           
         })
+
+        cyRef.ready(function () {
+          cyRef.edges().forEach(function (ele) {
+              makePopper(ele);
+          });
+
+          cyRef.on('mouseover','edge', (event) => {
+            event.target.popperDiv.state.elements.popper.style.display = "flex";
+          })
+          cyRef.on('mouseout', 'edge', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
+        });
 
         cyRef.minZoom(cyRef.zoom() - 0.01)
         cyRef.maxZoom(0.1)
