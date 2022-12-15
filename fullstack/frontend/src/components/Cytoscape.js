@@ -10,6 +10,30 @@ cytoscape.use( dagre );
 
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
+
+function makePopper(ele) {
+  ele.popperDiv = ele.popper({
+      content: () => {
+          let div = document.createElement('div');
+
+          div.innerHTML = ele.data('label');
+          div.setAttribute("role", "tooltip")
+          div.classList.add("my-tooltip")
+
+          div.style.display = 'none'
+
+          document.body.appendChild(div);
+
+          return div;
+      },
+      popper: {
+          placement: 'auto'
+      }
+  })
+}
+
+
+
     
 var styles = {
     backgroundColor: '#0a111f',
@@ -53,16 +77,17 @@ var stylesheet = [
     },
     {   selector : '.attackedNode',
         style: {
-            backgroundColor: "green",
+            backgroundColor: '#05b2dc',
             transitionProperty: 'background-color, shape',
-            transitionDuration: '0.5s'
+            transitionDuration: '0.5s',
+            color: '#060A12'
         }
     },
     {   selector : '.attackedEdge',
         style: {
             width: 40,
-            targetArrowColor: 'green',
-            lineColor: 'green',
+            targetArrowColor: '#05b2dc',
+            lineColor: '#05b2dc',
             transitionProperty: 'line-color, target-arrow-color',
             transitionDuration: '0.5s'
         }
@@ -101,7 +126,7 @@ function getNodesFromPath(arr) {
 
 
 
-const Cytoscape = ({graph,setMapTop,attackAgent}) => {
+const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -118,10 +143,23 @@ const Cytoscape = ({graph,setMapTop,attackAgent}) => {
     useEffect(() => {
         cyRef.ready(() => {
             cyRef.on('mouseover','node', (event) => {
-                setMapTop(event.target.data("properties")["machines"])
+              setMapTop(event.target.data("properties")["machines"])
             })
             cyRef.on('mouseout', 'node', () => setMapTop([]))
+
+           
         })
+
+        cyRef.ready(function () {
+          cyRef.edges().forEach(function (ele) {
+              makePopper(ele);
+          });
+
+          cyRef.on('mouseover','edge', (event) => {
+            event.target.popperDiv.state.elements.popper.style.display = "flex";
+          })
+          cyRef.on('mouseout', 'edge', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
+        });
 
         cyRef.minZoom(cyRef.zoom() - 0.01)
         cyRef.maxZoom(0.1)
@@ -190,8 +228,12 @@ const Cytoscape = ({graph,setMapTop,attackAgent}) => {
 
     return(
         <div style={{width: "100%", position: "relative", height: "100%"}}>
-            <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
-            <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+            {!loading ? 
+            <>
+                <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
+                <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+            </> : <div style={{alignItems: 'center', justifyContent: 'center', display: 'flex', height: '100%'}}>{loader}</div>
+            }
         </div>
     )
 }

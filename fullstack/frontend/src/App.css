@@ -86,11 +86,6 @@ input[type="file"] {
   background-color: #121F38;
 }
 
-.loader {
-  position: fixed;
-  position: 10rem;
-}
-
 .fill {
   width: 100%;
   height: 100%;

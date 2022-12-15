@@ -30,7 +30,7 @@ function App() {
 
   const { containerProps, indicatorEl } = useLoading({
     loading: true,
-    indicator: <BallTriangle width="50" class="loader"/>
+    indicator: <BallTriangle width="50"/>
   })
 
   const host = process.env.REACT_APP_HOST
@@ -42,7 +42,7 @@ function App() {
       <SimulationSidebar setAttackAgent={setAttackAgent}/>
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450'>
-          <TopologyBuilder setAtkGraph={setGraph} setMets={setMets} toHighlight={mapTopology}/>
+          <TopologyBuilder setAtkGraph={setGraph} setMets={setMets} setLoading={setLoading} toHighlight={mapTopology}/>
         </ReflexElement>
 
         <ReflexSplitter style={{width: '10px', zIndex: '1'}} className='gutter-vertical' />
@@ -50,7 +50,7 @@ function App() {
         <ReflexElement className='attack-graph' minSize='450'>
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
-            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} setMapTop={setMapTop}/>
+            <Cytoscape attackAgent={attackAgent} graph={atkGraph} key={atkGraph} setMapTop={setMapTop} loading={loading} loader={indicatorEl}/>
           }
           <Metrics mets={mets} />
         </ReflexElement>
