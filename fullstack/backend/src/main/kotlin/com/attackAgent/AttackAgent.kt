@@ -6,6 +6,17 @@ import com.neo4j.Rule
 
 abstract class AttackAgent {
 
+  companion object {
+    public fun getAttackResponse(attackAgent: AttackAgent): Pair<MutableList<Pair<String, String>>, Boolean> {
+      attackAgent.attack()
+      var successful = true
+      if (attackAgent is PredefinedAttackAgent) {
+        successful = attackAgent.usedPriorityTechnique
+      }
+      return Pair(attackAgent.returnPath(), successful)
+    }
+  }
+
   private val path: MutableList<RuleNodePair> = mutableListOf()
   private val adapter: Neo4JAdapter = Neo4JAdapter()
 
