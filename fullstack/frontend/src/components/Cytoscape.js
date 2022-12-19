@@ -3,7 +3,9 @@ import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import dagre from 'cytoscape-dagre';
 import axios from 'axios';
-import {useEffect} from "react"
+import {useEffect, useState} from "react"
+
+import Modal from "react-modal";
 
 cytoscape.use(popper);
 cytoscape.use( dagre );
@@ -128,6 +130,18 @@ function getNodesFromPath(arr) {
 
 const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
 
+    Modal.setAppElement("#attack-graph");
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    function toggleModal() {
+        setIsModalOpen(!isModalOpen)
+    }
+
+    function attackUnsuccessfulPopUp() {
+        toggleModal()
+    }
+
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
     
@@ -222,18 +236,30 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
           setTimeout(function(){highlightNode(index + 1)}, 500)
         }
 
-        // start highlighting nodes and edges of attack
-        highlightNode(0)
+        if (attacked.nodes.length == 0) {
+            attackUnsuccessfulPopUp()
+        } else {
+            // start highlighting nodes and edges of attack
+            highlightNode(0)
+        }
     }
 
     return(
-        <div style={{width: "100%", position: "relative", height: "100%"}}>
+        <div style={{width: "100%", position: "relative", height: "100%"}} id="attack-graph">
             {!loading ? 
             <>
                 <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
             </> : <div style={{alignItems: 'center', justifyContent: 'center', display: 'flex', height: '100%'}}>{loader}</div>
             }
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={toggleModal}
+                contentLabel="Attack Unsuccessful"
+            >
+                <div>Attack Unsuccessful</div>
+                <button onClick={toggleModal}>Close modal</button>
+            </Modal>
         </div>
     )
 }
