@@ -250,6 +250,11 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     
   }
 
+  function clearNetGraph() {
+    setNetGraph([]);
+    setCreated({});
+  }
+
   function printNetGraph() {
     console.log(netGraph)
     // setting zoom
@@ -348,6 +353,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
         </div>
         <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
         <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
+        <button className="input-custom" onClick={clearNetGraph}>Clear Topology Graph</button>
       </div>
       
   
