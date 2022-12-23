@@ -255,6 +255,12 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     setCreated({});
   }
 
+  function addDragDropDevice(e) {
+    e.preventDefault();
+    console.log(curDevice)
+    addDevice();
+  }
+
   function printNetGraph() {
     console.log(netGraph)
     // setting zoom
@@ -350,6 +356,13 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
             onChange={mergeTopology}
           />
           <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
+          
+          <div>
+            {machines.map((machine) => {
+              return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
+            })}
+          </div>
+
         </div>
         <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
         <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
@@ -358,15 +371,17 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
       
   
       {netGraph.length === 0 ?
-        <div className="no-item" style={{height: "100%"}}> No graph displayed </div> :
-        <CytoscapeComponent
-          cy={(cy) => cyRef = onMouseover(cy)}
-          elements={netGraph}
-          key={netGraph}
-          style={styles}
-          stylesheet={stylesheet}
-          layout={layout}
-        />
+        <div onDrop={(e) => addDragDropDevice(e)} onDragOver={(e) => e.preventDefault()} style={styles}> No graph displayed </div> :
+        <div onDrop={(e) => addDragDropDevice(e)} onDragOver={(e) => e.preventDefault()} style={styles}>
+          <CytoscapeComponent
+            cy={(cy) => cyRef = onMouseover(cy)}
+            elements={netGraph}
+            key={netGraph}
+            style={styles}
+            stylesheet={stylesheet}
+            layout={layout}
+          />
+        </div>
       }
    
     </div>
