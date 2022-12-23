@@ -336,17 +336,6 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
             onChange={addConfiguration}
           />
           <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
-        </div>  
-        <div className='dropdown'>
-          <p>Add to topology: </p>
-          <Dropdown
-            className="dropdown-color"
-            controlClassName="dropdown-color"
-            menuClassName="dropdown-color"
-            options={machines}
-            onChange={setDevice}
-          />
-          <button className="input-custom" onClick={addDevice}> + </button>
         </div>
         <div>
           <input 
@@ -358,6 +347,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
           <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
           
           <div>
+            <label>List of devices: </label>
             {machines.map((machine) => {
               return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
             })}
