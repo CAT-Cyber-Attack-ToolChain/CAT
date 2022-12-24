@@ -105,6 +105,14 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
   // used for repeatedly executing function (device slider)
   var interval;
 
+  useEffect(() => {
+    // allow user to use mouse wheel to scroll the device list
+    var slider = document.getElementById("device-slider")
+    slider.addEventListener("wheel", function (e) {
+      slider.scrollLeft += (e.deltaY > 0) ? 30 : -30;
+    })
+  }, []);
+
   /* TO IMPLEMENT
      toHighlight gets data from topology builder (Mapping here)
      This is called whenever toHighlight changes
