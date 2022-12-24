@@ -41,7 +41,7 @@ function App() {
     <div className="fill" style={{display: "flex", boxSizing: "border-box", flexDirection: "column"}}>
       <SimulationSidebar setAttackAgent={setAttackAgent}/>
       <ReflexContainer orientation="vertical" className='App'>
-        <ReflexElement className='topology-builder' minSize='450'>
+        <ReflexElement className='topology-builder' minSize='450' style={{overflow: "hidden"}}>
           <TopologyBuilder setAtkGraph={setGraph} setMets={setMets} setLoading={setLoading} toHighlight={mapTopology}/>
         </ReflexElement>
 

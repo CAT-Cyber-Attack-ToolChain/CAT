@@ -2,7 +2,9 @@ import axios from "axios";
 import CytoscapeComponent from "react-cytoscapejs";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import "./TopologyBuilder.css";
 import { useState, useEffect } from "react";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md"
 import fileDownload from "js-file-download";
 
 const panelHeight = 250
@@ -99,6 +101,9 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
   const [curDevice, setCurDevice] = useState(undefined);
   const [nextId, setNextId] = useState(0);
   const [created, setCreated] = useState({});
+
+  // used for repeatedly executing function (device slider)
+  var interval;
 
   /* TO IMPLEMENT
      toHighlight gets data from topology builder (Mapping here)
@@ -325,6 +330,36 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     setMets(JSON.parse(response.data))
   }
 
+  // helper function to slide device list to the left (1 time)
+  function slideLeft() {
+    var slider = document.getElementById("device-slider");
+    slider.scrollLeft = slider.scrollLeft - 30;
+  }
+
+  // helper function to slide device list to the right (1 time)
+  function slideRight() {
+    var slider = document.getElementById("device-slider");
+    slider.scrollLeft = slider.scrollLeft + 30;
+  }
+
+  // slide the slider to the left during the time the left icon is clicked
+  function slideLeftMouseDown() {
+    interval = setInterval(slideLeft, 95);
+  }
+
+  function slideLeftMouseUp() {
+    clearInterval(interval);
+  }
+
+  // slide the slider to the right during the time the left icon is clicked
+  function slideRightMouseDown() {
+    interval = setInterval(slideRight, 95);
+  }
+
+  function slideRightMouseUp() {
+    clearInterval(interval);
+  }
+
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box"}}>
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
@@ -345,12 +380,16 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
             onChange={mergeTopology}
           />
           <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
-          
-          <div>
-            <label>List of devices: </label>
-            {machines.map((machine) => {
-              return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
-            })}
+          <br/><br/>
+          <div className="device-slider-container">
+            <label style={{display: "inline-block", border: "1px", padding: "6px 12px"}}>Devices: </label>
+            <MdChevronLeft style={{cursor: "pointer"}} onClick={slideLeft} onMouseDown={slideLeftMouseDown} onMouseUp={slideLeftMouseUp} size={40} />
+            <div id="device-slider" style={{padding: "6px 12px", overflowX: "scroll", whiteSpace: "nowrap", scrollBehavior: "smooth"}}>
+              {machines.map((machine) => {
+                return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
+              })}
+            </div>
+            <MdChevronRight style={{cursor: "pointer"}} onClick={slideRight} onMouseDown={slideRightMouseDown} onMouseUp={slideRightMouseUp} size={40} />
           </div>
 
         </div>
