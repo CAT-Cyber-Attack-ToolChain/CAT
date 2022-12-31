@@ -8,8 +8,8 @@ services:
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     ports:
-      - 8081:8080      
-    entrypoint: mv /fullstack/backend/docker.conf /fullstack/backend/.conf
+      - 8081:8080
+    entrypoint: /fullstack/backend/startup.sh
 
   neo4j:
     image: neo4j:4.4.9-enterprise
@@ -32,4 +32,4 @@ services:
       - 8080:8080
     volumes:
       - ../fullstack/frontend:/frontend
-    entrypoint: mv /frontend/docker.env /frontend/.env
+    entrypoint: /frontend/startup.sh
