@@ -12,6 +12,11 @@ body {
   height : 100%;
 }
 
+.content-color {
+  color: #05b2dc;
+  background-color: #0a111f;
+}
+
 .App {
   display: flex;
   height: 100%;
@@ -93,6 +98,11 @@ input[type="file"] {
 
 .center {
   margin: 40%;
+}
+
+.right-aligned {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .dropdown {

@@ -6,6 +6,7 @@ import axios from 'axios';
 import {useEffect, useState} from "react"
 
 import Modal from "react-modal";
+import { blue } from '@mui/material/colors';
 
 cytoscape.use(popper);
 cytoscape.use( dagre );
@@ -47,6 +48,23 @@ var styles = {
 var layout = {
     name: "dagre",
     spacingFactor: 3
+}
+
+var modalStyles = {
+    content: {
+        top: '35%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        width: '60%',
+        transform: 'translate(-40%, -10%)',   
+        color: "#05b2dc",
+        backgroundColor: "#0a111f"
+    },
+    overlay: {
+        zIndex: 1
+    }
 }
 
 var stylesheet = [
@@ -95,16 +113,6 @@ var stylesheet = [
         }
     }
 ]
-
-async function simulateRandomAttack() {
-    const response = await axios.get(`http://${host}:${port}/simulation/random`)
-    return response.data
-}
-
-async function simulateRealAttack() {
-    const response = await axios.get("http://localhost:8080/simulation/real")
-    return response.data
-}
 
 async function simulateAttack(attackAgent) {
     const response = await axios.get(`http://${host}:${port}/simulation/${attackAgent}`)
@@ -256,9 +264,14 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
                 isOpen={isModalOpen}
                 onRequestClose={toggleModal}
                 contentLabel="Attack Unsuccessful"
+                style={modalStyles}
+                portalClassName="App"
             >
                 <div>Attack Unsuccessful</div>
-                <button onClick={toggleModal}>Close modal</button>
+                <div className='right-aligned'>
+                    <button onClick={toggleModal} className="input-custom">OK</button>
+                </div>
+                
             </Modal>
         </div>
     )
