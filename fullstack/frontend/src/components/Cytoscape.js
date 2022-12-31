@@ -130,7 +130,6 @@ function getNodesFromPath(arr) {
 
 const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
 
-    Modal.setAppElement("#attack-graph");
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -219,7 +218,7 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
         const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
-
+ 
         function highlightNode(index) {
           cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
           if (index === attacked.nodes.length - 1) {
@@ -238,6 +237,7 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
 
         if (attacked.nodes.length == 0) {
             attackUnsuccessfulPopUp()
+            document.getElementById('simulate-button').disabled = false
         } else {
             // start highlighting nodes and edges of attack
             highlightNode(0)

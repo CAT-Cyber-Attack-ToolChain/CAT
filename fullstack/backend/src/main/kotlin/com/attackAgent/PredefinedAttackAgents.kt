@@ -160,6 +160,7 @@ class WiperAttackAgent : PredefinedAttackAgent() {
 
 class CustomAttackAgent(val techniqueMap: Map<String, Int> = mapOf()) : PredefinedAttackAgent() {
     init {
+        usedPriorityTechnique = techniqueMap.isEmpty()
         updateScoresWith(techniqueMap)
     }
 
