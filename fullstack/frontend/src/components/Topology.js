@@ -79,6 +79,9 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
         indicator: <Grid width="50" class="center" />
     })
 
+    const host = process.env.REACT_APP_HOST
+    const port = process.env.REACT_APP_PORT
+
     var topologyCyRef = undefined
 
     useEffect(() => {
@@ -174,7 +177,7 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
             console.log(JSON.stringify(Array.from(edges)))
 
             try {
-              const response = await axios.post('http://localhost:8080/graph/separate', {
+              const response = await axios.post(`http://${host}:${port}/graph/separate`, {
                 nodes: JSON.stringify(Array.from(nodes)),
                 edges: JSON.stringify(Array.from(edges))
               })
