@@ -4,6 +4,10 @@ import com.neo4j.Node
 import com.neo4j.Rule
 
 abstract class PredefinedAttackAgent : AttackAgent() {
+
+    var priorityTechniques: List<String> = listOf()
+
+    var usedPriorityTechnique: Boolean = false
     // cloning the original map
     private val TECHNIQUE_LIKELIHOOD_MAP = TECHNIQUE_EASYNESS_MAP.toMutableMap()
 
@@ -11,7 +15,7 @@ abstract class PredefinedAttackAgent : AttackAgent() {
         TECHNIQUE_LIKELIHOOD_MAP.put(technique, score)
     }
 
-    fun updateScores(priorityTechniques: List<String>) {
+    fun updateScores() {
         for (technique in priorityTechniques) {
             changeOrAddScore(technique, HIGH_SCORE)
         }
@@ -35,6 +39,10 @@ abstract class PredefinedAttackAgent : AttackAgent() {
                 pickedRule = rule
                 maxScore = currentScore
         }
+
+        if (priorityTechniques.contains(getMitreTechnique(pickedRule!!).technique)) {
+            usedPriorityTechnique = true
+        }
         return pickedRule!!
     }
 
@@ -47,18 +55,18 @@ abstract class PredefinedAttackAgent : AttackAgent() {
 class WannacryAttackAgent : PredefinedAttackAgent() {
 
     init {
-        val priorityTechniques = listOf<String>("Exploit Public-Facing Application",
+        priorityTechniques = listOf<String>("Exploit Public-Facing Application",
                                             "Active Scanning",
                                             "Encrypted Channel",
                                             "Data Encrypted for Impact")
 
-        updateScores(priorityTechniques)
+        updateScores()
     }
 }
 
 class REvilAttackAgent : PredefinedAttackAgent() {
     init {
-        val priorityTechniques = listOf<String>("Access Token Manipulation: Token Impersonation/Theft",
+        priorityTechniques = listOf<String>("Access Token Manipulation: Token Impersonation/Theft",
         "Access Token Manipulation: Create Process with Token", "Application Layer Protocol: Web Protocols",
         "Command and Scripting Interpreter", "Data Destruction", "Data Encrypted for Impact", "Deobfuscate/Decode Files or Information",
         "Drive-by Compromise", "Encrypted Channel: Asymmetric Cryptography",
@@ -110,13 +118,13 @@ class REvilAttackAgent : PredefinedAttackAgent() {
         T0863
          */
 
-        updateScores(priorityTechniques)
+        updateScores()
     }
 }
 
 class SynAckAttackAgent : PredefinedAttackAgent() {
     init {
-        val priorityTechniques = listOf("Data Encrypted for Impact", "File and Directory Discovery",
+        priorityTechniques = listOf("Data Encrypted for Impact", "File and Directory Discovery",
             "Indicator Removal: Clear Windows Event Logs", "Modify Registry", "Native API", "Obfuscated Files or Information",
         "Process Discovery", "Process Injection: Process Doppelganging", "Query Registry", "System Information Discovery",
         "System Location Discovery: System Language Discovery", "System Owner/User Discovery",
@@ -124,13 +132,13 @@ class SynAckAttackAgent : PredefinedAttackAgent() {
 
         // T1083, T1070, T1112, T1106, T1027, T1057, T1055, T1012, T1082, T1614, T1033, T1007, T1497
 
-        updateScores(priorityTechniques)
+        updateScores()
     }
 }
 
 class T9000AttackAgent : PredefinedAttackAgent() {
     init {
-        val priorityTechniques = listOf("Archive Collected Data: Archive via Custom Method", "Audio Capture",
+        priorityTechniques = listOf("Archive Collected Data: Archive via Custom Method", "Audio Capture",
         "Automated Collection", "Event Triggered Execution: AppInit DLLs", "Hijack Execution Flow: DLL Side-Loading",
         "Peripheral Device Discovery", "Screen Capture", "Software Discovery: Security Software Discovery",
         "System Information Discovery", "System Network Configuration Discovery", "System Owner/User Discovery",
@@ -138,20 +146,21 @@ class T9000AttackAgent : PredefinedAttackAgent() {
 
         // T1560, T1123, T1119, 12546, T1574, T1120, T1113, T1518, T1082, T1016, T1033, T1124, T1125
 
-        updateScores(priorityTechniques)
+        updateScores()
     }
 }
 
 class WiperAttackAgent : PredefinedAttackAgent() {
     init {
-        val priorityTechniques = listOf("Software Deployment Tools")
+        priorityTechniques = listOf("Software Deployment Tools")
         // T1072
-        updateScores(priorityTechniques)
+        updateScores()
     }
 }
 
 class CustomAttackAgent(val techniqueMap: Map<String, Int> = mapOf()) : PredefinedAttackAgent() {
     init {
+        usedPriorityTechnique = techniqueMap.isEmpty()
         updateScoresWith(techniqueMap)
     }
 

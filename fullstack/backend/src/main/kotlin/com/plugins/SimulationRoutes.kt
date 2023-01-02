@@ -60,6 +60,10 @@ fun Route.SimulationRouting() {
 }
 
 private fun attackAndGetPath(agent: AttackAgent): MutableList<Pair<String, String>> {
-    agent.attack()
-    return agent.returnPath()
+    val response = AttackAgent.getAttackResponse(agent)
+    val success = response.second
+    val path = response.first
+    if (success)
+        return path
+    return mutableListOf()
 }

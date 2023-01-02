@@ -3,7 +3,10 @@ import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import dagre from 'cytoscape-dagre';
 import axios from 'axios';
-import {useEffect} from "react"
+import {useEffect, useState} from "react"
+
+import Modal from "react-modal";
+import { blue } from '@mui/material/colors';
 
 cytoscape.use(popper);
 cytoscape.use( dagre );
@@ -45,6 +48,23 @@ var styles = {
 var layout = {
     name: "dagre",
     spacingFactor: 3
+}
+
+var modalStyles = {
+    content: {
+        top: '35%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        width: '60%',
+        transform: 'translate(-40%, -10%)',   
+        color: "#05b2dc",
+        backgroundColor: "#0a111f"
+    },
+    overlay: {
+        zIndex: 1
+    }
 }
 
 var stylesheet = [
@@ -94,16 +114,6 @@ var stylesheet = [
     }
 ]
 
-async function simulateRandomAttack() {
-    const response = await axios.get(`http://${host}:${port}/simulation/random`)
-    return response.data
-}
-
-async function simulateRealAttack() {
-    const response = await axios.get("http://localhost:8080/simulation/real")
-    return response.data
-}
-
 async function simulateAttack(attackAgent) {
     const response = await axios.get(`http://${host}:${port}/simulation/${attackAgent}`)
     return response.data
@@ -127,6 +137,17 @@ function getNodesFromPath(arr) {
 
 
 const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    function toggleModal() {
+        setIsModalOpen(!isModalOpen)
+    }
+
+    function attackUnsuccessfulPopUp() {
+        toggleModal()
+    }
 
     //initialise once Cytoscape components finishes
     var cyRef = undefined;
@@ -205,7 +226,7 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
         const attacked = await simulateAttack(attackAgent).then(path=> {
           return simulationParser(path);
         })
-
+ 
         function highlightNode(index) {
           cyRef.$('#' + attacked.nodes[index]).addClass("attackedNode")
           if (index === attacked.nodes.length - 1) {
@@ -222,18 +243,36 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
           setTimeout(function(){highlightNode(index + 1)}, 500)
         }
 
-        // start highlighting nodes and edges of attack
-        highlightNode(0)
+        if (attacked.nodes.length == 0) {
+            attackUnsuccessfulPopUp()
+            document.getElementById('simulate-button').disabled = false
+        } else {
+            // start highlighting nodes and edges of attack
+            highlightNode(0)
+        }
     }
 
     return(
-        <div style={{width: "100%", position: "relative", height: "100%"}}>
+        <div style={{width: "100%", position: "relative", height: "100%"}} id="attack-graph">
             {!loading ? 
             <>
                 <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
             </> : <div style={{alignItems: 'center', justifyContent: 'center', display: 'flex', height: '100%'}}>{loader}</div>
             }
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={toggleModal}
+                contentLabel="Attack Unsuccessful"
+                style={modalStyles}
+                portalClassName="App"
+            >
+                <div>Attack Unsuccessful</div>
+                <div className='right-aligned'>
+                    <button onClick={toggleModal} className="input-custom">OK</button>
+                </div>
+                
+            </Modal>
         </div>
     )
 }

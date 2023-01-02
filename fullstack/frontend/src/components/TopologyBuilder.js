@@ -100,6 +100,9 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
   const [nextId, setNextId] = useState(0);
   const [created, setCreated] = useState({});
 
+  const host = process.env.REACT_APP_HOST
+  const port = process.env.REACT_APP_PORT
+
   /* TO IMPLEMENT
      toHighlight gets data from topology builder (Mapping here)
      This is called whenever toHighlight changes
@@ -267,7 +270,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     var routers = netGraph.filter((x) => x.data.type === "router").map((x) => x.data.machine)
     try {
       setLoading(true)
-      var response = await axios.post('http://localhost:8080/submitInput', {
+      var response = await axios.post(`http://${host}:${port}/submitInput`, {
         machines: JSON.stringify(Array.from(machines)),
         routers: JSON.stringify(Array.from(routers)),
         links: JSON.stringify(Array.from(edges))
@@ -310,7 +313,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
   }
 
   async function getMetrics() {
-    const response = await axios.get('http://localhost:8080/metrics')
+    const response = await axios.get(`http://${host}:${port}/metrics`)
     setMets(JSON.parse(response.data))
   }
 

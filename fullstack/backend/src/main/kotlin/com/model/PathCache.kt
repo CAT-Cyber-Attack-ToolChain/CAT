@@ -5,10 +5,12 @@ import org.neo4j.driver.*
 import java.io.File
 import java.io.IOException
 import java.util.*
+import com.controller.Neo4JController
 
 
 class PathCache(val filePath: String) {
-    private val driver: Driver = GraphDatabase.driver("neo4j+s://c7776984.databases.neo4j.io", AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU"))
+    // using common driver:
+    private val driver: Driver = Neo4JController.driver
     private var pathLengths: List<Int> = mutableListOf()
     var startNodeId: Int = -1;
     var goalNodeIds: List<Int> = listOf<Int>();

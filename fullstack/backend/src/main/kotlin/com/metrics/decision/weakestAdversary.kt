@@ -4,6 +4,8 @@ import com.metrics.DecisionMetric
 import com.example.model.PathCache
 import org.neo4j.driver.*
 
+import com.controller.Neo4JController
+
 class WeakestAdversary(private val cache: PathCache) : DecisionMetric() {
 
     override fun toString(): String {
@@ -22,6 +24,6 @@ class WeakestAdversary(private val cache: PathCache) : DecisionMetric() {
         return factSets.min().toDouble()
     }
     companion object {
-        private val driver: Driver = GraphDatabase.driver("neo4j+s://c7776984.databases.neo4j.io", AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU"))
+        private val driver: Driver = Neo4JController.driver
     }
 }
