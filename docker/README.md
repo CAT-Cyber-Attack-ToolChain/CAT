@@ -1,49 +1,67 @@
 # Setting up this toolchain using Docker containers
 
-1. Get/Build relevant images:
-    This toolchain uses three containers, one for mulval and the backend server, one for the frontend, and one for the Neo4J database.
-    The Dockerfiles for mulval and the frontend are provided, namely `mulval.Dockerfile` and `npm.Dockerfile`.
-    You can build them with the following commands: (You might need root permissions)
+### 0. Prerequisites: ###
 
-    Run this one from the root directory of this repository:
-     ```
-    [sudo] docker build --file docker/mulval.Dockerfile --tag mulval_git:Dockerfile .
-    ```
-    And the following ones from within the `docker` directory.
-    ```
-    [sudo] docker build --file npm.Dockerfile --tag npm-16 .
-    ```
-    The Neo4J image can be pulled from Docker Hub:
-    ```
-    [sudo] docker pull neo4j
-    ```
+`docker` and `docker compose` plugin need to be installed on the delpoying machine to run this project.
 
-2. Run the containers using Docker Compose:
-    Once the images are correctly installed, the containers can be started up.
-    A `compose.yml` file is provided for this purpose. To run it, execute the following command:
-    ```
-    docker compose up
-    ```
-    That should start up the three containers in Docker.
+Recommeded to install Docker Desktop, which includes `compose`: https://docs.docker.com/desktop/
 
-3. Starting the backend:
-    In the `mulval` container, the backend needs to be started up so that it can serve the frontend requests.
-    To do this, execute the following commands in the mulval container:
-    ```
-    mulval$> cd fullstack/backend
-    mulval$> ./gradlew run
-    ```
+Alternatively, you could install docker and `docker compose` separately:
 
-    This will set it up so that the server listens for requests on the container's `0.0.0.0:8080`.
-    This is also where the server exceptions will be printed out.
+Install `docker`: 
+```
+sudo apt-get update
+sudo apt install docker.io
+```
 
-4. Starting the frontend:
-    In the `node` container, execute the following commands to start the frontend interface:
-    ```
-    node$> cd frontend
-    node$> npm start 
-    ```
-    Once a successful compilation message pops up, the frontend web UI should be accessible on `localhost:3000`.
+Install `docker compose`: https://docs.docker.com/compose/install/linux/
+
+
+
+### 1. Get/Build relevant images: ###
+This toolchain uses three containers, one for mulval and the backend server, one for the frontend, and one for the Neo4J database.
+The Dockerfiles for mulval and the frontend are provided, namely `mulval.Dockerfile` and `npm.Dockerfile`.
+You can build them with the following commands: (You might need root permissions)
+
+Run this one from the root directory of this repository:
+ ```
+[sudo] docker build --file docker/mulval.Dockerfile --tag mulval_git:Dockerfile .
+```
+And the following ones from within the `docker` directory.
+```
+[sudo] docker build --file npm.Dockerfile --tag npm-16 .
+```
+The Neo4J image can be pulled from Docker Hub:
+```
+[sudo] docker pull neo4j
+```
+
+### 2. Run the containers using Docker Compose: ###
+Once the images are correctly installed, the containers can be started up.
+A `compose.yml` file is provided for this purpose. To run it, execute the following command:
+```
+[sudo] docker compose up
+```
+That should start up the three containers in Docker.
+
+### 3. Starting the backend: ###
+In the `mulval` container, the backend needs to be started up so that it can serve the frontend requests.
+To do this, execute the following commands in the mulval container:
+```
+mulval$> cd fullstack/backend
+mulval$> ./gradlew run
+```
+
+This will set it up so that the server listens for requests on the container's `0.0.0.0:8080`.
+This is also where the server exceptions will be printed out.
+
+### 4. Starting the frontend: ###
+In the `node` container, execute the following commands to start the frontend interface:
+```
+node$> cd frontend
+node$> npm start 
+```
+Once a successful compilation message pops up, the frontend web UI should be accessible on `localhost:3000`.
 
 ## Some Docker help
 
