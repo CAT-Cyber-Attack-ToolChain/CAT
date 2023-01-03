@@ -11,7 +11,7 @@ RUN apt install python3 -y
 
 RUN wget https://github.com/JetBrains/kotlin/releases/download/v1.7.20/kotlin-native-linux-x86_64-1.7.20.tar.gz -O kotlin.tar.gz && tar -xzf kotlin.tar.gz && rm kotlin.tar.gz
 RUN wget 'https://sourceforge.net/projects/xsb/files/xsb/5.0%20%28Green%20Tea%29/XSB-5.0.tar.gz/download' -O xsb.tar.gz && tar -xzf xsb.tar.gz && rm xsb.tar.gz
-RUN wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz -O maven.tar.gz && tar -xzf maven.tar.gz && rm maven.tar.gz
+RUN wget https://dlcdn.apache.org/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz -O maven.tar.gz && tar -xzf maven.tar.gz && rm maven.tar.gz
 
 RUN apt install graphviz -y
 RUN apt install make -y
