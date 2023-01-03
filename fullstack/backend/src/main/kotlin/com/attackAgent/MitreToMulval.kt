@@ -1,6 +1,6 @@
 package com.attackAgent
 
-import com.neo4j.Rule
+import com.graph.Rule
 import org.apache.commons.csv.CSVFormat
 
 import java.io.InputStream

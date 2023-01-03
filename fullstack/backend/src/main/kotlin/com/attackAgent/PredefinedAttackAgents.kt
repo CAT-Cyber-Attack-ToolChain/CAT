@@ -1,7 +1,7 @@
 package com.attackAgent
 
-import com.neo4j.Node
-import com.neo4j.Rule
+import com.graph.Node
+import com.graph.Rule
 
 abstract class PredefinedAttackAgent : AttackAgent() {
 

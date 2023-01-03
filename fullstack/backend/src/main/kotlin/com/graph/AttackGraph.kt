@@ -1,4 +1,4 @@
-package com.neo4j
+package com.graph
 
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
@@ -8,7 +8,7 @@ import org.neo4j.driver.Result
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 
-class Neo4JAdapter {
+class AttackGraph {
 
     private val driver: Driver = Neo4JController.driver
 
@@ -118,7 +118,7 @@ class Neo4JAdapter {
     }
 }
 
-val adapter: Neo4JAdapter = Neo4JAdapter()
+val adapter: AttackGraph = AttackGraph()
 
 fun main(args: Array<String>) {
 
