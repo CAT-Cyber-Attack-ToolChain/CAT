@@ -8,20 +8,17 @@ import com.cytoscape.CytoDataWrapper
 import com.cytoscape.CytoEdge
 import com.cytoscape.CytoNode
 import com.example.model.PathCache
-import com.graph.Machine
 import com.graph.TopologyGraph
 import com.model.AttackGraphOutput
 import com.model.MachineExtractor
 import com.model.MulvalInput
 import com.model.Neo4JMapping
-import com.neo4j.Neo4JAdapter
-import com.neo4j.Node
-import io.ktor.http.content.*
+import com.graph.AttackGraph
+import com.graph.Node
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.io.File
 import java.util.*
 
 fun Route.GraphGenRouting() {
@@ -77,7 +74,7 @@ fun nodeToCytoJSON(n: Node): List<CytoDataWrapper> {
 
 fun exportToCytoscapeJSON(): String {
   val klaxon = Klaxon()
-  val adapter = Neo4JAdapter()
+  val adapter = AttackGraph()
   val nodestrlist: List<String> = adapter.nodes.values.map { n ->
 
     val dataWrappers = nodeToCytoJSON(n)

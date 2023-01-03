@@ -1,8 +1,8 @@
 package com.attackAgent
 
-import com.neo4j.Neo4JAdapter
-import com.neo4j.Node
-import com.neo4j.Rule
+import com.graph.AttackGraph
+import com.graph.Node
+import com.graph.Rule
 
 abstract class AttackAgent {
 
@@ -18,7 +18,7 @@ abstract class AttackAgent {
   }
 
   private val path: MutableList<RuleNodePair> = mutableListOf()
-  private val adapter: Neo4JAdapter = Neo4JAdapter()
+  private val adapter: AttackGraph = AttackGraph()
 
   fun attack() {
     val startNode = adapter.getGraph()
