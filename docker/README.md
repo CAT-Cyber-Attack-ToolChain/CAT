@@ -3,14 +3,19 @@
 1. Get/Build relevant images:
     This toolchain uses three containers, one for mulval and the backend server, one for the frontend, and one for the Neo4J database.
     The Dockerfiles for mulval and the frontend are provided, namely `mulval.Dockerfile` and `npm.Dockerfile`.
-    You can build them with the following commands:
+    You can build them with the following commands: (You might need root permissions)
+
+    Run this one from the root directory of this repository:
      ```
-      docker build --file mulval.Dockerfile --tag mulval_git:Dockerfile .
-      docker build --file npm.Dockerfile --tag npm-16 .
+    [sudo] docker build --file docker/mulval.Dockerfile --tag mulval_git:Dockerfile .
+    ```
+    And the following ones from within the `docker` directory.
+    ```
+    [sudo] docker build --file npm.Dockerfile --tag npm-16 .
     ```
     The Neo4J image can be pulled from Docker Hub:
     ```
-    docker pull neo4j
+    [sudo] docker pull neo4j
     ```
 
 2. Run the containers using Docker Compose:
