@@ -1,0 +1,1 @@
+All `MulVAL` outputs will be stored in this directory.
