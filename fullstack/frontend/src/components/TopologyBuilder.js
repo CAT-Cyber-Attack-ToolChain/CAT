@@ -2,7 +2,9 @@ import axios from "axios";
 import CytoscapeComponent from "react-cytoscapejs";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import "./TopologyBuilder.css";
 import { useState, useEffect } from "react";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md"
 import fileDownload from "js-file-download";
 
 const panelHeight = 250
@@ -102,6 +104,16 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
 
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
+  // used for repeatedly executing function (device slider)
+  var interval;
+
+  useEffect(() => {
+    // allow user to use mouse wheel to scroll the device list
+    var slider = document.getElementById("device-slider")
+    slider.addEventListener("wheel", function (e) {
+      slider.scrollLeft += (e.deltaY > 0) ? 30 : -30;
+    })
+  }, []);
 
   /* TO IMPLEMENT
      toHighlight gets data from topology builder (Mapping here)
@@ -253,6 +265,17 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     
   }
 
+  function clearNetGraph() {
+    setNetGraph([]);
+    setCreated({});
+  }
+
+  function addDragDropDevice(e) {
+    e.preventDefault();
+    console.log(curDevice)
+    addDevice();
+  }
+
   function printNetGraph() {
     console.log(netGraph)
     // setting zoom
@@ -317,6 +340,36 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     setMets(JSON.parse(response.data))
   }
 
+  // helper function to slide device list to the left (1 time)
+  function slideLeft() {
+    var slider = document.getElementById("device-slider");
+    slider.scrollLeft = slider.scrollLeft - 30;
+  }
+
+  // helper function to slide device list to the right (1 time)
+  function slideRight() {
+    var slider = document.getElementById("device-slider");
+    slider.scrollLeft = slider.scrollLeft + 30;
+  }
+
+  // slide the slider to the left during the time the left icon is clicked
+  function slideLeftMouseDown() {
+    interval = setInterval(slideLeft, 95);
+  }
+
+  function slideLeftMouseUp() {
+    clearInterval(interval);
+  }
+
+  // slide the slider to the right during the time the left icon is clicked
+  function slideRightMouseDown() {
+    interval = setInterval(slideRight, 95);
+  }
+
+  function slideRightMouseUp() {
+    clearInterval(interval);
+  }
+
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box"}}>
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
@@ -328,17 +381,6 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
             onChange={addConfiguration}
           />
           <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
-        </div>  
-        <div className='dropdown'>
-          <p>Add to topology: </p>
-          <Dropdown
-            className="dropdown-color"
-            controlClassName="dropdown-color"
-            menuClassName="dropdown-color"
-            options={machines}
-            onChange={setDevice}
-          />
-          <button className="input-custom" onClick={addDevice}> + </button>
         </div>
         <div>
           <input 
@@ -348,22 +390,37 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
             onChange={mergeTopology}
           />
           <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
+          <br/><br/>
+          <div className="device-slider-container">
+            <label style={{display: "inline-block", border: "1px", padding: "6px 12px"}}>Devices: </label>
+            <MdChevronLeft style={{cursor: "pointer"}} onClick={slideLeft} onMouseDown={slideLeftMouseDown} onMouseUp={slideLeftMouseUp} size={40} />
+            <div id="device-slider" style={{padding: "6px 12px", overflowX: "scroll", whiteSpace: "nowrap", scrollBehavior: "smooth"}}>
+              {machines.map((machine) => {
+                return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
+              })}
+            </div>
+            <MdChevronRight style={{cursor: "pointer"}} onClick={slideRight} onMouseDown={slideRightMouseDown} onMouseUp={slideRightMouseUp} size={40} />
+          </div>
+
         </div>
         <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
         <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
+        <button className="input-custom" onClick={clearNetGraph}>Clear Topology Graph</button>
       </div>
       
   
       {netGraph.length === 0 ?
-        <div className="no-item" style={{height: "100%"}}> No graph displayed </div> :
-        <CytoscapeComponent
-          cy={(cy) => cyRef = onMouseover(cy)}
-          elements={netGraph}
-          key={netGraph}
-          style={styles}
-          stylesheet={stylesheet}
-          layout={layout}
-        />
+        <div onDrop={(e) => addDragDropDevice(e)} onDragOver={(e) => e.preventDefault()} style={styles}> No graph displayed </div> :
+        <div onDrop={(e) => addDragDropDevice(e)} onDragOver={(e) => e.preventDefault()} style={styles}>
+          <CytoscapeComponent
+            cy={(cy) => cyRef = onMouseover(cy)}
+            elements={netGraph}
+            key={netGraph}
+            style={styles}
+            stylesheet={stylesheet}
+            layout={layout}
+          />
+        </div>
       }
    
     </div>

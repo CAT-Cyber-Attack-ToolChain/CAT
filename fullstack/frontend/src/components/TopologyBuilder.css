@@ -1,0 +1,15 @@
+.device-slider-container {
+  position: relative;
+  display: flex;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#device-slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#device-slider {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
