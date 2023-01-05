@@ -1,7 +1,7 @@
-package metrics.assistive
+package com.metrics.assistive
 
 import com.metrics.AssistiveMetric
-import com.example.model.PathCache
+import com.model.PathCache
 import kotlin.math.pow
 import kotlin.math.sqrt
 

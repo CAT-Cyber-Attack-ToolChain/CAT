@@ -1,7 +1,7 @@
 package com
 
-import com.plugins.configurePlugins
-import com.plugins.configureRouting
+import com.ktor.configurePlugins
+import com.ktor.configureRouting
 import io.ktor.server.application.*
 
 

@@ -1,15 +1,15 @@
-package com.plugins
+package com.ktor.routes
 
 import com.attackAgent.MitreTechnique
 import com.attackAgent.getMitreTechnique
 import com.attackAgent.RealAttackAgent
 import com.beust.klaxon.Klaxon
-import com.controller.MulvalController
-import com.controller.Neo4JController
+import com.controller.Mulval
+import com.controller.Neo4J
 import com.cytoscape.CytoDataWrapper
 import com.cytoscape.CytoEdge
 import com.cytoscape.CytoNode
-import com.example.model.PathCache
+import com.model.PathCache
 import com.graph.TopologyGraph
 import com.model.AttackGraphOutput
 import com.model.MachineExtractor
@@ -26,12 +26,11 @@ import java.util.*
 
 fun Route.GraphGenRouting() {
   val cur = System.getProperty("user.dir") // cur = backend directory
-  var filePath: String = "";
 
-  fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
+  fun generateGraph(mulval: Mulval, neo4J: Neo4J): String {
     // upload the graph to Neo4j
-    if (mulvalController.generateGraph()) {
-      neo4JController.update()
+    if (mulval.generateGraph()) {
+      neo4J.update()
     }
     // get the graph data from Neo4j
     return exportToCytoscapeJSON()
@@ -53,9 +52,9 @@ fun Route.GraphGenRouting() {
       val mulvalOutput = AttackGraphOutput("$cur/../../output")
       TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
       // generate the graph, move to Neo4j, and display it on frontend
-      val neo4JController = Neo4JController(mulvalOutput, PathCache("$cur/input.P"), "default")
-      Neo4JMapping.add(neo4JController)
-      val attackGraphJson = generateGraph(MulvalController(mulvalInput, mulvalOutput), neo4JController)
+      val neo4J = Neo4J(mulvalOutput, PathCache("$cur/input.P"), "default")
+      Neo4JMapping.add(neo4J)
+      val attackGraphJson = generateGraph(Mulval(mulvalInput, mulvalOutput), neo4J)
       println(attackGraphJson)
       call.respond("{\"attackGraph\": $attackGraphJson}")
     }

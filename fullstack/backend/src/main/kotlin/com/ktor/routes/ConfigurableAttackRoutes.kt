@@ -1,8 +1,5 @@
-package com.plugins
+package com.ktor.routes
 
-import com.attackAgent.AttackAgent
-import com.attackAgent.RandomAttackAgent
-import com.attackAgent.RealAttackAgent
 import com.attackAgent.CustomAttackAgent
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import io.ktor.server.application.*
@@ -10,8 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.request.*
 
-import com.beust.klaxon.JsonReader
-import java.io.StringReader
 import com.beust.klaxon.Klaxon
 
 
@@ -34,7 +29,7 @@ fun Route.ConfigurableAttackRouting() {
     route("/attack/custom") {
             post {
                 val jsonText = call.receiveText().replace("\\", "").replace("\"[", "[").replace("]\"", "]")
-                val jsonString = jsonText.toString()
+                val jsonString = jsonText
 
                 val map = parseJsonMap(jsonString)
 
