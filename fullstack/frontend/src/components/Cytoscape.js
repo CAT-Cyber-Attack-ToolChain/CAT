@@ -4,9 +4,7 @@ import popper from 'cytoscape-popper';
 import dagre from 'cytoscape-dagre';
 import axios from 'axios';
 import {useEffect, useState} from "react"
-
 import Modal from "react-modal";
-import { blue } from '@mui/material/colors';
 
 cytoscape.use(popper);
 cytoscape.use( dagre );
@@ -135,7 +133,7 @@ function getNodesFromPath(arr) {
 
 
 
-
+/* Attack Graph */
 const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
 
 
@@ -243,7 +241,7 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
           setTimeout(function(){highlightNode(index + 1)}, 500)
         }
 
-        if (attacked.nodes.length == 0) {
+        if (attacked.nodes.length === 0) {
             attackUnsuccessfulPopUp()
             document.getElementById('simulate-button').disabled = false
         } else {

@@ -65,7 +65,7 @@ var stylesheet = [
 ]
 
 
-const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
+const ReachabilityGraph = ({graph, setAtkGraph, setTopology, setMetrics}) => {
 
     const [cursor, setCursor] = useState("default")
 
@@ -210,4 +210,4 @@ const Topology = ({graph, setAtkGraph, setTopology, setMetrics}) => {
     )
 }
 
-export default Topology;
+export default ReachabilityGraph;

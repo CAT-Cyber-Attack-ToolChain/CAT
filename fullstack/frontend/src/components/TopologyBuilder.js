@@ -1,6 +1,5 @@
 import axios from "axios";
 import CytoscapeComponent from "react-cytoscapejs";
-import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import "./TopologyBuilder.css";
 import { useState, useEffect } from "react";
@@ -115,10 +114,6 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
     })
   }, []);
 
-  /* TO IMPLEMENT
-     toHighlight gets data from topology builder (Mapping here)
-     This is called whenever toHighlight changes
-  */
   useEffect(() => {
     if (cyRef) {
       if (toHighlight.length !== 0) {
