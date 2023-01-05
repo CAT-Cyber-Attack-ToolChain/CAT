@@ -1,7 +1,7 @@
 package com.metrics.decision
 
 import com.metrics.DecisionMetric
-import com.example.model.PathCache
+import com.model.PathCache
 
 class ShortestPath(private val cache: PathCache) : DecisionMetric() {
     override fun toString(): String {

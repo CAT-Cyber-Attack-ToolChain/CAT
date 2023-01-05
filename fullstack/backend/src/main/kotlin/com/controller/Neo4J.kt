@@ -2,7 +2,7 @@ package com.controller
 
 import com.model.AttackGraphOutput
 import com.opencsv.CSVReader
-import com.example.model.PathCache
+import com.model.PathCache
 
 import com.model.Configuration
 import com.model.NetworkConfiguration
@@ -18,7 +18,7 @@ import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
 
-class Neo4JController(private val dir: AttackGraphOutput, private val cache: PathCache, private val name: String) {
+class Neo4J(private val dir: AttackGraphOutput, private val cache: PathCache, private val name: String) {
 
     private var vertices = mutableListOf<List<String>>()
     private var arcs = mutableListOf<List<String>>()

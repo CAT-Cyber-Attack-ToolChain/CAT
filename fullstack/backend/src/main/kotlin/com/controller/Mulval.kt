@@ -6,7 +6,7 @@ import com.model.MulvalInput
 import java.io.File
 import java.lang.Exception
 
-class MulvalController(private val inputP: MulvalInput, private val outputDir: AttackGraphOutput) : Controller() {
+class Mulval(private val inputP: MulvalInput, private val outputDir: AttackGraphOutput) : Controller() {
 
     private var generated = false
 
