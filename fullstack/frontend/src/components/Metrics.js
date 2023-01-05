@@ -12,7 +12,7 @@ const Metrics = ({mets}) => {
 
     return (
         <div style={metricsContainerStyle}>
-          <h2>Metrics</h2>
+          <h4>Metrics</h4>
           {mets == null
             ? <p>No metrics to calculate, upload a graph</p>
             : <div style={{overflow : "scroll"}}>
