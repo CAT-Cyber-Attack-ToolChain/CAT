@@ -19,17 +19,17 @@ Install `docker compose`: https://docs.docker.com/compose/install/linux/
 
 
 ### 1. Get/Build relevant images: ###
-This toolchain uses three containers, one for mulval and the backend server, one for the frontend, and one for the Neo4J database.
-The Dockerfiles for mulval and the frontend are provided, namely `mulval.Dockerfile` and `npm.Dockerfile`.
+This toolchain uses three containers, one for the backend server, one for the frontend, and one for the Neo4J database.
+The Dockerfiles for backend and the frontend are provided, namely `backend.Dockerfile` and `frontend.Dockerfile`.
 You can build them with the following commands: (You might need root permissions)
 
 Run this one from the root directory of this repository:
  ```
-[sudo] docker build --file docker/mulval.Dockerfile --tag mulval_git:Dockerfile .
+[sudo] docker build --file docker/backend.Dockerfile --tag mulval_git:Dockerfile .
 ```
 And the following ones from within the `docker` directory.
 ```
-[sudo] docker build --file npm.Dockerfile --tag npm-16 .
+[sudo] docker build --file frontend.Dockerfile --tag npm-16 .
 ```
 The Neo4J image can be pulled from Docker Hub:
 ```
@@ -45,8 +45,8 @@ A `compose.yml` file is provided for this purpose. To run it, execute the follow
 That should start up the three containers in Docker.
 
 ### 3. Starting the backend: ###
-In the `mulval` container, the backend needs to be started up so that it can serve the frontend requests.
-To do this, execute the following commands in the mulval container:
+In the `backend` container, the backend needs to be started up so that it can serve the frontend requests.
+To do this, execute the following commands in the backend container:
 ```
 mulval$> cd fullstack/backend
 mulval$> ./gradlew run
@@ -56,7 +56,7 @@ This will set it up so that the server listens for requests on the container's `
 This is also where the server exceptions will be printed out.
 
 ### 4. Starting the frontend: ###
-In the `node` container, execute the following commands to start the frontend interface:
+In the `frontend` container, execute the following commands to start the frontend interface:
 ```
 node$> cd frontend
 node$> npm start 
@@ -73,7 +73,7 @@ docker exec <CONTAINER> <COMMAND> <ARGS>
 
 For example:
 ```
-docker exec mulval cd fullstack/backend
+docker exec backend cd fullstack/backend
 ```
 
 ## Advanced Hostname and Port Configurability
