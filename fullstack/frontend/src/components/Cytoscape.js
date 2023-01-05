@@ -255,7 +255,7 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
         <div style={{width: "100%", position: "relative", height: "100%"}} id="attack-graph">
             {!loading ? 
             <>
-                <button className="input-custom" id="open-buton" style={{position: "absolute", zIndex: 1, left: 0, margin : "20px 0 0 20px"}} onClick={() => setReachabilityOpen(true)}> Reachability Graph </button>
+                <button className="input-custom" id="open-button" style={{position: "absolute", zIndex: 1, left: 0, margin : "20px 0 0 20px"}} onClick={() => setReachabilityOpen(true)}> Reachability Graph </button>
                 <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
             </> : <div style={{alignItems: 'center', justifyContent: 'center', display: 'flex', height: '100%'}}>{loader}</div>

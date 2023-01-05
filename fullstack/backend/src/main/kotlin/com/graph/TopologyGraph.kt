@@ -1,5 +1,9 @@
 package com.graph
 
+import com.beust.klaxon.Klaxon
+import com.cytoscape.CytoDataWrapper
+import com.cytoscape.CytoEdge
+import com.cytoscape.CytoNode
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.FileWriter
@@ -110,11 +114,13 @@ data class Vulnerability(val name: String, val machine: String, val application:
 
 @kotlinx.serialization.Serializable
 data class FirewallRule(val source: String, val dest: String, val protocol: String, val port: String, val direction: String) {
-  fun accept(m1: String, m2: String, protocol: String, port: String): String {
+  fun accept(m1: String, m2: String, protocol: String, port: String, reachability: MutableMap<String, MutableSet<String>>): String {
     val m1 = restrict(m1, source) ?: return ""
     val m2 = restrict(m2, dest) ?: return ""
     val protocol = restrict(protocol, this.protocol) ?: return ""
     val port = restrict(port, this.port) ?: return ""
+    reachability[m1]!!.add(m2)
+    println("$m1->$m2")
     return "hacl($m1, $m2, $protocol, $port).\n"
   }
 
@@ -136,7 +142,7 @@ data class FirewallRule(val source: String, val dest: String, val protocol: Stri
 @kotlinx.serialization.Serializable
 data class Router(val type: String, val label: String, val value: String, val name: String, val rules: List<FirewallRule>) {
   var subnet: Set<String>? = null
-  fun build(routers: Set<Router>, machineMap: Map<String, Router>): String {
+  fun build(routers: Set<Router>, machineMap: Map<String, Router>, reachability: MutableMap<String, MutableSet<String>>): String {
     if (subnet == null) {
       throw Exception("Failed To Create Subnet $name")
     }
@@ -158,12 +164,12 @@ data class Router(val type: String, val label: String, val value: String, val na
               continue
             }
             for (m in machines) {
-              sb.append(r2.acceptAll(m, rule.protocol, rule.port))
+              sb.append(r2.acceptAll(m, rule.protocol, rule.port, reachability))
             }
           }
         } else {
           for (m in machines) {
-            sb.append(machineMap[rule.dest]!!.accept(m, rule.dest, rule.protocol, rule.port))
+            sb.append(machineMap[rule.dest]!!.accept(m, rule.dest, rule.protocol, rule.port, reachability))
           }
         }
       }
@@ -171,21 +177,21 @@ data class Router(val type: String, val label: String, val value: String, val na
     return sb.toString()
   }
 
-  private fun accept(m1: String, m2: String, protocol: String, port: String): String {
+  private fun accept(m1: String, m2: String, protocol: String, port: String, reachability: MutableMap<String, MutableSet<String>>): String {
     val sb = StringBuilder()
     for (rule in rules) {
       if (rule.direction == "out") {
         continue
       }
-      sb.append(rule.accept(m1, m2, protocol, port))
+      sb.append(rule.accept(m1, m2, protocol, port, reachability))
     }
     return sb.toString()
   }
 
-  private fun acceptAll(m1: String, protocol: String, port: String): String {
+  private fun acceptAll(m1: String, protocol: String, port: String, reachability: MutableMap<String, MutableSet<String>>): String {
     val sb = StringBuilder()
     for (m2 in subnet!!) {
-      sb.append(accept(m1, m2, protocol, port))
+      sb.append(accept(m1, m2, protocol, port, reachability))
     }
     return sb.toString()
   }
@@ -196,7 +202,7 @@ data class Link(val source: String, val dest: String)
 
 class TopologyGraph {
   companion object {
-    fun build(machines: String, routers: String, links: String, outputFile: String) {
+    fun build(machines: String, routers: String, links: String, outputFile: String): String {
       val writer = FileWriter(outputFile)
       val sb = StringBuilder()
       sb.append("attackerLocated(internet).\n")
@@ -206,22 +212,56 @@ class TopologyGraph {
       //Parse routers and construct router objects
       //Parse edges and add connections to routers
       //Build input.P from machines and routers
-      for (m in Json.decodeFromString<List<Machine>>(machines)) {
+      val machineList = Json.decodeFromString<List<Machine>>(machines)
+      for (m in machineList) {
         sb.append(m)
       }
       val routerList = Json.decodeFromString<List<Router>>(routers)
       val linkList = Json.decodeFromString<List<Link>>(links)
       val routerComponents = findRoutes(routerList, linkList)
       val subnetMaps = findSubnets(routerList, linkList)
+      val reachability = mutableMapOf<String, MutableSet<String>>()
+      for (m in machineList) {
+        reachability[m.name] = mutableSetOf()
+      }
       for (router in routerList) {
         router.subnet = subnetMaps.first[router]!!
+        for (m in (router.subnet as Set<String>)) {
+          reachability[m]!!.addAll(router.subnet as Set<String>)
+        }
       }
       for (router in routerList) {
-        sb.append(router.build(routerComponents.first[routerComponents.second[router]!!], subnetMaps.second))
+        sb.append(router.build(routerComponents.first[routerComponents.second[router]!!], subnetMaps.second, reachability))
       }
+      println(reachability)
       println(sb.toString())
       writer.write(sb.toString())
       writer.close()
+      return exportToCytoscapeJSON(machineList, reachability)
+    }
+
+    fun exportToCytoscapeJSON(machines: List<Machine>, reachability: MutableMap<String, MutableSet<String>>) : String{
+      val klaxon = Klaxon()
+      val strlist: MutableList<String> = mutableListOf()
+      var id = 0
+      for (m in machines) {
+        val cytoNode = CytoNode(m.name, m.name)
+        cytoNode.addProperty("bool", 0)
+        cytoNode.addProperty("node_id", id)
+        cytoNode.addProperty("text", m.name)
+        cytoNode.addProperty("type", "OR")
+        strlist.add(klaxon.toJsonString(CytoDataWrapper(cytoNode)))
+        id++
+      }
+
+      for ((k, v) in reachability) {
+        for (n in v) {
+          id++
+          val cytoEdge = CytoEdge("e$id", "$k", "$n", "edge")
+          strlist.add(klaxon.toJsonString(CytoDataWrapper(cytoEdge)))
+        }
+      }
+      return "[" + strlist.joinToString() + "]"
     }
 
     private fun findSubnets(routers: List<Router>, links: List<Link>): Pair<Map<Router, Set<String>>, Map<String, Router>> {
