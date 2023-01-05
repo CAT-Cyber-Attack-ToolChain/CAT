@@ -36,12 +36,20 @@ function makePopper(ele) {
 
 
     
-var styles = {
+var attackGraphStyles = {
     backgroundColor: '#0a111f',
     zIndex:  0,
     position: "relative",
     height : "100%"
-  }
+}
+
+var reachabilityGraphStyles = {
+    backgroundColor: '#0a111f',
+    zIndex:  0,
+    position: "relative",
+    height : "600px"
+}
+
 
 var layout = {
     name: "dagre",
@@ -50,15 +58,12 @@ var layout = {
 
 var modalStyles = {
     content: {
-        top: '35%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        width: '60%',
-        transform: 'translate(-40%, -10%)',   
         color: "#05b2dc",
-        backgroundColor: "#0a111f"
+        backgroundColor: "#0a111f",
+        height : "80%",
+        width : "80%",
+        inset : "0",
+        margin : "auto"
     },
     overlay: {
         zIndex: 1
@@ -134,7 +139,7 @@ function getNodesFromPath(arr) {
 
 
 /* Attack Graph */
-const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
+const Cytoscape = ({graph,reachability,setMapTop,attackAgent,loading,loader}) => {
 
 
     const [isAttackResultOpen, setAttackResultOpen] = useState(false)
@@ -257,7 +262,7 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
             <>
                 <button className="input-custom" id="open-button" style={{position: "absolute", zIndex: 1, left: 0, margin : "20px 0 0 20px"}} onClick={() => setReachabilityOpen(true)}> Reachability Graph </button>
                 <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
-                <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
+                <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={attackGraphStyles} stylesheet={stylesheet} layout={layout} />
             </> : <div style={{alignItems: 'center', justifyContent: 'center', display: 'flex', height: '100%'}}>{loader}</div>
             }
             <Modal
@@ -265,7 +270,6 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
                 onRequestClose={toggleAttackResult}
                 contentLabel="Attack Unsuccessful"
                 style={modalStyles}
-                portalClassName="App"
             >
                 <div>Attack Unsuccessful</div>
                 <div className='right-aligned'>
@@ -277,9 +281,9 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
                 isOpen={isReachabilityGraphOpen}
                 style={modalStyles}
                 contentLabel="Reachability Graph"
-                portalClassName="App"
+                ariaHideApp={false}
             >
-                <div>Reachability Graph</div>
+                <CytoscapeComponent elements={JSON.parse(reachability)} style={reachabilityGraphStyles} stylesheet={stylesheet} layout={layout} />
                 <div className='right-aligned'>
                     <button onClick={() => setReachabilityOpen(false)} className="input-custom">OK</button>
                 </div>
