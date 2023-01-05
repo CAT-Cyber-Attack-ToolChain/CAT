@@ -39,8 +39,8 @@ const Metrics = ({mets}) => {
       <div style={metricsContainerStyle}>
         <h4>Metrics</h4>
         {mets == null
-          ? <div className="App">
-            <div className="column1">
+          ? <div className="Metrics">
+            <div className="column">
               <div className="decision">Shortest Path
                 <p className='text'>{mets2["shortestpath"]}</p>  
               </div>
@@ -52,7 +52,7 @@ const Metrics = ({mets}) => {
               </div>
             </div>
               
-            <div className="column2">
+            <div className="column">
               <div className='decision'>Mean Path Length
                 <p className='text'>{mets2["meanpathlength"]}</p> 
               </div> 
@@ -64,19 +64,19 @@ const Metrics = ({mets}) => {
               </div> 
             </div>
               
-            <div className="column3">
+            <div className="column">
               <div className='decision'>Mode of Path Lengths
                 <p className='text'>{mets2["modepathlength"]}</p> 
               </div> 
               <div className='decision'>Median of Path Lengths
                 <p className='text'>{mets2["sdpathlength"]}</p> 
               </div> 
-              <div className='filler'>you will never see this
-                <p>you will never see this</p>
+              <div className='filler'>Filler text
+                <p className='fillerText'>{mets2["sdpathlength"]}</p>
               </div>
             </div>
           </div>
-          : <p>Nondbsmsdbmsd metrics to calculate, upload a graph</p>
+          : <p>No metrics to calculate, upload a graph</p>
         }
       </div>
   )

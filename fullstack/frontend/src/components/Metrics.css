@@ -1,4 +1,4 @@
-.App {
+.Metrics {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -6,29 +6,13 @@
     overflow: scroll;
   }
   
-  .column1 {
+  .column {
     width: 33%;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
     display: flex;
     border-radius: 10px;
-  }
-  
-  .column2 {
-    width: 33%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    display: flex;
-  }
-  
-  .column3 {
-    width: 33%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    display: flex;
   }
   
   .App-logo {
