@@ -1,4 +1,4 @@
-package com.plugins
+package com.ktor.routes
 
 import com.attackAgent.RealAttackAgent
 import com.beust.klaxon.Klaxon
@@ -23,7 +23,6 @@ import java.util.*
 
 fun Route.GraphGenRouting() {
   val cur = System.getProperty("user.dir") // cur = backend directory
-  var filePath: String = "";
 
   fun generateGraph(mulvalController: MulvalController, neo4JController: Neo4JController): String {
     // upload the graph to Neo4j

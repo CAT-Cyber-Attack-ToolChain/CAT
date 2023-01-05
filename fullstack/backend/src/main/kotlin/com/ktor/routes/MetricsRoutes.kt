@@ -1,4 +1,4 @@
-package com.plugins
+package com.ktor
 
 import ModeOfPathLengths
 import com.metrics.decision.NormalisedMOPL
@@ -12,7 +12,6 @@ import io.ktor.server.routing.*
 import metrics.assistive.MeanOfPathLengths
 import metrics.assistive.MedianOfPathLengths
 import metrics.assistive.StandardDeviationOfPathLengths
-import com.example.model.PathCache
 
 //TODO: Implement MVC model for metrics
 fun Route.MetricsRouting() {
