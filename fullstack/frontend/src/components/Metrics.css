@@ -1,0 +1,53 @@
+.App {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: scroll;
+  }
+  
+  .column1 {
+    width: 33%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: flex;
+    border-radius: 10px;
+  }
+  
+  .column2 {
+    width: 33%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: flex;
+  }
+  
+  .column3 {
+    width: 33%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: flex;
+  }
+  
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  .decision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .filler {
+    color: #0a111f;
+    font-size:20px;
+  }
+  
+  .text {
+    font-weight: 700;
+    font-size: 20px;
+  }
