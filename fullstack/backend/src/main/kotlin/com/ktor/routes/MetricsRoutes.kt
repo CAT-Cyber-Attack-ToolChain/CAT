@@ -1,6 +1,5 @@
-package com.ktor
+package com.ktor.routes
 
-import ModeOfPathLengths
 import com.metrics.decision.NormalisedMOPL
 import com.metrics.decision.NumberOfPaths
 import com.metrics.decision.ShortestPath
@@ -10,7 +9,8 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.metrics.assistive.MeanOfPathLengths
-import metrics.assistive.MedianOfPathLengths
+import com.metrics.assistive.MedianOfPathLengths
+import com.metrics.assistive.ModeOfPathLengths
 import com.metrics.assistive.StandardDeviationOfPathLengths
 
 //TODO: Implement MVC model for metrics
