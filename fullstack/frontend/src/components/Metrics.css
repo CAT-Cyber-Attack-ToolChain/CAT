@@ -1,0 +1,40 @@
+.Metrics {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+  }
+  
+.column {
+    width: 33%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: flex;
+    border-radius: 10px;
+}
+  
+.decision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  
+.filler {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #0a111f;
+}
+
+.fillerText {
+    color: #0a111f;
+    font-weight: 700;
+    font-size: 20px;
+}
+  
+.text {
+    font-weight: 700;
+    font-size: 20px;
+}
