@@ -78,7 +78,7 @@ var stylesheet = [
             height : 'label',
             textValign: "center",
             textHalign: "center",
-            shape: 'rectangle',
+            shape: 'ellipse',
             color: '#fca311',
             backgroundColor: '#14213d'
         }
@@ -87,17 +87,17 @@ var stylesheet = [
         selector: 'edge',
         style: {
             width: 40,
-            lineColor: '#fca311',
-            targetArrowColor: '#fca311',
+            lineColor: '#05b2dc',
+            targetArrowColor: '#05b2dc',
             arrowScale : 5,
-            targetArrowShape: 'triangle',
+            targetArrowShape: 'triangle-backcurve',
             curveStyle : 'taxi',
-            //'control-point-step-size' : '1000'
+            // 'control-point-step-size' : '100'
         }
     },
     {   selector : '.attackedNode',
         style: {
-            backgroundColor: '#05b2dc',
+            backgroundColor: '#fca311',
             transitionProperty: 'background-color, shape',
             transitionDuration: '0.5s',
             color: '#060A12'
@@ -106,8 +106,8 @@ var stylesheet = [
     {   selector : '.attackedEdge',
         style: {
             width: 40,
-            targetArrowColor: '#05b2dc',
-            lineColor: '#05b2dc',
+            targetArrowColor: '#fca311',
+            lineColor: '#fca311',
             transitionProperty: 'line-color, target-arrow-color',
             transitionDuration: '0.5s'
         }
