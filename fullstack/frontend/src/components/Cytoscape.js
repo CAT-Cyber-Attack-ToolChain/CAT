@@ -137,14 +137,15 @@ function getNodesFromPath(arr) {
 const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
 
 
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isAttackResultOpen, setAttackResultOpen] = useState(false)
+    const [isReachabilityGraphOpen, setReachabilityOpen] = useState(false)
 
-    function toggleModal() {
-        setIsModalOpen(!isModalOpen)
+    function toggleAttackResult() {
+        setAttackResultOpen(!isAttackResultOpen)
     }
 
     function attackUnsuccessfulPopUp() {
-        toggleModal()
+        toggleAttackResult()
     }
 
     //initialise once Cytoscape components finishes
@@ -254,22 +255,34 @@ const Cytoscape = ({graph,setMapTop,attackAgent,loading,loader}) => {
         <div style={{width: "100%", position: "relative", height: "100%"}} id="attack-graph">
             {!loading ? 
             <>
+                <button className="input-custom" id="open-buton" style={{position: "absolute", zIndex: 1, left: 0, margin : "20px 0 0 20px"}} onClick={() => setReachabilityOpen(true)}> Reachability Graph </button>
                 <button className="input-custom" id="simulate-button" style={{position: "absolute", zIndex: 1, right: 0, margin : "20px 20px 0 0"}} onClick={() => simulationHandler()}> Simulate </button>
                 <CytoscapeComponent cy={(cy) => cyRef = cy} elements={JSON.parse(graph)} style={styles} stylesheet={stylesheet} layout={layout} />
             </> : <div style={{alignItems: 'center', justifyContent: 'center', display: 'flex', height: '100%'}}>{loader}</div>
             }
             <Modal
-                isOpen={isModalOpen}
-                onRequestClose={toggleModal}
+                isOpen={isAttackResultOpen}
+                onRequestClose={toggleAttackResult}
                 contentLabel="Attack Unsuccessful"
                 style={modalStyles}
                 portalClassName="App"
             >
                 <div>Attack Unsuccessful</div>
                 <div className='right-aligned'>
-                    <button onClick={toggleModal} className="input-custom">OK</button>
+                    <button onClick={toggleAttackResult} className="input-custom">OK</button>
                 </div>
                 
+            </Modal>
+            <Modal
+                isOpen={isReachabilityGraphOpen}
+                style={modalStyles}
+                contentLabel="Reachability Graph"
+                portalClassName="App"
+            >
+                <div>Reachability Graph</div>
+                <div className='right-aligned'>
+                    <button onClick={() => setReachabilityOpen(false)} className="input-custom">OK</button>
+                </div>
             </Modal>
         </div>
     )
