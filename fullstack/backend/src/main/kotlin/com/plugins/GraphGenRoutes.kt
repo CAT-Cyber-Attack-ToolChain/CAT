@@ -1,5 +1,7 @@
 package com.plugins
 
+import com.attackAgent.MitreTechnique
+import com.attackAgent.getMitreTechnique
 import com.attackAgent.RealAttackAgent
 import com.beust.klaxon.Klaxon
 import com.controller.MulvalController
@@ -15,6 +17,7 @@ import com.model.MulvalInput
 import com.model.Neo4JMapping
 import com.graph.AttackGraph
 import com.graph.Node
+import com.graph.Rule
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -68,8 +71,16 @@ fun nodeToCytoJSON(n: Node): List<CytoDataWrapper> {
   val node = CytoNode("n${n.getId()}", n.getPermission())
   node.addProperty("machines", MachineExtractor.extract(n.getPermission()))
   result.add(CytoDataWrapper(node))
-  n.getConnections().forEach { rule -> result.add(CytoDataWrapper(CytoEdge("e${rule.getId()}", "n${n.getId()}", "n${rule.getDest().getId()}", rule.getText()))) }
+  n.getConnections().forEach { rule -> result.add(CytoDataWrapper(ruleToCytoEdge(rule, n))) }
   return result
+}
+
+fun ruleToCytoEdge(rule: Rule, n: Node): CytoEdge {
+  val technique = getMitreTechnique(rule)
+  var label = technique.technique
+  if (technique == MitreTechnique.nullTechnique)
+    label = rule.getText()
+  return CytoEdge("e${rule.getId()}", "n${n.getId()}", "n${rule.getDest().getId()}", label)
 }
 
 fun exportToCytoscapeJSON(): String {
