@@ -11,10 +11,7 @@ import com.cytoscape.CytoEdge
 import com.cytoscape.CytoNode
 import com.model.PathCache
 import com.graph.TopologyGraph
-import com.model.AttackGraphOutput
 import com.model.MachineExtractor
-import com.model.MulvalInput
-import com.model.Neo4JMapping
 import com.graph.AttackGraph
 import com.graph.Node
 import com.graph.Rule
@@ -22,15 +19,16 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.io.File
 import java.util.*
 
 fun Route.GraphGenRouting() {
   val cur = System.getProperty("user.dir") // cur = backend directory
 
-  fun generateGraph(mulval: Mulval, neo4J: Neo4J): String {
+  fun generateGraph(): String {
     // upload the graph to Neo4j
-    if (mulval.generateGraph()) {
-      neo4J.update()
+    if (Mulval.generateGraph()) {
+      Neo4J.update()
     }
     // get the graph data from Neo4j
     return exportToCytoscapeJSON()
@@ -48,14 +46,14 @@ fun Route.GraphGenRouting() {
   route("/submitInput") {
     post {
       val upload = call.receive<TopologyInput>()
-      val mulvalInput = MulvalInput("$cur/input.P")
-      val mulvalOutput = AttackGraphOutput("$cur/../../output")
+      val mulvalInput = File("$cur/input.P")
+      val mulvalOutput = File("$cur/../../output")
       val reachability = TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
       println(reachability)
       // generate the graph, move to Neo4j, and display it on frontend
-      val neo4J = Neo4J(mulvalOutput, PathCache("$cur/input.P"), "default")
-      Neo4JMapping.add(neo4J)
-      val attackGraphJson = generateGraph(Mulval(mulvalInput, mulvalOutput), neo4J)
+      Neo4J.init(mulvalOutput, PathCache("$cur/input.P"))
+      Mulval.init(mulvalInput, mulvalOutput)
+      val attackGraphJson = generateGraph()
       println(attackGraphJson)
       call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability}")
     }

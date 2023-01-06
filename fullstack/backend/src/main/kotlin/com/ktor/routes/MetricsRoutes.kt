@@ -1,10 +1,10 @@
 package com.ktor.routes
 
+import com.controller.Neo4J
 import com.metrics.decision.NormalisedMOPL
 import com.metrics.decision.NumberOfPaths
 import com.metrics.decision.ShortestPath
 import com.metrics.decision.WeakestAdversary
-import com.model.Neo4JMapping
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -17,13 +17,8 @@ import com.metrics.assistive.StandardDeviationOfPathLengths
 fun Route.MetricsRouting() {
   route("/metrics") {
     get {
-      val optionalController = Neo4JMapping.get("default")
 
-      if (optionalController.isEmpty) {
-        throw Exception()
-      }
-
-      val cache = optionalController.get().getCache()
+      val cache = Neo4J.getCache()
 
       val shortestPath = ShortestPath(cache)
       val meanofpathlength = MeanOfPathLengths(cache)
