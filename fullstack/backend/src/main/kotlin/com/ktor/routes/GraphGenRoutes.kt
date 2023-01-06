@@ -48,13 +48,14 @@ fun Route.GraphGenRouting() {
       val upload = call.receive<TopologyInput>()
       val mulvalInput = File("$cur/input.P")
       val mulvalOutput = File("$cur/../../output")
-      TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
+      val reachability = TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
+      println(reachability)
       // generate the graph, move to Neo4j, and display it on frontend
       Neo4J.init(mulvalOutput, PathCache("$cur/input.P"))
       Mulval.init(mulvalInput, mulvalOutput)
       val attackGraphJson = generateGraph()
       println(attackGraphJson)
-      call.respond("{\"attackGraph\": $attackGraphJson}")
+      call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability}")
     }
   }
 }

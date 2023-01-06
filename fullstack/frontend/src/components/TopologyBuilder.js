@@ -84,7 +84,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
+const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toHighlight}) => {
 
   //initialised once component renders
   var cyRef = undefined
@@ -295,6 +295,7 @@ const TopologyBuilder = ({setAtkGraph, setMets, setLoading, toHighlight}) => {
       });
       let data = JSON.parse(response.data)
       setAtkGraph(JSON.stringify(data["attackGraph"]))
+      setReachability(JSON.stringify(data["reachability"]))
       setLoading(false) 
       setMets(getMetrics())
     } catch (error) {
