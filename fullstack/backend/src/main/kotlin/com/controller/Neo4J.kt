@@ -1,71 +1,72 @@
 package com.controller
 
-import com.model.AttackGraphOutput
-import com.opencsv.CSVReader
-import com.model.PathCache
 
 import com.model.Configuration
 import com.model.NetworkConfiguration
-
-
-
+import com.model.PathCache
+import com.opencsv.CSVReader
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
 
-class Neo4J(private val dir: AttackGraphOutput, private val cache: PathCache, private val name: String) {
-
+object Neo4J {
+    private lateinit var dir : File
+    private lateinit var cache: PathCache
     private var vertices = mutableListOf<List<String>>()
     private var arcs = mutableListOf<List<String>>()
     private var hasData = false
+    private val networkConfig: Configuration = NetworkConfiguration.neo4j
 
-    companion object {
-        private val networkConfig: Configuration = NetworkConfiguration.neo4j
-        
-        // TODO: Add configurability for user/password
-        val driver: Driver = GraphDatabase.driver(
-            networkConfig.toString(),
-            AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU")
-        )
+    // TODO: Add configurability for user/password
+    val driver: Driver = GraphDatabase.driver(
+        networkConfig.toString(),
+        AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU")
+    )
 
-        fun close() {
-            driver.close()
-        }
+    fun init(dir: File, cache: PathCache){
+        this.dir = dir
+        this.cache = cache
+    }
 
-        /*
-        E.g. file.csv
+    fun close() {
+        driver.close()
+    }
 
-             Hello,My            [["Hello","My"],
-             Name,Is        ===>  ["Name","Is"],
-             Bob                  ["Bob"]]
-         */
-        fun readCSV(filepath: String, storage: MutableList<List<String>>) {
-            val fr = FileReader(filepath, StandardCharsets.UTF_8)
+    /*
+    E.g. file.csv
 
-            fr.use {
-                val reader = CSVReader(fr)
+         Hello,My            [["Hello","My"],
+         Name,Is        ===>  ["Name","Is"],
+         Bob                  ["Bob"]]
+     */
+    fun readCSV(filepath: String, storage: MutableList<List<String>>) {
+        val fr = FileReader(filepath, StandardCharsets.UTF_8)
 
-                reader.use { r ->
-                    var line = r.readNext()
+        fr.use {
+            val reader = CSVReader(fr)
 
-                    while (line != null) {
-                        val items = mutableListOf<String>()
-                        line.forEach {
-                            items.add(it)
-                        }
+            reader.use { r ->
+                var line = r.readNext()
 
-                        storage.add(items)
-                        line = r.readNext()
+                while (line != null) {
+                    val items = mutableListOf<String>()
+                    line.forEach {
+                        items.add(it)
                     }
+
+                    storage.add(items)
+                    line = r.readNext()
                 }
             }
         }
     }
+
 
     private fun readData() {
         hasData = try {
@@ -116,7 +117,10 @@ class Neo4J(private val dir: AttackGraphOutput, private val cache: PathCache, pr
 
         session.writeTransaction { tx ->
             for (arc: List<String> in arcs) {
-                tx.run("""MATCH (dst {node_id: toInteger(${arc[0]})}) MATCH (src {node_id: toInteger(${arc[1]})}) CREATE (src) -[r:To {step: toInteger(${arc[2]})}]-> (dst); """, parameters())
+                tx.run(
+                    """MATCH (dst {node_id: toInteger(${arc[0]})}) MATCH (src {node_id: toInteger(${arc[1]})}) CREATE (src) -[r:To {step: toInteger(${arc[2]})}]-> (dst); """,
+                    parameters()
+                )
             }
         }
     }
@@ -126,10 +130,6 @@ class Neo4J(private val dir: AttackGraphOutput, private val cache: PathCache, pr
         session.writeTransaction { tx ->
             tx.run("MATCH (n) DETACH DELETE n ", parameters())
         }
-    }
-
-    fun getName(): String {
-        return name
     }
 
     fun getCache(): PathCache {
@@ -145,7 +145,7 @@ class Neo4J(private val dir: AttackGraphOutput, private val cache: PathCache, pr
         println(result)
     }
 
-    fun update() : Boolean {
+    fun update(): Boolean {
         print("Sending attack graph to Neo4j AuraDB...")
         hasData = false
         readData()
