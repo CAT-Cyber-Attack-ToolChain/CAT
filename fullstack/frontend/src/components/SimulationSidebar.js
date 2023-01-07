@@ -10,7 +10,6 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import Button from '@mui/material/Button';
 
 
 const SimulationSidebar = ({setAttackAgent}) => {
@@ -27,7 +26,7 @@ const SimulationSidebar = ({setAttackAgent}) => {
   const radioButtonStyle = {
     color: "white",
     '&.Mui-checked': {
-      color: "#0aa689",
+      color: "#05b2dc",
     },
   }
 
@@ -56,12 +55,12 @@ const SimulationSidebar = ({setAttackAgent}) => {
                     onChange={handleSimulationSelect}
                     name="sim-radio-buttons-group"
                   >
-                    <FormControlLabel value="wannacry" control={<Radio sx={radioButtonStyle}/>} label="WannaCry" />
-                    <FormControlLabel value="revil" control={<Radio sx={radioButtonStyle} />} label="REvil" />
-                    <FormControlLabel value="t9000" control={<Radio sx={radioButtonStyle} />} label="T9000" />
-                    <FormControlLabel value="synack" control={<Radio sx={radioButtonStyle} />} label="SynAck" />
-                    <FormControlLabel value="wiper" control={<Radio sx={radioButtonStyle} />} label="Wiper" />
-                    <FormControlLabel value="custom" control={<Radio sx={radioButtonStyle} />} label="Custom" />
+                    <FormControlLabel value="wannacry" control={<Radio sx={radioButtonStyle}/>} label="WannaCry" sx={{color : "#05b2dc"}}/>
+                    <FormControlLabel value="revil" control={<Radio sx={radioButtonStyle} />} label="REvil" sx={{color : "#05b2dc"}}/>
+                    <FormControlLabel value="t9000" control={<Radio sx={radioButtonStyle} />} label="T9000" sx={{color : "#05b2dc"}}/>
+                    <FormControlLabel value="synack" control={<Radio sx={radioButtonStyle} />} label="SynAck" sx={{color : "#05b2dc"}}/>
+                    <FormControlLabel value="wiper" control={<Radio sx={radioButtonStyle} />} label="Wiper" sx={{color : "#05b2dc"}}/>
+                    <FormControlLabel value="custom" control={<Radio sx={radioButtonStyle} />} label="Custom" sx={{color : "#05b2dc"}}/>
                   </RadioGroup>
                 </FormControl>
                 <ConfigurableAttackAgentForm />
