@@ -14,13 +14,21 @@ const Configuration = ({setConfig}) => {
         setConfig(true)
     }
 
+    const submitDocker = (event) => {
+        event.preventDefault()
+        setConfig(true)
+    }
+
     return(
-        <div className="form-container">
+        <div className="container">
             <form onSubmit={submitHandler} className="form">
                 <input type="text" value={address} placeholder="Neo4j address" onChange={(e) => setAddr(e.target.value)}/>
                 <input type="text" value={user} placeholder="Username" onChange={(e) => setUser(e.target.value)}/>
                 <input type="text" value={password} placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
-                <button className="input-custom" id="open-button" type="submit"> Set Config </button>
+                <div className="container">
+                    <button className="input-custom" id="open-button" type="submit"> Set Config </button>
+                    <button className="input-custom" id="open-button" onClick={submitDocker}> Use Docker Config </button>
+                </div>
             </form>
         </div>
     )
