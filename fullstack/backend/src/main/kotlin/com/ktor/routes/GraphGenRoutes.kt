@@ -25,15 +25,6 @@ import java.util.*
 fun Route.GraphGenRouting() {
   val cur = System.getProperty("user.dir") // cur = backend directory
 
-  fun generateGraph(): String {
-    // upload the graph to Neo4j
-    if (Mulval.generateGraph()) {
-      Neo4J.update()
-    }
-    // get the graph data from Neo4j
-    return exportToCytoscapeJSON()
-  }
-
   route("/test") {
     get {
       val attack = RealAttackAgent()
@@ -53,7 +44,8 @@ fun Route.GraphGenRouting() {
       // generate the graph, move to Neo4j, and display it on frontend
       Neo4J.init(mulvalOutput, PathCache("$cur/input.P"))
       Mulval.init(mulvalInput, mulvalOutput)
-      val attackGraphJson = generateGraph()
+      Mulval.generateGraph()
+      val attackGraphJson = exportToCytoscapeJSON()
       println(attackGraphJson)
       call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability}")
     }

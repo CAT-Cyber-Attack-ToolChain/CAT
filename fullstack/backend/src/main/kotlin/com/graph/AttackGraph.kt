@@ -3,12 +3,13 @@ package com.graph
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
 import com.controller.Neo4J
+import com.view.Updatable
 import org.neo4j.driver.Driver
 import org.neo4j.driver.Result
 import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 
-class AttackGraph {
+class AttackGraph: Updatable {
 
     private val driver: Driver = Neo4J.driver
 
@@ -19,7 +20,7 @@ class AttackGraph {
         return attackGraph
     }
 
-    fun update() {
+    override fun update() {
         attackGraph = buildAttackGraph()
     }
 
