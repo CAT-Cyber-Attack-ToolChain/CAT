@@ -92,11 +92,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
   const [selected, setSelected] = useState(undefined);
-  const [machines, setMachines] = useState([
-    { label: "a", value: "a" },
-    { label: "b", value: "b" },
-    { label: "c", value: "c" },
-  ]);
+  const [machines, setMachines] = useState([]);
   const [curDevice, setCurDevice] = useState(undefined);
   const [nextId, setNextId] = useState(0);
   const [created, setCreated] = useState({});
