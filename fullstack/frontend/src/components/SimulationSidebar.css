@@ -1,7 +1,7 @@
 .simulationSidebar {
   height: 100%;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .radio-group {
-  color: white!important;
+  color: #05b2dc!important;
 }
 
 .radio-button {

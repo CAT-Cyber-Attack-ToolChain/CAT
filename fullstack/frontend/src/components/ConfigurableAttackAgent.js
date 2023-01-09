@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Dropdown from "react-dropdown";
 import axios from "axios";
+import "./ConfigurableAttackAgent.css"
 
 function ConfigurableAttackAgentForm() {
 
@@ -46,12 +47,11 @@ function ConfigurableAttackAgentForm() {
       "score": 0
     }
     setCount(prevState => prevState + 1)
-    console.log(count)
     return (
-      <label key={count}  style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <label className="technique"key={count}  style={{ display: "flex", justifyContent: "space-evenly", marginTop:"1rem"}}>
 
         {dropdown ?
-        <Dropdown className="input-width" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
+        <Dropdown controlClassName='dropdown-control' placeholderClassName="dropdown-placeholder" arrowClassName="dropdown-arrow" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
           techniqueScore.technique = option.value
           setDefaultScore(option.value, count)
         }}/>
@@ -61,7 +61,7 @@ function ConfigurableAttackAgentForm() {
           value={techniqueMap[count]}
           onInput={(e) => techniqueScore.technique = e.target.value}
         />}
-        <input className="input-width"
+        <input className="input-width score"
           id={`score-${count}`}
           type="number"
           value={techniqueMap[count]}
@@ -96,20 +96,19 @@ function ConfigurableAttackAgentForm() {
 
   
   return (
-    <div style={{display: "flex", flexDirection:"column"}}>
-      <form style={{ display: "flex", flexDirection: "column"}}>
-        <label style={{ display: "flex", justifyContent: "space-evenly" }}>
+    <div style={{display: "flex", flexDirection:"column", marginTop: "2rem"}}>
+      <form className="custom-technique-container">
+        <div style={{display: "flex", justifyContent:"space-around"}}>
           <label className='input-width'>Technique Name</label>
           <label className='input-width'>Score</label>
-        </label>
-
+        </div>
         {
           formElements.map((item) => item)
         }
       </form>
       <div style={{display: "flex", justifyContent: "space-evenly"}}>
-        <button id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
-        <button id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
+        <button className="input-custom" id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
+        <button className="input-custom" id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
       </div>
     </div>
   )

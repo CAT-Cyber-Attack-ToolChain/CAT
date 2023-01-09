@@ -147,6 +147,7 @@ input[type="file"] {
 }
 
 .input-width {
+  color : #05b2dc;
   width: 5rem;
   min-width: 150px;
   max-width: 200px;
