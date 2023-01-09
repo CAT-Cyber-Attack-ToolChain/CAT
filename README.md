@@ -53,14 +53,14 @@ Click the `Save Topology Graph` button to download the topology graph in JSON fo
 
 ---
 
-Click the `Upload topology (initialisation/network merging)` button and upload a network.
+Click the `Upload existing topology` button and upload a network.
 The uploaded network will appear on the topology graph pane.
 
 ### Option 3: Merge Networks
 
 ---
 
-Click the `Upload topology (initialisation/network merging)` button and upload a network.
+Click the `Upload existing topology` button and upload a network.
 The uploaded network will appear on the topology graph pane alongside the one you are building. You can then merge both networks as you wish.
 
 ## Generate an Attack Graph
