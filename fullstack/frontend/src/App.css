@@ -106,6 +106,8 @@ input[type="file"] {
 
 .heading {
   text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .right-aligned {

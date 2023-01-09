@@ -45,16 +45,16 @@ function App() {
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450' style={{overflow: "hidden"}}>          
           <div className='heading'>
-            <h3>Network Topology</h3>
+           Network Topology
           </div>   
           <TopologyBuilder setAtkGraph={setGraph} setReachability={setReachability} setMets={setMets} setLoading={setLoading} toHighlight={mapTopology}/>
         </ReflexElement>
 
         <ReflexSplitter style={{width: '10px', zIndex: '1'}} className='gutter-vertical' />
 
-        <ReflexElement className='attack-graph' minSize='450'>
+        <ReflexElement className='attack-graph' minSize='450' style={{overflow: "hidden"}}>
           <div className='heading'>
-            <h3>Attack Graph</h3>
+            Attack Graph
           </div>   
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
