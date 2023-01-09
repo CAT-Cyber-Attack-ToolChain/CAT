@@ -45,7 +45,7 @@ function App() {
       <ReflexContainer orientation="vertical" className='App'>
         <ReflexElement className='topology-builder' minSize='450' style={{overflow: "hidden"}}>          
           <div className='heading'>
-            <h2>Network Topology</h2>
+            <h3>Network Topology</h3>
           </div>   
           <TopologyBuilder setAtkGraph={setGraph} setReachability={setReachability} setMets={setMets} setLoading={setLoading} toHighlight={mapTopology}/>
         </ReflexElement>
@@ -54,7 +54,7 @@ function App() {
 
         <ReflexElement className='attack-graph' minSize='450'>
           <div className='heading'>
-            <h2>Attack Graph</h2>
+            <h3>Attack Graph</h3>
           </div>   
           {atkGraph == null ?
             <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :

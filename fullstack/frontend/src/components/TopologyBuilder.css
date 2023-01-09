@@ -13,3 +13,8 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.panel {
+  display: flex;
+  justify-content: space-between;
+}
