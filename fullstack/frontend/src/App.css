@@ -58,6 +58,10 @@ body {
   cursor: pointer;
 }
 
+.device {
+  color: #fca311;
+}
+
 
 input[type="file"] {
   display: none;
