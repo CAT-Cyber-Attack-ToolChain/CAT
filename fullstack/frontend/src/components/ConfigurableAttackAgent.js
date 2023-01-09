@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Dropdown from "react-dropdown";
 import axios from "axios";
+import "./ConfigurableAttackAgent.css"
 
 function ConfigurableAttackAgentForm() {
 
@@ -51,7 +52,7 @@ function ConfigurableAttackAgentForm() {
       <label key={count}  style={{ display: "flex", justifyContent: "space-evenly" }}>
 
         {dropdown ?
-        <Dropdown className="input-width" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
+        <Dropdown controlClassName='dropdown-control' placeholderClassName="dropdown-placeholder" arrowClassName="dropdown-arrow" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
           techniqueScore.technique = option.value
           setDefaultScore(option.value, count)
         }}/>
@@ -61,7 +62,7 @@ function ConfigurableAttackAgentForm() {
           value={techniqueMap[count]}
           onInput={(e) => techniqueScore.technique = e.target.value}
         />}
-        <input className="input-width"
+        <input className="input-width score"
           id={`score-${count}`}
           type="number"
           value={techniqueMap[count]}

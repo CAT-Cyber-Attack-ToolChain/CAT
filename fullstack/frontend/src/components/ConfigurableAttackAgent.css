@@ -1,0 +1,22 @@
+.dropdown-control {
+    background-color: black;
+    border-color: transparent;
+}
+
+.dropdown-placeholder {
+    color : #05b2dc;
+}
+
+.dropdown-arrow {
+    border-color: #05b2dc transparent transparent;
+}
+
+.is-open .dropdown-arrow {
+    border-color: transparent transparent #05b2dc;
+    border-width: 0 5px 5px
+}
+
+.score {
+    background-color: black;
+    border: none;
+}
