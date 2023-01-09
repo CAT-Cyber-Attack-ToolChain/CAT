@@ -1,9 +1,10 @@
 .Metrics {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    overflow: visible;
+    overflow :scroll;
+    flex-wrap: wrap ;
   }
   
 .column {
@@ -19,14 +20,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 33%;
+    text-align: center;
 }
   
-.filler {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #0a111f;
-}
 
 .fillerText {
     color: #0a111f;
