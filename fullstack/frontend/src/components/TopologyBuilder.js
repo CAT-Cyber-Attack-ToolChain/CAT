@@ -390,7 +390,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
             <MdChevronLeft style={{cursor: "pointer"}} onClick={slideLeft} onMouseDown={slideLeftMouseDown} onMouseUp={slideLeftMouseUp} size={40} />
             <div id="device-slider" style={{padding: "6px 12px", overflowX: "scroll", whiteSpace: "nowrap", scrollBehavior: "smooth"}}>
               {machines.map((machine) => {
-                return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
+                return (<button className="input-custom device" draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
               })}
             </div>
             <MdChevronRight style={{cursor: "pointer"}} onClick={slideRight} onMouseDown={slideRightMouseDown} onMouseUp={slideRightMouseUp} size={40} />
