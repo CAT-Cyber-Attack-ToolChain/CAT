@@ -20,3 +20,12 @@
     background-color: black;
     border: none;
 }
+
+.custom-technique-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.technique { 
+    margin-bottom: 0.5rem;
+}

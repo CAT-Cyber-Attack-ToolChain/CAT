@@ -47,9 +47,8 @@ function ConfigurableAttackAgentForm() {
       "score": 0
     }
     setCount(prevState => prevState + 1)
-    console.log(count)
     return (
-      <label key={count}  style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <label className="technique"key={count}  style={{ display: "flex", justifyContent: "space-evenly", marginTop:"1rem"}}>
 
         {dropdown ?
         <Dropdown controlClassName='dropdown-control' placeholderClassName="dropdown-placeholder" arrowClassName="dropdown-arrow" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
@@ -97,13 +96,12 @@ function ConfigurableAttackAgentForm() {
 
   
   return (
-    <div style={{display: "flex", flexDirection:"column"}}>
-      <form style={{ display: "flex", flexDirection: "column"}}>
-        <label style={{ display: "flex", justifyContent: "space-evenly" }}>
+    <div style={{display: "flex", flexDirection:"column", marginTop: "2rem"}}>
+      <form className="custom-technique-container">
+        <div style={{display: "flex", justifyContent:"space-around"}}>
           <label className='input-width'>Technique Name</label>
           <label className='input-width'>Score</label>
-        </label>
-
+        </div>
         {
           formElements.map((item) => item)
         }
