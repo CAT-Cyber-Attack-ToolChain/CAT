@@ -4,13 +4,11 @@ import * as AiIcons from "react-icons/ai";
 import './SimulationSidebar.css';
 import { IconContext } from 'react-icons'
 import ConfigurableAttackAgentForm from './ConfigurableAttackAgent';
-
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import Button from '@mui/material/Button';
 
 
 const SimulationSidebar = ({setAttackAgent}) => {
@@ -25,10 +23,14 @@ const SimulationSidebar = ({setAttackAgent}) => {
   const showSidebar = () => setSidebar(!sidebar)
 
   const radioButtonStyle = {
-    color: "white",
+    color: "#060A12",
     '&.Mui-checked': {
-      color: "#0aa689",
+      color: "#05b2dc"
     },
+    '& .MuiSvgIcon-root:not(.MuiSvgIcon-root ~ .MuiSvgIcon-root)' : {
+      color: "#060A12",
+      strokeWidth : "5"
+    }
   }
 
 
@@ -56,12 +58,12 @@ const SimulationSidebar = ({setAttackAgent}) => {
                     onChange={handleSimulationSelect}
                     name="sim-radio-buttons-group"
                   >
-                    <FormControlLabel value="wannacry" control={<Radio sx={radioButtonStyle}/>} label="WannaCry" />
-                    <FormControlLabel value="revil" control={<Radio sx={radioButtonStyle} />} label="REvil" />
-                    <FormControlLabel value="t9000" control={<Radio sx={radioButtonStyle} />} label="T9000" />
-                    <FormControlLabel value="synack" control={<Radio sx={radioButtonStyle} />} label="SynAck" />
-                    <FormControlLabel value="wiper" control={<Radio sx={radioButtonStyle} />} label="Wiper" />
-                    <FormControlLabel value="custom" control={<Radio sx={radioButtonStyle} />} label="Custom" />
+                    <FormControlLabel value="wannacry" control={<Radio sx={radioButtonStyle}/>} sx={{color : "#05b2dc"}} label="WannaCry" />
+                    <FormControlLabel value="revil" control={<Radio sx={radioButtonStyle} />} sx={{color : "#05b2dc"}} label="REvil" />
+                    <FormControlLabel value="t9000" control={<Radio sx={radioButtonStyle} />} sx={{color : "#05b2dc"}} label="T9000" />
+                    <FormControlLabel value="synack" control={<Radio sx={radioButtonStyle} />} sx={{color : "#05b2dc"}} label="SynAck" />
+                    <FormControlLabel value="wiper" control={<Radio sx={radioButtonStyle} />} sx={{color : "#05b2dc"}} label="Wiper" />
+                    <FormControlLabel value="custom" control={<Radio sx={radioButtonStyle} />} sx={{color : "#05b2dc"}} label="Custom" />
                   </RadioGroup>
                 </FormControl>
                 <ConfigurableAttackAgentForm />

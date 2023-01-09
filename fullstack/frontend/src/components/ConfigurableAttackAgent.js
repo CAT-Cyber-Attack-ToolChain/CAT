@@ -108,8 +108,8 @@ function ConfigurableAttackAgentForm() {
         }
       </form>
       <div style={{display: "flex", justifyContent: "space-evenly"}}>
-        <button id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
-        <button id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
+        <button className="input-custom" id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
+        <button className="input-custom" id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
       </div>
     </div>
   )
