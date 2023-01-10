@@ -48,8 +48,8 @@ That should start up the three containers in Docker.
 In the `backend` container, the backend needs to be started up so that it can serve the frontend requests.
 To do this, execute the following commands in the backend container:
 ```
-mulval$> cd fullstack/backend
-mulval$> ./gradlew run
+backend$> cd fullstack/backend
+backend$> ./gradlew run
 ```
 
 This will set it up so that the server listens for requests on the container's `0.0.0.0:8080`.
@@ -58,8 +58,8 @@ This is also where the server exceptions will be printed out.
 ### 4. Starting the frontend: ###
 In the `frontend` container, execute the following commands to start the frontend interface:
 ```
-node$> cd frontend
-node$> npm start 
+frontend> cd frontend
+frontend$> npm start 
 ```
 Once a successful compilation message pops up, the frontend web UI should be accessible on `localhost:3000`.
 
