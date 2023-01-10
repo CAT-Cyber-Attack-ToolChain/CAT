@@ -19,7 +19,7 @@ object Mulval : Controller() {
         print("Generating attack graph using MulVAL...")
 
         generated = try {
-            val output = shellRun("graph_gen.sh", listOf(inputFile.path, "-v", "-p"), outputDir)
+            val output = shellRun("graph_gen.sh", listOf(inputFile.path, "-l"), outputDir)
             println(output)
             true
         } catch (e: Exception) {
