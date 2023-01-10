@@ -37,22 +37,21 @@ const Metrics = ({mets}) => {
       <div style={metricsContainerStyle}>
         <h4>Metrics</h4>
         {mets == null
-          ? <p>No metrics to calculate, upload a graph</p>
+          ? 
+          <p>No metrics to calculate, upload a graph</p>
           : 
           <div className="Metrics">
-          <div className="column">
             <div className="decision">Shortest Path
               <p className='text'>{mets["shortestpath"]}</p>  
             </div>
             <div className='decision'>Number of Paths
               <p className='text'>{mets["numberofpaths"]}</p>
             </div> 
-            <div className='decision'>Weakest Adversary
+            <div className='decision'>
+              <div> Weakest Adversary </div>
               <p className='text'>{mets["weakestadversary"]}</p> 
             </div>
-          </div>
-            
-          <div className="column">
+        
             <div className='decision'>Mean Path Length
               <p className='text'>{mets["meanpathlength"]}</p> 
             </div> 
@@ -62,19 +61,15 @@ const Metrics = ({mets}) => {
             <div className='decision'>SD of Path Lengths 
               <p className='text'>{mets["sdpathlength"]}</p>
             </div> 
-          </div>
+          
             
-          <div className="column">
             <div className='decision'>Mode of Path Lengths
               <p className='text'>{mets["modepathlength"]}</p> 
             </div> 
-            <div className='decision'>Median of Path Lengths
-              <p className='text'>{mets["modepathlength"]}</p> 
+            <div className='decision'>
+              <div> Median of Path Lengths </div>
+              <p className='text'>{mets["medianpathlength"]}</p> 
             </div> 
-            <div className='filler'>Filler text
-              <p className='fillerText'>{mets["sdpathlength"]}</p>
-            </div>
-          </div>
           </div>
         }
       </div>

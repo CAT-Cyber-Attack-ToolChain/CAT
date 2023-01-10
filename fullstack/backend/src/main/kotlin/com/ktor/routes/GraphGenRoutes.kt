@@ -15,6 +15,7 @@ import com.model.MachineExtractor
 import com.graph.AttackGraph
 import com.graph.Node
 import com.graph.Rule
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -58,11 +59,27 @@ fun Route.GraphGenRouting() {
       call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability}")
     }
   }
+
+  route("/queryConfig"){
+    get {
+        call.respond(Neo4J.configured)
+    }
+  }
+
+  route("/submitConfig"){
+    post{
+      val upload = call.receive<ConfigInput>()
+      Neo4J.setConfig(upload.user, upload.address, upload.password)
+      call.respond(HttpStatusCode.OK)
+    }
+  }
 }
 
 @kotlinx.serialization.Serializable
 data class TopologyInput(val machines: String, val routers: String, val links: String)
 
+@kotlinx.serialization.Serializable
+data class ConfigInput(val address: String, val user: String, val password: String)
 
 fun nodeToCytoJSON(n: Node): List<CytoDataWrapper> {
   val result: LinkedList<CytoDataWrapper> = LinkedList()

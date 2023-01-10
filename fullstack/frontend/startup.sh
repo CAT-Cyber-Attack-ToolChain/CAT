@@ -2,4 +2,6 @@
 cd /frontend/
 cp docker.env .env
 npm i
-npm start
+npm install -g serve
+npm run build
+serve -s build

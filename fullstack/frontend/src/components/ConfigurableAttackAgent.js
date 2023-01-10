@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Dropdown from "react-dropdown";
 import axios from "axios";
+import "./ConfigurableAttackAgent.css"
 
 function ConfigurableAttackAgentForm() {
 
@@ -96,20 +97,19 @@ function ConfigurableAttackAgentForm() {
 
   
   return (
-    <div style={{display: "flex", flexDirection:"column"}}>
-      <form style={{ display: "flex", flexDirection: "column"}}>
-        <label style={{ display: "flex", justifyContent: "space-evenly" }}>
+    <div style={{display: "flex", flexDirection:"column", marginTop: "2rem"}}>
+      <form className="custom-technique-container">
+        <div style={{display: "flex", justifyContent:"space-around"}}>
           <label className='input-width'>Technique Name</label>
           <label className='input-width'>Score</label>
-        </label>
-
+        </div>
         {
           formElements.map((item) => item)
         }
       </form>
       <div style={{display: "flex", justifyContent: "space-evenly"}}>
-        <button id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
-        <button id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
+        <button className="input-custom" id="add-button" onClick={(event) => callWithoutSubmit(event, addFormField)}> Add new technique </button>
+        <button className="input-custom" id="submit-button" onClick={(event) => callWithoutSubmit(event, sendTechniquesToBackend)}> Submit </button>
       </div>
     </div>
   )

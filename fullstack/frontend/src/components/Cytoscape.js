@@ -188,8 +188,8 @@ const Cytoscape = ({graph,reachability,setMapTop,attackAgent,loading,loader}) =>
           cyRef.on('mouseout', 'edge', (event) => event.target.popperDiv.state.elements.popper.style.display = "none");
         });
 
-        cyRef.minZoom(cyRef.zoom() - 0.01)
-        cyRef.maxZoom(0.1)
+        cyRef.minZoom(cyRef.zoom() - 0.001)
+        cyRef.maxZoom(0.001)
 
     }, [cyRef])
 
