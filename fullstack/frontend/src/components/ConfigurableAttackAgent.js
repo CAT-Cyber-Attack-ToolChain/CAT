@@ -47,11 +47,12 @@ function ConfigurableAttackAgentForm() {
       "score": 0
     }
     setCount(prevState => prevState + 1)
+    console.log(count)
     return (
-      <label className="technique"key={count}  style={{ display: "flex", justifyContent: "space-evenly", marginTop:"1rem"}}>
+      <label key={count}  style={{ display: "flex", justifyContent: "space-evenly" }}>
 
         {dropdown ?
-        <Dropdown controlClassName='dropdown-control' placeholderClassName="dropdown-placeholder" arrowClassName="dropdown-arrow" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
+        <Dropdown className="input-width" options={Object.keys(defaultTechniqueMap)} onChange={(option) => {
           techniqueScore.technique = option.value
           setDefaultScore(option.value, count)
         }}/>
@@ -61,7 +62,7 @@ function ConfigurableAttackAgentForm() {
           value={techniqueMap[count]}
           onInput={(e) => techniqueScore.technique = e.target.value}
         />}
-        <input className="input-width score"
+        <input className="input-width"
           id={`score-${count}`}
           type="number"
           value={techniqueMap[count]}

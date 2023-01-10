@@ -18,20 +18,37 @@ import java.nio.charset.StandardCharsets
 object Neo4J {
     private lateinit var dir : File
     private lateinit var cache: PathCache
+    private lateinit var user: String
+    private lateinit var password: String
+    private lateinit var address: String
+    var configured = false
     private var vertices = mutableListOf<List<String>>()
     private var arcs = mutableListOf<List<String>>()
     private var hasData = false
     private val networkConfig: Configuration = NetworkConfiguration.neo4j
 
     // TODO: Add configurability for user/password
-    val driver: Driver = GraphDatabase.driver(
-        networkConfig.toString(),
-        AuthTokens.basic("neo4j", "cBILCAAPyZ81KMdulAzT-46Lo-jeJVO-6uMBErJDgqU")
-    )
+    lateinit var driver: Driver
 
     fun init(dir: File, cache: PathCache){
         this.dir = dir
         this.cache = cache
+    }
+
+    fun setConfig(user: String, address: String, password: String){
+        this.user = user
+        this.password = password
+        this.address = address
+        this.configured = true
+        println(address)
+        println(user)
+        println(password)
+
+        this.driver = GraphDatabase.driver(
+                //networkConfig.toString()
+                Neo4J.address,
+                AuthTokens.basic(Neo4J.user, Neo4J.password)
+        )
     }
 
     fun close() {

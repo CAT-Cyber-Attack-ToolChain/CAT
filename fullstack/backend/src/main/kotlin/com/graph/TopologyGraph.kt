@@ -115,13 +115,13 @@ data class Vulnerability(val name: String, val machine: String, val application:
 @kotlinx.serialization.Serializable
 data class FirewallRule(val source: String, val dest: String, val protocol: String, val port: String, val direction: String) {
   fun accept(m1: String, m2: String, protocol: String, port: String, reachability: MutableMap<String, MutableSet<String>>): String {
-    val m1 = restrict(m1, source) ?: return ""
-    val m2 = restrict(m2, dest) ?: return ""
-    val protocol = restrict(protocol, this.protocol) ?: return ""
-    val port = restrict(port, this.port) ?: return ""
-    reachability[m1]!!.add(m2)
-    println("$m1->$m2")
-    return "hacl($m1, $m2, $protocol, $port).\n"
+    val restrictedM1 = restrict(m1, source) ?: return ""
+    val restrictedM2 = restrict(m2, dest) ?: return ""
+    val restrictedProtocol = restrict(protocol, this.protocol) ?: return ""
+    val restrictedPort = restrict(port, this.port) ?: return ""
+    reachability[restrictedM1]!!.add(restrictedM2)
+    println("$restrictedM1->$restrictedM2")
+    return "hacl($restrictedM1, $restrictedM2, $restrictedProtocol, $restrictedPort).\n"
   }
 
   private fun restrict(x: String, y: String): String? {
