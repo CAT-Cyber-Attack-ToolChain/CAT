@@ -1,18 +1,16 @@
 import './App.css';
-import { useCallback, useState } from 'react';
-import React from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import Cytoscape from "./components/Cytoscape";
 import Metrics from "./components/Metrics";
 import "react-dropdown/style.css";
 import TopologyBuilder from './components/TopologyBuilder';
-import ConfigurableAttackAgentForm from "./components/ConfigurableAttackAgent"
 
 import 'react-reflex/styles.css'
-import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
-import { useLoading, BallTriangle } from '@agney/react-loading';
+import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
+import {BallTriangle, useLoading} from '@agney/react-loading';
 import SimulationSidebar from './components/SimulationSidebar';
 import Configuration from './components/Configuration';
-
+import axios from "axios";
 
 //TODO: Add configurability for host and port for all requests being sent.
 
@@ -40,6 +38,15 @@ function App() {
 
   const host = process.env.REACT_APP_HOST
   const port = process.env.REACT_APP_PORT
+
+  useLayoutEffect(() =>{
+    async function queryConfig() {
+      await axios.get(`http://${host}:${port}/queryConfig`).then((response) => {
+        setConfig(response.data)
+      })
+    }
+    queryConfig()
+  })
 
   return (
     <div className='fill'>

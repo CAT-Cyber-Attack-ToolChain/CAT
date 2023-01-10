@@ -1,21 +1,36 @@
 import { useState } from "react"
 import "./Configuration.css"
+import axios from "axios";
 const Configuration = ({setConfig}) => {
 
     const [address, setAddr] = useState("")
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
 
-    const submitHandler = (event) => {
+    const host = process.env.REACT_APP_HOST
+    const port = process.env.REACT_APP_PORT
+
+    const submitHandler = async (event) => {
         event.preventDefault()
-        console.log(address)
-        console.log(user)
-        console.log(password)
+        await axios.post(`http://${host}:${port}/submitConfig`, {
+            address: address,
+            user: user,
+            password: password
+        }).then((response)=>{
+            console.log(response.status)
+        })
         setConfig(true)
     }
 
-    const submitDocker = (event) => {
+    const submitDocker = async (event) => {
         event.preventDefault()
+        await axios.post(`http://${host}:${port}/submitConfig`, {
+            address: "bolt://neo4j:7687",
+            user: "neo4j",
+            password: "password"
+        }).then((response)=>{
+            console.log(response.status)
+        })
         setConfig(true)
     }
 
