@@ -5,6 +5,7 @@ import com.model.Configuration
 import com.model.NetworkConfiguration
 import com.model.PathCache
 import com.opencsv.CSVReader
+import com.view.Updatable
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
@@ -15,7 +16,7 @@ import java.io.FileNotFoundException
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
 
-object Neo4J {
+object Neo4J : Updatable, Controller() {
     private lateinit var dir : File
     private lateinit var cache: PathCache
     private lateinit var user: String
@@ -162,18 +163,17 @@ object Neo4J {
         println(result)
     }
 
-    fun update(): Boolean {
+    override fun update() {
         print("Sending attack graph to Neo4j AuraDB...")
         hasData = false
         readData()
-        return if (hasData) {
+        if (hasData) {
             generateGraph()
             cache.update()
+            notifyObservers()
             println("Done!")
-            true
         } else {
             println("Failed!")
-            false
         }
     }
 }

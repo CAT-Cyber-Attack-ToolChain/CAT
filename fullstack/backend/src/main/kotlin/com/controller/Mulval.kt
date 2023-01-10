@@ -21,13 +21,13 @@ object Mulval : Controller() {
         generated = try {
             val output = shellRun("graph_gen.sh", listOf(inputFile.path, "-l"), outputDir)
             println(output)
+            notifyObservers()
             true
         } catch (e: Exception) {
             print("MulVal has encountered an error...")
             println(e.message)
             return false
         }
-        notifyObservers()
         println("Done!")
         return true
     }
