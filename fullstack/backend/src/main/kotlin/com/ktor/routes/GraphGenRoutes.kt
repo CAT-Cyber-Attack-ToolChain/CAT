@@ -3,6 +3,7 @@ package com.ktor.routes
 import com.attackAgent.RealAttackAgent
 import com.controller.Mulval
 import com.controller.Neo4J
+import com.controller.Metric
 import com.graph.AttackGraph
 import com.graph.TopologyGraph
 import com.model.PathCache
@@ -39,7 +40,12 @@ fun Route.GraphGenRouting() {
 			Mulval.generateGraph()
 			val attackGraphJson = attackGraph.exportToCytoscapeJSON()
 			println(attackGraphJson)
+			
+			val metrics = Metric.getMetrics()
+
 			call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability}")
+			
+			
 		}
 	}
 }

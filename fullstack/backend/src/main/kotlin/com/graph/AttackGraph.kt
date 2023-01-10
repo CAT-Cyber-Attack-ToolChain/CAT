@@ -1,5 +1,7 @@
 package com.graph
 
+import com.controller.Controller
+import com.controller.Metric
 import com.attackAgent.MitreTechnique
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
@@ -16,15 +18,18 @@ import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 import java.util.*
 
-class AttackGraph : Updatable {
+class AttackGraph : Updatable, Controller() {
 
 	private val driver: Driver = Neo4J.driver
-
 	val nodes: MutableMap<Int, Node> = mutableMapOf()
 	private lateinit var attackGraph: Node
 
 	fun getGraph(): Node {
 		return attackGraph
+	}
+
+	fun init() {
+		this.addObserver(Metric)
 	}
 
 	fun exportToCytoscapeJSON(): String {
@@ -58,6 +63,7 @@ class AttackGraph : Updatable {
 
 	override fun update() {
 		attackGraph = buildAttackGraph()
+		this.notifyObservers()
 	}
 
 	private fun buildAttackGraph(): Node {
