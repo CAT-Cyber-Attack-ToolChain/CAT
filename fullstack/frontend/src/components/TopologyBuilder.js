@@ -208,16 +208,24 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   }
 
   function addConfiguration(file) {
-    const fr = new FileReader();
-    fr.addEventListener("load", (event) => {
-      const obj = JSON.parse(event.target.result);
-      if (Array.isArray(obj)) {
-        setMachines([...machines, ...obj.filter((o) => !machines.some((m) => m["label"] === o["label"]))])
-      } else if (!machines.some((m) => m["label"] === obj["label"])) {
-        setMachines([...machines, obj]);
-      }
-    });
-    fr.readAsText(file.target.files[0]);
+    let machineConf = []
+    let promises = [];
+    for (let machine of file.target.files) {
+        let filePromise = new Promise(resolve => {
+            let reader = new FileReader();
+            reader.readAsText(machine);
+            reader.onload = () => {
+              return resolve(reader.result)
+            };
+        });
+        promises.push(filePromise);
+    }
+    Promise.all(promises).then((fileContents) => {
+      fileContents.forEach((configs) => {
+        JSON.parse(configs).forEach((config) => machineConf.push(config))
+      })
+      setMachines(prevState => [...prevState,...machineConf])
+    })
   }
 
   function setDevice(option) {
@@ -372,6 +380,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
               type="file"
               name="Add Machine"
               id="add-machine"
+              multiple
               onChange={addConfiguration}
             />
             <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
