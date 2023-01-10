@@ -14,6 +14,7 @@
     "bootstrap": "^5.2.2",
     "cytoscape": "^3.23.0",
     "cytoscape-dagre": "^2.5.0",
+    "cytoscape-fcose": "^2.1.0",
     "cytoscape-popper": "^2.0.0",
     "js-file-download": "^0.4.12",
     "react": "^18.2.0",

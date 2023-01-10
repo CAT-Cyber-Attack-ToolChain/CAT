@@ -2,12 +2,14 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import popper from 'cytoscape-popper';
 import dagre from 'cytoscape-dagre';
+import fcose from 'cytoscape-fcose';
 import axios from 'axios';
 import {useEffect, useState} from "react"
 import Modal from "react-modal";
 
 cytoscape.use(popper);
 cytoscape.use( dagre );
+cytoscape.use( fcose );
 
 const host = process.env.REACT_APP_HOST
 const port = process.env.REACT_APP_PORT
