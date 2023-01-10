@@ -43,9 +43,7 @@ fun Route.GraphGenRouting() {
 			
 			val metrics = Metric.getMetrics()
 
-			call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability}")
-			
-			
+			call.respond("{\"attackGraph\": $attackGraphJson, \"reachability\": $reachability, \"metrics\": $metrics}")
 		}
 	}
 }
