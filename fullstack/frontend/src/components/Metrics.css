@@ -1,0 +1,37 @@
+.Metrics {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    overflow :scroll;
+    flex-wrap: wrap ;
+  }
+  
+.column {
+    width: 33%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: flex;
+    border-radius: 10px;
+}
+  
+.decision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 33%;
+    text-align: center;
+}
+  
+
+.fillerText {
+    color: #0a111f;
+    font-weight: 700;
+    font-size: 20px;
+}
+  
+.text {
+    font-weight: 700;
+    font-size: 20px;
+}

@@ -2,7 +2,7 @@ package com.graph
 
 import com.attackAgent.TECHNIQUE_EASYNESS_MAP
 import com.attackAgent.getMitreTechnique
-import com.controller.Neo4JController
+import com.controller.Neo4J
 import org.neo4j.driver.Driver
 import org.neo4j.driver.Result
 import org.neo4j.driver.Session
@@ -10,7 +10,7 @@ import org.neo4j.driver.Values.parameters
 
 class AttackGraph {
 
-    private val driver: Driver = Neo4JController.driver
+    private val driver: Driver = Neo4J.driver
 
     val nodes: MutableMap<Int, Node> = mutableMapOf()
     private var attackGraph: Node = buildAttackGraph()

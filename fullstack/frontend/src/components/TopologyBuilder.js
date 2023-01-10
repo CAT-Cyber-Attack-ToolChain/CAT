@@ -92,11 +92,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   const [cursor, setCursor] = useState("default");
   const [netGraph, setNetGraph] = useState([]);
   const [selected, setSelected] = useState(undefined);
-  const [machines, setMachines] = useState([
-    { label: "a", value: "a" },
-    { label: "b", value: "b" },
-    { label: "c", value: "c" },
-  ]);
+  const [machines, setMachines] = useState([]);
   const [curDevice, setCurDevice] = useState(undefined);
   const [nextId, setNextId] = useState(0);
   const [created, setCreated] = useState({});
@@ -212,16 +208,24 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   }
 
   function addConfiguration(file) {
-    const fr = new FileReader();
-    fr.addEventListener("load", (event) => {
-      const obj = JSON.parse(event.target.result);
-      if (Array.isArray(obj)) {
-        setMachines([...machines, ...obj.filter((o) => !machines.some((m) => m["label"] === o["label"]))])
-      } else if (!machines.some((m) => m["label"] === obj["label"])) {
-        setMachines([...machines, obj]);
-      }
-    });
-    fr.readAsText(file.target.files[0]);
+    let machineConf = []
+    let promises = [];
+    for (let machine of file.target.files) {
+        let filePromise = new Promise(resolve => {
+            let reader = new FileReader();
+            reader.readAsText(machine);
+            reader.onload = () => {
+              return resolve(reader.result)
+            };
+        });
+        promises.push(filePromise);
+    }
+    Promise.all(promises).then((fileContents) => {
+      fileContents.forEach((configs) => {
+        JSON.parse(configs).forEach((config) => machineConf.push(config))
+      })
+      setMachines(prevState => [...prevState,...machineConf])
+    })
   }
 
   function setDevice(option) {
@@ -276,7 +280,6 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
     // setting zoom
     if (cyRef) {
 
-      cyRef.fit()
       cyRef.minZoom(cyRef.zoom() - 0.01)
     }
     submitHandler()
@@ -371,39 +374,44 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   return (
     <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box"}}>
       <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
-        <div>
-          <input
-            type="file"
-            name="Add Machine"
-            id="add-machine"
-            onChange={addConfiguration}
-          />
-          <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
+        <div className="panel">
+          <div>
+            <input
+              type="file"
+              name="Add Machine"
+              id="add-machine"
+              multiple
+              onChange={addConfiguration}
+            />
+            <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
+          </div>
+          <div>
+            <input 
+              type="file" 
+              name="merge-toppology" 
+              id="merge-topology"
+              onChange={mergeTopology}
+            />
+            <label htmlFor="merge-topology" className="input-custom">Upload existing topology</label>
+          </div>
         </div>
-        <div>
-          <input 
-            type="file" 
-            name="merge-toppology" 
-            id="merge-topology"
-            onChange={mergeTopology}
-          />
-          <label htmlFor="merge-topology" className="input-custom">Upload topology (initialisation/network merging)</label>
-          <br/><br/>
-          <div className="device-slider-container">
+        <div className="device-slider-container">
             <label style={{display: "inline-block", border: "1px", padding: "6px 12px"}}>Devices: </label>
             <MdChevronLeft style={{cursor: "pointer"}} onClick={slideLeft} onMouseDown={slideLeftMouseDown} onMouseUp={slideLeftMouseUp} size={40} />
-            <div id="device-slider" style={{padding: "6px 12px", overflowX: "scroll", whiteSpace: "nowrap", scrollBehavior: "smooth"}}>
+            <div id="device-slider" style={{padding: "6px 12px", overflowX: "scroll", display: "flex", scrollBehavior: "smooth"}}>
               {machines.map((machine) => {
-                return (<button draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
+                return (<button className="input-custom device" draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
               })}
             </div>
             <MdChevronRight style={{cursor: "pointer"}} onClick={slideRight} onMouseDown={slideRightMouseDown} onMouseUp={slideRightMouseUp} size={40} />
-          </div>
-
         </div>
-        <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
-        <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
-        <button className="input-custom" onClick={clearNetGraph}>Clear Topology Graph</button>
+        <div className="panel">
+          <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
+          <div className="panel">
+            <button className="input-custom" onClick={saveGraph}> Save Topology Graph </button>
+            <button className="input-custom" onClick={clearNetGraph}>Clear Topology Graph</button>
+          </div>
+        </div>
       </div>
       
   

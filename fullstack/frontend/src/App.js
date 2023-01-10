@@ -43,23 +43,23 @@ function App() {
 
   return (
     <div className='fill'>
-    {isConfig ? 
+    {isConfig ?
       <div className="fill" style={{display: "flex", boxSizing: "border-box", flexDirection: "column", overflow: "hidden"}}>
         <SimulationSidebar setAttackAgent={setAttackAgent}/>
         <ReflexContainer orientation="vertical" className='App'>
-          <ReflexElement className='topology-builder' minSize='450' style={{overflow: "hidden"}}>          
+          <ReflexElement className='topology-builder' minSize='450' style={{overflow: "hidden"}}>
             <div className='heading'>
-              <h2>Network Topology</h2>
-            </div>   
+              Network Topology
+            </div>
             <TopologyBuilder setAtkGraph={setGraph} setReachability={setReachability} setMets={setMets} setLoading={setLoading} toHighlight={mapTopology}/>
           </ReflexElement>
 
           <ReflexSplitter style={{width: '10px', zIndex: '1'}} className='gutter-vertical' />
 
-          <ReflexElement className='attack-graph' minSize='450'>
+          <ReflexElement className='attack-graph' minSize='450' style={{overflow : "hidden"}}>
             <div className='heading'>
-              <h2>Attack Graph</h2>
-            </div>   
+              Attack Graph
+            </div>
             {atkGraph == null ?
               <div className="no-item">{!loading && "Please select input file"} {loading && indicatorEl}</div> :
               <Cytoscape attackAgent={attackAgent} graph={atkGraph} reachability={reachabilityGraph} key={atkGraph} setMapTop={setMapTop} loading={loading} loader={indicatorEl}/>

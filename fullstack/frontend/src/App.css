@@ -58,6 +58,10 @@ body {
   cursor: pointer;
 }
 
+.device {
+  color: #fca311;
+}
+
 
 input[type="file"] {
   display: none;
@@ -102,6 +106,8 @@ input[type="file"] {
 
 .heading {
   text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .right-aligned {
@@ -141,6 +147,7 @@ input[type="file"] {
 }
 
 .input-width {
+  color : #05b2dc;
   width: 5rem;
   min-width: 150px;
   max-width: 200px;
