@@ -29,8 +29,6 @@ ENV MAVEN_HOME=${M2_HOME}
 
 ENV PATH="${M2_HOME}/bin:/XSB/bin:/kotlin-native-linux-x86_64-1.7.20/bin:$PATH"
 
-ADD mulval/ /mulval/
-ADD output/ /output/
 ENV MULVALROOT="/mulval"
 ENV PATH="${MULVALROOT}/utils:${MULVALROOT}/bin:$PATH"
 

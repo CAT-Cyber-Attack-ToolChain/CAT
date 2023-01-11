@@ -7,6 +7,9 @@ class ShortestPath(private val cache: PathCache) : DecisionMetric() {
     override fun toString(): String {
         return "Shortest Path"
     }
-    override fun calculate(): Double = cache.get().min().toDouble()
+    override fun calculate(): Double {
+        println(cache.get())
+        return cache.get().min().toDouble()
+    }
 }
 

@@ -3,11 +3,12 @@ package com.attackAgent
 import com.graph.AttackGraph
 import com.graph.Node
 import com.graph.Rule
+import com.ktor.Components
 
 abstract class AttackAgent {
 
   companion object {
-    public fun getAttackResponse(attackAgent: AttackAgent): Pair<MutableList<Pair<String, String>>, Boolean> {
+    fun getAttackResponse(attackAgent: AttackAgent): Pair<MutableList<Pair<String, String>>, Boolean> {
       attackAgent.attack()
       var successful = true
       if (attackAgent is PredefinedAttackAgent) {
@@ -18,15 +19,20 @@ abstract class AttackAgent {
   }
 
   private val path: MutableList<RuleNodePair> = mutableListOf()
-  private val adapter: AttackGraph = AttackGraph()
 
   fun attack() {
-    val startNode = adapter.getGraph()
+    val visited = hashSetOf<Node>()
+
+    val startNode = Components.attackGraph.getGraph()
     var currNode = startNode
 
     while (currNode.getConnections().isNotEmpty()) {
+      if (visited.contains(currNode)) {
+        break
+      }
       var rule = chooseRule(currNode)
       path.add(RuleNodePair(currNode, rule))
+      visited.add(currNode)
       currNode = rule.getDest()
     }
   }

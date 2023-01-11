@@ -18,16 +18,16 @@ object Mulval : Controller() {
         generated = false
         print("Generating attack graph using MulVAL...")
 
-        generated = try {
+        //generated = try {
             val output = shellRun("graph_gen.sh", listOf(inputFile.path, "-l"), outputDir)
             println(output)
-            true
-        } catch (e: Exception) {
+            notifyObservers()
+          generated = true
+        /*} catch (e: Exception) {
             print("MulVal has encountered an error...")
             println(e.message)
             return false
-        }
-        notifyObservers()
+        }*/
         println("Done!")
         return true
     }

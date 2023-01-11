@@ -9,8 +9,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
 }
 
-group = "com.example"
-version = "0.0.1"
+group = "com.CatPLC"
+version = "0.5"
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
