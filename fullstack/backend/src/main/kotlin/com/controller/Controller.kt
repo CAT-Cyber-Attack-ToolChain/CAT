@@ -14,6 +14,7 @@ abstract class Controller {
     }
 
     fun notifyObservers() {
+        println("OBSERVED")
         list.forEach() {
             it.update()
         }

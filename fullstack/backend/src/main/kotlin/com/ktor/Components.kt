@@ -10,7 +10,7 @@ object Components {
 
   fun configureObjects() {
     Mulval.addObserver(Neo4J)
-    Neo4J.addObserver(Metric)
     Neo4J.addObserver(attackGraph)
+    attackGraph.addObserver(Metric)
   }
 }

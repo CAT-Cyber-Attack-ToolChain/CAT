@@ -94,7 +94,7 @@ var stylesheet = [
             targetArrowColor: '#05b2dc',
             arrowScale : 5,
             targetArrowShape: 'triangle-backcurve',
-            curveStyle : 'taxi',
+            curveStyle : 'line',
             // 'control-point-step-size' : '100'
         }
     },

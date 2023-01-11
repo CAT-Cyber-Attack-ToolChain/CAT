@@ -3,6 +3,7 @@ package com.attackAgent
 import com.graph.AttackGraph
 import com.graph.Node
 import com.graph.Rule
+import com.ktor.Components
 
 abstract class AttackAgent {
 
@@ -18,10 +19,9 @@ abstract class AttackAgent {
   }
 
   private val path: MutableList<RuleNodePair> = mutableListOf()
-  private val adapter: AttackGraph = AttackGraph()
 
   fun attack() {
-    val startNode = adapter.getGraph()
+    val startNode = Components.attackGraph.getGraph()
     var currNode = startNode
 
     while (currNode.getConnections().isNotEmpty()) {

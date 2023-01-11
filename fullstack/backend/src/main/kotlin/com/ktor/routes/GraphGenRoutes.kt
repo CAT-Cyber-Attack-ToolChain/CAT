@@ -34,7 +34,7 @@ fun Route.GraphGenRouting() {
       val reachability = TopologyGraph.build(upload.machines, upload.routers, upload.links, "$cur/input.P")
       println(reachability)
       // generate the graph, move to Neo4j, and display it on frontend
-      Neo4J.init(mulvalOutput, PathCache("$cur/input.P", Components.attackGraph))
+      Neo4J.init(mulvalOutput, PathCache("$cur/input.P"))
       Mulval.init(mulvalInput, mulvalOutput)
       Mulval.generateGraph()
       val attackGraphJson = Components.attackGraph.exportToCytoscapeJSON()

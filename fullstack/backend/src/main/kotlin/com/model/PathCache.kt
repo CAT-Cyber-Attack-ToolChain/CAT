@@ -9,8 +9,9 @@ import com.controller.Neo4J
 import com.graph.AttackGraph
 import com.graph.Rule
 import com.graph.Node
+import com.ktor.Components
 
-class PathCache(val filePath: String, val attackGraph: AttackGraph) {
+class PathCache(val filePath: String) {
     // using common driver:
     private val driver: Driver = Neo4J.driver!!
     private var pathLengths: MutableList<Int> = mutableListOf()
@@ -47,7 +48,7 @@ class PathCache(val filePath: String, val attackGraph: AttackGraph) {
             pathLengths.add(length)
         }
         for (r in x.getConnections()) {
-            if (!(r.getDest().getId() in visited)) {
+            if (r.getDest().getId() !in visited) {
                 traverse(r.getDest(), visited + x.getId(), length + 1)
             }
         }
@@ -74,7 +75,7 @@ class PathCache(val filePath: String, val attackGraph: AttackGraph) {
             }
             pathLengths += pathLengthsForCurrentGoal.toTypedArray()
         }*/
-        traverse(attackGraph.nodes[0]!!, setOf(), 0)
+        traverse(Components.attackGraph.nodes[0]!!, setOf(), 0)
         pathLengths.sort()
         println(pathLengths)
     }

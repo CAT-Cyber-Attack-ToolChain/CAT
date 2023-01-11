@@ -18,7 +18,7 @@ import java.util.*
 
 class AttackGraph : Updatable, Controller() {
 
-  val nodes: MutableMap<Int, Node> = mutableMapOf()
+  var nodes: MutableMap<Int, Node> = mutableMapOf()
   private var attackGraph: Node? = null
 
   fun getGraph(): Node {
@@ -74,6 +74,8 @@ class AttackGraph : Updatable, Controller() {
   }*/
 
   private fun optimisedBuild(): Node {
+    nodes = mutableMapOf()
+    attackGraph = null
 
     val session: Session = Neo4J.driver!!.session()
     println("building attack graph")
