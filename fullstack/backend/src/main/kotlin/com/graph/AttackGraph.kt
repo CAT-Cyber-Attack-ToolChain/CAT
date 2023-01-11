@@ -28,6 +28,7 @@ class AttackGraph : Updatable, Controller() {
 	}
 
 	fun exportToCytoscapeJSON(): String {
+		println("export to json")
 		val klaxon = Klaxon()
 		val nodestrlist: List<String> = this.nodes.values.map { n ->
 
@@ -57,24 +58,68 @@ class AttackGraph : Updatable, Controller() {
 	}
 
 	override fun update() {
-		attackGraph = buildAttackGraph()
+		attackGraph = optimisedBuild()
+		//attackGraph = buildAttackGraph()
 	}
 
-	private fun buildAttackGraph(): Node {
+	/*private fun buildAttackGraph(): Node {
 		println("building attack graph")
 		val ruleNodeIds: MutableList<Int> = mutableListOf()
 		for (rule: Int in connectedRule(attackerLocatedNode())) {
 			ruleNodeIds.add(rule)
 		}
-		val connections: Set<Rule> = buildRules(ruleNodeIds)
+		val connections: MutableSet<Rule> = buildRules(ruleNodeIds)
 		val node = Node(0, "start", connections)
 		nodes[0] = node
 		this.notifyObservers()
 		return node
+	}*/
+
+	fun optimisedBuild(): Node {
+
+		val session: Session = Neo4J.driver.session()
+		println("building attack graph")
+
+		val permissions = session.writeTransaction { tx ->
+			val result: Result = tx.run(
+				"MATCH(n:Permission) RETURN n.node_id as id, n.text as text", parameters()
+			)
+			result.list {r -> Node(r["id"].toString().toInt(), r["text"].toString(), mutableSetOf())}
+		}
+		for (node in permissions) {
+			nodes[node.getId()] = node
+		}
+		println(permissions)
+
+		session.writeTransaction { tx ->
+			val result: Result = tx.run(
+				"MATCH(x:Permission)-[:To]->(z:Rule)-[:To]->(y:Permission) RETURN z.node_id AS ruleId, z.text AS text, x.node_id AS start, y.node_id AS dest", parameters()
+			)
+			for (r in result.list()) {
+				nodes[r["start"].toString().toInt()]!!.addRule(Rule(r["ruleId"].toString().toInt(), r["text"].toString(), nodes[r["dest"].toString().toInt()]!!))
+			}
+		}
+		println(nodes)
+
+		nodes[0] = Node(0, "start", mutableSetOf())
+		session.writeTransaction { tx ->
+			val result: Result = tx.run(
+				"MATCH(f:Fact)-[:To]->(r:Rule)-[:To]->(p:Permission) WHERE (f.text STARTS WITH \"attackerLocated\") RETURN r.node_id AS ruleId, r.text AS text, p.node_id AS dest", parameters()
+			)
+			for (r in result.list()) {
+				nodes[0]!!.addRule(Rule(r["ruleId"].toString().toInt(), r["text"].toString(), nodes[r["dest"].toString().toInt()]!!))
+			}
+		}
+		println("built attack graph")
+
+		this.notifyObservers()
+
+		return nodes[0]!!
 	}
 
+
 	/* id required to be id of a permission node */
-	private fun buildNode(id: Int): Node {
+	/*private fun buildNode(id: Int): Node {
 		if (!nodes.containsKey(id)) {
 			val permission: String = getNodeText(id)
 			nodes[id] = Node(id, permission, setOf())
@@ -85,7 +130,7 @@ class AttackGraph : Updatable, Controller() {
 	}
 
 	/* ids required to be ids of rule nodes */
-	private fun buildRules(ids: List<Int>): Set<Rule> {
+	private fun buildRules(ids: List<Int>): MutableSet<Rule> {
 		val rules: MutableSet<Rule> = mutableSetOf()
 		for (id in ids) {
 			val rule: Rule = buildRule(id)
@@ -154,6 +199,8 @@ class AttackGraph : Updatable, Controller() {
 			result.list()[0].get(0).toString().toInt()
 		}
 	}
+
+	 */
 }
 
 
@@ -170,7 +217,7 @@ fun main() {
 class Node(
 	private val id: Int,
 	private val permission: String,
-	private val connections: Set<Rule>
+	private val connections: MutableSet<Rule>
 ) {
 	fun getId(): Int {
 		return id
@@ -182,6 +229,10 @@ class Node(
 
 	fun getConnections(): Set<Rule> {
 		return connections
+	}
+
+	fun addRule(r: Rule) {
+		connections.add(r)
 	}
 }
 

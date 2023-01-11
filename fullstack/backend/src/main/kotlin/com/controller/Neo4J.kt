@@ -169,7 +169,7 @@ object Neo4J : Updatable, Controller() {
         readData()
         if (hasData) {
             generateGraph()
-            cache.update()
+            println("updated cache")
             notifyObservers()
             println("Done!")
         } else {

@@ -313,27 +313,34 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   }
 
   function mergeTopology(file) {
-    const fr = new FileReader();
-    fr.addEventListener("load", (event) => {
-      var obj = JSON.parse(event.target.result);
-      const n = obj.length
-      obj = obj.filter((x) => x.data.label === "edge" || !netGraph.some((y) => y.data.label === x.data.label));
-      obj = obj.filter((x) => x.data.label !== "edge" || (obj.some((y) => y.data.id === x.data.source) && obj.some((y) => y.data.id === x.data.target)));
-      for (var i = 0; i < obj.length; ++i) {
-        obj[i].data.id = String(Number(obj[i].data.id) + nextId);
-        if (obj[i].data.label === "edge") {
-          obj[i].data.source = String(Number(obj[i].data.source) + nextId);
-          obj[i].data.target = String(Number(obj[i].data.target) + nextId);
+      const fr = new FileReader();
+      const idMap = {}
+      fr.addEventListener("load", (event) => {
+        var obj = JSON.parse(event.target.result);
+        console.log(obj)
+        const n = obj.length
+        obj = obj.filter((x) => x.data.label === "edge" || !netGraph.some((y) => y.data.label === x.data.label));
+        console.log(obj)
+        obj = obj.filter((x) => x.data.label !== "edge" || (obj.some((y) => y.data.id === x.data.source) && obj.some((y) => y.data.id === x.data.target)));
+        console.log(obj)
+        for (var i = 0; i < obj.length; ++i) {
+          idMap[obj[i].data.id] = String(nextId + i);
+          obj[i].data.id = idMap[obj[i].data.id];
+          if (obj[i].data.label === "edge") {
+            obj[i].data.source = idMap[obj[i].data.source];
+            obj[i].data.target = idMap[obj[i].data.target];
+          }
+          created[obj[i].data.label] = true;
+          netGraph.push(obj[i]);
         }
-        created[obj[i].data.label] = true;
-        netGraph.push(obj[i]);
-      }
-      setNetGraph(netGraph);
-      setNextId(nextId + n);
-      setCreated(created);
-    });
-    fr.readAsText(file.target.files[0]);
-  }
+        setNetGraph(netGraph);
+        setNextId(nextId + n);
+        setCreated(created);
+        console.log(netGraph);
+      });
+      fr.readAsText(file.target.files[0]);
+    }
+
 
   async function getMetrics() {
     const response = await axios.get(`http://${host}:${port}/metrics`)

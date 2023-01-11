@@ -24,7 +24,9 @@ object  Metric : Updatable {
     }
 
     override fun update() {
+        println("calculating metrics")
         cache = Neo4J.getCache()
+        cache.update()
         
         val shortestPath = ShortestPath(cache)
         val meanofpathlength = MeanOfPathLengths(cache)
@@ -33,7 +35,7 @@ object  Metric : Updatable {
         val modepathlength = ModeOfPathLengths(cache)
         val sdpathlength = StandardDeviationOfPathLengths(cache)
         val numberofpaths = NumberOfPaths(cache)
-        val weakestadversary = WeakestAdversary(cache)
+        //val weakestadversary = WeakestAdversary(cache)
 
         metrics = "{\"shortestpath\": " + shortestPath.calculate() +
                   ",\"meanpathlength\": " + meanofpathlength.calculate() +
@@ -41,7 +43,9 @@ object  Metric : Updatable {
                   ",\"medianpathlength\": " + medianpathlength.calculate() +
                   ",\"modepathlength\": " + modepathlength.calculate() +
                   ",\"sdpathlength\": " + sdpathlength.calculate() +
-                  ",\"numberofpaths\": " + numberofpaths.calculate() +
-                  ",\"weakestadversary\": " + weakestadversary.calculate() + "}"
+                  ",\"numberofpaths\": " + numberofpaths.calculate() + "}"
+                  //",\"weakestadversary\": " + weakestadversary.calculate() + "}"
+
+        metrics = "{}"
     }
 }

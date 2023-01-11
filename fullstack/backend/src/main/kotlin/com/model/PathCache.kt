@@ -6,9 +6,11 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import com.controller.Neo4J
+import com.graph.AttackGraph
+import com.graph.Rule
+import com.graph.Node
 
-
-class PathCache(val filePath: String) {
+class PathCache(val filePath: String, val attackGraph: AttackGraph) {
     // using common driver:
     private val driver: Driver = Neo4J.driver
     private var pathLengths: MutableList<Int> = mutableListOf()
@@ -33,7 +35,26 @@ class PathCache(val filePath: String) {
         }
         return attackGoal
     }
+
+    fun traverse(x: Node, visited: Set<Int>, length: Int) {
+        println(x.getId())
+        println(x.getPermission())
+        if(x.getPermission().length > 9) {
+            println(x.getPermission().substring(1,9))
+        }
+        if (x.getPermission().length > 9 && x.getPermission().substring(1, 9) == "execCode") {
+            println("woo")
+            pathLengths.add(length)
+        }
+        for (r in x.getConnections()) {
+            if (!(r.getDest().getId() in visited)) {
+                traverse(r.getDest(), visited + x.getId(), length + 1)
+            }
+        }
+    }
+
     fun update() {
+        /*
         val session: Session = driver.session()
         startNodeId = session.writeTransaction { tx -> 
             val result: Result =
@@ -52,7 +73,9 @@ class PathCache(val filePath: String) {
                 result.list {r -> r.get(0).size()}
             }
             pathLengths += pathLengthsForCurrentGoal.toTypedArray()
-        }
-        pathLengths = pathLengths.sorted() as MutableList<Int>
+        }*/
+        traverse(attackGraph.nodes[0]!!, setOf(), 0)
+        pathLengths.sort()
+        println(pathLengths)
     }
 }

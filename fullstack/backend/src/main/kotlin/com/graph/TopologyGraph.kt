@@ -29,10 +29,10 @@ data class Service(
         val application: String,
         val protocol: String,
         val port: String,
-        val privilege: String
+        val user: String
 ) {
   override fun toString(): String {
-    return "networkServiceInfo($machine, $application, $protocol, $port, $privilege)."
+    return "networkServiceInfo($machine, $application, $protocol, $port, $user)."
   }
 }
 
