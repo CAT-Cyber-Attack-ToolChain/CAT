@@ -22,14 +22,12 @@ object Neo4J : Updatable, Controller() {
     private lateinit var user: String
     private lateinit var password: String
     private lateinit var address: String
-    var configured = false
     private var vertices = mutableListOf<List<String>>()
     private var arcs = mutableListOf<List<String>>()
     private var hasData = false
     private val networkConfig: Configuration = NetworkConfiguration.neo4j
 
-    // TODO: Add configurability for user/password
-    lateinit var driver: Driver
+    var driver: Driver? = null
 
     fun init(dir: File, cache: PathCache){
         this.dir = dir
@@ -40,10 +38,6 @@ object Neo4J : Updatable, Controller() {
         this.user = user
         this.password = password
         this.address = address
-        this.configured = true
-        println(address)
-        println(user)
-        println(password)
 
         this.driver = GraphDatabase.driver(
                 //networkConfig.toString()
@@ -53,7 +47,7 @@ object Neo4J : Updatable, Controller() {
     }
 
     fun close() {
-        driver.close()
+        driver!!.close()
     }
 
     /*
@@ -113,7 +107,7 @@ object Neo4J : Updatable, Controller() {
     }
 
     private fun generateVertices() {
-        val session: Session = driver.session()
+        val session: Session = driver!!.session()
         val query = StringBuilder()
         for (vertex: List<String> in vertices) {
 
@@ -131,7 +125,7 @@ object Neo4J : Updatable, Controller() {
     }
 
     private fun generateRelations() {
-        val session: Session = driver.session()
+        val session: Session = driver!!.session()
 
         session.writeTransaction { tx ->
             for (arc: List<String> in arcs) {
@@ -144,7 +138,7 @@ object Neo4J : Updatable, Controller() {
     }
 
     private fun flushGraph() {
-        val session: Session = driver.session()
+        val session: Session = driver!!.session()
         session.writeTransaction { tx ->
             tx.run("MATCH (n) DETACH DELETE n ", parameters())
         }
@@ -155,7 +149,7 @@ object Neo4J : Updatable, Controller() {
     }
 
     fun getGraph() {
-        val session: Session = driver.session()
+        val session: Session = driver!!.session()
         val result: List<String> = session.writeTransaction { tx ->
             val result: org.neo4j.driver.Result = tx.run("MATCH(n) RETURN n", parameters())
             result.list { r -> r.toString() }

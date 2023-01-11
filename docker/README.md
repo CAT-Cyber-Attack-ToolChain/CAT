@@ -23,12 +23,9 @@ This toolchain uses three containers, one for the backend server, one for the fr
 The Dockerfiles for backend and the frontend are provided, namely `backend.Dockerfile` and `frontend.Dockerfile`.
 You can build them with the following commands: (You might need root permissions)
 
-Run this one from the root directory of this repository:
- ```
-[sudo] docker build --file docker/backend.Dockerfile --tag mulval_git:Dockerfile .
+Run the following from within the `docker` directory.
 ```
-And the following ones from within the `docker` directory.
-```
+[sudo] docker build --file backend.Dockerfile --tag mulval_git:Dockerfile .
 [sudo] docker build --file frontend.Dockerfile --tag npm-16 .
 ```
 The Neo4J image can be pulled from Docker Hub:

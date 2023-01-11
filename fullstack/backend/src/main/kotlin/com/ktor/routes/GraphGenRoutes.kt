@@ -4,8 +4,8 @@ import com.attackAgent.RealAttackAgent
 import com.controller.Metric
 import com.controller.Mulval
 import com.controller.Neo4J
-import com.graph.AttackGraph
 import com.graph.TopologyGraph
+import com.ktor.Components
 import com.model.PathCache
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,9 +16,6 @@ import java.io.File
 
 fun Route.GraphGenRouting() {
   val cur = System.getProperty("user.dir") // cur = backend directory
-  val attackGraph = AttackGraph()
-  Neo4J.addObserver(attackGraph)
-  Neo4J.addObserver(Metric)
 
   route("/test") {
     get {
@@ -40,7 +37,7 @@ fun Route.GraphGenRouting() {
       Neo4J.init(mulvalOutput, PathCache("$cur/input.P"))
       Mulval.init(mulvalInput, mulvalOutput)
       Mulval.generateGraph()
-      val attackGraphJson = attackGraph.exportToCytoscapeJSON()
+      val attackGraphJson = Components.attackGraph.exportToCytoscapeJSON()
       println(attackGraphJson)
       var metrics = ""
       if(Mulval.getGenerated()) {
@@ -53,7 +50,7 @@ fun Route.GraphGenRouting() {
 
   route("/queryConfig") {
     get {
-      call.respond(Neo4J.configured)
+      call.respond(Neo4J.driver == null)
     }
   }
 
