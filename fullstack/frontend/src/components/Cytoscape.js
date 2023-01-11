@@ -39,14 +39,14 @@ function makePopper(ele) {
 
     
 var attackGraphStyles = {
-    backgroundColor: '#0a111f',
+    backgroundColor: '#B1C5CB',
     zIndex:  0,
     position: "relative",
     height : "100%"
 }
 
 var reachabilityGraphStyles = {
-    backgroundColor: '#0a111f',
+    backgroundColor: "#B1C5CB",
     zIndex:  0,
     position: "relative",
     height : "600px"

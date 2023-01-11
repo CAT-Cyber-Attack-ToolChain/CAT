@@ -9,7 +9,7 @@ import fileDownload from "js-file-download";
 const panelHeight = 250
 
 var styles = {
-  backgroundColor: "#0a111f",
+  backgroundColor: "#B1C5CB",
   zIndex: 0,
   position: "relative",
   height: "100%",
@@ -38,15 +38,15 @@ var stylesheet = [
       textValign: "center",
       textHalign: "center",
       shape: "rectangle",
-      color: "#fca311",
-      backgroundColor: "#14213d",
+      color: "#B1C5CB",
+      backgroundColor: "#30414b",
     },
   },
   {
     selector: "edge",
     style: {
       width: 20,
-      lineColor: "#fca311",
+      lineColor: "#414952",
       targetArrowColor: "#000",
       arrowScale: 5,
       targetArrowShape: "line",
@@ -58,7 +58,7 @@ var stylesheet = [
     selector: ".highlightNode",
     style: {
       color:"#14213d",
-      backgroundColor: "#fca311",
+      backgroundColor: "#414952",
     },
   },
   {
