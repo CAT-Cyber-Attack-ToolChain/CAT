@@ -4,7 +4,7 @@
 
 `docker` and `docker compose` plugin need to be installed on the delpoying machine to run this project.
 
-Recommeded to install Docker Desktop, which includes `compose`: https://docs.docker.com/desktop/
+Recommended to install Docker Desktop, which includes `compose`: https://docs.docker.com/desktop/
 
 Alternatively, you could install docker and `docker compose` separately:
 
