@@ -7,21 +7,21 @@ body {
   margin: 0;
 }
 #root {
-  background-color: #0a111f;
+  background-color: #B1C5CB;
   /* background-color: #708090; */
   height : 100%;
 }
 
 .content-color {
-  color: #05b2dc;
-  background-color: #0a111f;
+  color: #30414b;
+  background-color: #B1C5CB;
 }
 
 .App {
   display: flex;
   height: 100%;
   box-sizing: border-box;
-  color: #05b2dc;
+  color: #30414b;
   /* color: #0aa689; */
 }
 
@@ -29,8 +29,8 @@ body {
   display : flex;
   width: 100%;
   height : 100%;
-  background: #0a111f;
-  color: #05b2dc;
+  background: #B1C5CB;
+  color: #30414b;
   /* background : #808080; */
   justify-content : center;
   align-items: center;
@@ -39,9 +39,8 @@ body {
 .input-button {
   position : absolute; 
   z-index : 1;
-  border: 1px solid #121F38;
-  background-color: #060A12;
-  color: #05b2dc;
+  background-color: #B1C5CB;
+  color: #30414b;
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
@@ -50,17 +49,19 @@ body {
 .input-custom {
   display: inline-block;
   z-index : 1;
-  border: 1px solid #121F38;
-  background-color: #060A12;
-  color: #05b2dc;
+  background-color: #B1C5CB;
+  color: #30414b;
+  border: 1px solid #30414b;
   display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
 }
 
 .device {
-  color: #fca311;
+  color: #414952; 
+  font-weight: 700;
 }
+
 
 
 input[type="file"] {
@@ -92,7 +93,7 @@ input[type="file"] {
 .App.reflex-container.vertical > .reflex-splitter {
   border-right: 1px solid transparent;
   border-left: 1px solid transparent;
-  background-color: #121F38;
+  background-color: #414952;
 }
 
 .fill {
@@ -127,18 +128,18 @@ input[type="file"] {
 }
 
 .App .Dropdown-option, .App .Dropdown-root, .App .Dropdown-control, .App .dropdown-color {
-  border: 1px solid #121F38;
-  background-color: #060A12;
-  color: #05b2dc;
+  border: 1px solid #30414b;
+  background-color: #B1C5CB;
+  color: #30414b;
 }
 
 .App .Dropdown-option.is-selected {
-  color: #0a111f;
-  background-color: #05b2dc;
+  color: #B1C5CB;
+  background-color: #30414b;
 }
 
 .App .Dropdown-option:hover {
-  color: #0a111f;
+  color: #B1C5CB;
   background-color: #fca311;
 }
 
@@ -147,11 +148,10 @@ input[type="file"] {
 }
 
 .input-width {
-  color : #05b2dc;
+  color : #414952;
   width: 5rem;
   min-width: 150px;
   max-width: 200px;
   box-sizing: content-box;
   margin: 1px 2px;
-  color : #05b2dc;
 }

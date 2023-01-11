@@ -1,3 +1,12 @@
+.metrics-container {
+  width : 100%;
+  background-color: #B1C5CB;
+  padding: 20px;
+  height: 200px;
+  display : flex;
+  flex-direction: column;
+}
+
 .Metrics {
     width: 100%;
     display: flex;
@@ -26,7 +35,7 @@
   
 
 .fillerText {
-    color: #0a111f;
+    color: #B1C5CB;
     font-weight: 700;
     font-size: 20px;
 }

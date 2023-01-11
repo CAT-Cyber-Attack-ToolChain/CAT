@@ -4,15 +4,15 @@
 }
 
 .dropdown-placeholder {
-    color : #05b2dc;
+    color : #30414b;
 }
 
 .dropdown-arrow {
-    border-color: #05b2dc transparent transparent;
+    border-color: #30414b transparent transparent;
 }
 
 .is-open .dropdown-arrow {
-    border-color: transparent transparent #05b2dc;
+    border-color: transparent transparent #30414b;
     border-width: 0 5px 5px
 }
 
@@ -28,4 +28,8 @@
 
 .technique { 
     margin-bottom: 0.5rem;
+}
+
+.label-custom { 
+  color : #B1C5CB;
 }
