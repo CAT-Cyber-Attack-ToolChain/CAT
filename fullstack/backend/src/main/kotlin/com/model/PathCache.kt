@@ -75,6 +75,7 @@ class PathCache(val filePath: String) {
             }
             pathLengths += pathLengthsForCurrentGoal.toTypedArray()
         }*/
+        pathLengths = mutableListOf()
         traverse(Components.attackGraph.nodes[0]!!, setOf(), 0)
         pathLengths.sort()
         println(pathLengths)
