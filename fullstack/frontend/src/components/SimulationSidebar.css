@@ -14,9 +14,9 @@
 }
 
 .menu-content {
-  background-color: #121F38;
+  background-color: #414952;
   /* background-color: #060b26; */
-  color: #f5f5f5;
+  color: #30414B;
   width: 500px;
   height: 100vh;
   display: flex;
@@ -38,15 +38,15 @@
 }
 
 .radio-group {
-  color: #05b2dc!important;
+  color: #B1C5CB!important;
 }
 
 .radio-button {
-   color: white;
+   color: #B1c5cb;
 }
 
 .radio-button.Mui-checked {
-            color: lightblue,
+            color: #B1c5cb,
 }
 
 .center-children {
