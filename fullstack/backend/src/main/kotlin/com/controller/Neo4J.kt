@@ -160,6 +160,8 @@ object Neo4J : Updatable, Controller() {
     override fun update() {
         println("Sending attack graph to Neo4j AuraDB...")
         hasData = false
+        vertices = mutableListOf()
+        arcs = mutableListOf()
         readData()
         if (hasData) {
             generateGraph()
