@@ -18,9 +18,10 @@ abstract class AttackAgent {
     }
   }
 
-  private val path: MutableList<RuleNodePair> = mutableListOf()
+  private var path: MutableList<RuleNodePair> = mutableListOf()
 
   fun attack() {
+    path = mutableListOf()
     val visited = hashSetOf<Node>()
 
     val startNode = Components.attackGraph.getGraph()

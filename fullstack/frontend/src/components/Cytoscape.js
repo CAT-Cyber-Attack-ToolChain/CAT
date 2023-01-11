@@ -60,8 +60,8 @@ var layout = {
 
 var modalStyles = {
     content: {
-        color: "#05b2dc",
-        backgroundColor: "#0a111f",
+        color: "#B1c5cb",
+        backgroundColor: "#30414b",
         height : "80%",
         width : "80%",
         inset : "0",
@@ -96,7 +96,7 @@ var stylesheet = [
             targetArrowColor: '#000',
             arrowScale : 5,
             targetArrowShape: 'triangle-backcurve',
-            curveStyle : 'line',
+            curveStyle : 'straight',
             // 'control-point-step-size' : '100'
         }
     },
@@ -105,7 +105,7 @@ var stylesheet = [
             backgroundColor: '#ff91a4',
             transitionProperty: 'background-color, shape',
             transitionDuration: '0.5s',
-            color: '#060A12'
+            color: '#000'
         }
     },
     {   selector : '.attackedEdge',
@@ -216,7 +216,6 @@ const Cytoscape = ({graph,reachability,setMapTop,attackAgent,loading,loader}) =>
                 console.error('Could not find edges with source : ' + src + ' target: ' + dst)
             }
         }
-        
         return {nodes: nodes, edges: edges}
     }
 
