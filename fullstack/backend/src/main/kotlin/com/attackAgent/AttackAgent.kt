@@ -21,12 +21,18 @@ abstract class AttackAgent {
   private val path: MutableList<RuleNodePair> = mutableListOf()
 
   fun attack() {
+    val visited = hashSetOf<Node>()
+
     val startNode = Components.attackGraph.getGraph()
     var currNode = startNode
 
     while (currNode.getConnections().isNotEmpty()) {
+      if (visited.contains(currNode)) {
+        break
+      }
       var rule = chooseRule(currNode)
       path.add(RuleNodePair(currNode, rule))
+      visited.add(currNode)
       currNode = rule.getDest()
     }
   }
