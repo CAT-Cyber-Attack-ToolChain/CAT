@@ -170,8 +170,8 @@ object Neo4J : Updatable, Controller() {
         if (hasData) {
             generateGraph()
             cache.update()
-            notifyObservers()
             println("Done!")
+            notifyObservers()
         } else {
             println("Failed!")
         }
