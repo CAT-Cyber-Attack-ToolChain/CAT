@@ -24,10 +24,9 @@ object  Metric : Updatable {
     }
 
     override fun update() {
-        println("calculating metrics")
         cache = Neo4J.getCache()
         cache.update()
-        
+
         val shortestPath = ShortestPath(cache)
         val meanofpathlength = MeanOfPathLengths(cache)
         val normalisedmopl = NormalisedMOPL(cache)
@@ -37,15 +36,24 @@ object  Metric : Updatable {
         val numberofpaths = NumberOfPaths(cache)
         //val weakestadversary = WeakestAdversary(cache)
 
-        metrics = "{\"shortestpath\": " + shortestPath.calculate() +
-                  ",\"meanpathlength\": " + meanofpathlength.calculate() +
-                  ",\"normalisedmopl\": " + normalisedmopl.calculate() +
-                  ",\"medianpathlength\": " + medianpathlength.calculate() +
-                  ",\"modepathlength\": " + modepathlength.calculate() +
-                  ",\"sdpathlength\": " + sdpathlength.calculate() +
-                  ",\"numberofpaths\": " + numberofpaths.calculate() + "}"
-                  //",\"weakestadversary\": " + weakestadversary.calculate() + "}"
+        // metrics = "{\"shortestpath\": " + shortestPath.calculate() +
+        //           ",\"meanpathlength\": " + meanofpathlength.calculate() +
+        //           ",\"normalisedmopl\": " + normalisedmopl.calculate() +
+        //           ",\"medianpathlength\": " + medianpathlength.calculate() +
+        //           ",\"modepathlength\": " + modepathlength.calculate() +
+        //           ",\"sdpathlength\": " + sdpathlength.calculate() +
+        //           ",\"numberofpaths\": " + numberofpaths.calculate() +
+        //           ",\"weakestadversary\": " + weakestadversary.calculate() + "}"
 
-        metrics = "{}"
+        metrics = "{shortestpath: \"" + shortestPath.calculate() +
+                  "\",meanpathlength \": " + meanofpathlength.calculate() +
+                  "\",normalisedmopl: \"" + normalisedmopl.calculate() +
+                  "\",medianpathlength: \"" + medianpathlength.calculate() +
+                  "\",modepathlength: \"" + modepathlength.calculate() +
+                  "\",sdpathlength: \"" + sdpathlength.calculate() +
+                  "\",numberofpaths: \"" + numberofpaths.calculate() + "\"}"
+                 // "\",weakestadversary: \"" + weakestadversary.calculate() + "\"}"
+
+        //val mets2 = {shortestpath : "1", meanpathlength: "2", normalisedmopl: "3", modepathlength: "4", sdpathlength: "5", numberofpaths: "6", weakestadversary: "7"}
     }
 }

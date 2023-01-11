@@ -12,7 +12,7 @@ import com.graph.Node
 
 class PathCache(val filePath: String, val attackGraph: AttackGraph) {
     // using common driver:
-    private val driver: Driver = Neo4J.driver
+    private val driver: Driver = Neo4J.driver!!
     private var pathLengths: MutableList<Int> = mutableListOf()
     var startNodeId: Int = -1
     var goalNodeIds: List<Int> = listOf()

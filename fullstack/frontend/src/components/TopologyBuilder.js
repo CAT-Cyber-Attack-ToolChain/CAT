@@ -301,7 +301,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
       setReachability(JSON.stringify(data["reachability"]))
       setLoading(false) 
       //setMets(getMetrics())
-      setMets(JSON.stringify(data["metrics"]))
+      setMets(data["metrics"])
     } catch (error) {
       console.error('Error:', error);
       setLoading(false) 
