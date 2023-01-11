@@ -100,8 +100,8 @@ function ConfigurableAttackAgentForm() {
     <div style={{display: "flex", flexDirection:"column", marginTop: "2rem"}}>
       <form className="custom-technique-container">
         <div style={{display: "flex", justifyContent:"space-around"}}>
-          <label className='input-width'>Technique Name</label>
-          <label className='input-width'>Score</label>
+          <label className='label-custom'>Technique Name</label>
+          <label className='label-custom'>Score</label>
         </div>
         {
           formElements.map((item) => item)
