@@ -2,7 +2,7 @@
 
 ### 0. Prerequisites: ###
 
-`docker` and `docker compose` plugin need to be installed on the delpoying machine to run this project.
+`docker` and `docker compose` plugin need to be installed on the deploying machine to run this project.
 
 Recommended to install Docker Desktop, which includes `compose`: https://docs.docker.com/desktop/
 
