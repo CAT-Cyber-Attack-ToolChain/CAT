@@ -18,7 +18,7 @@ fun Route.GraphGenRouting() {
   val cur = System.getProperty("user.dir") // cur = backend directory
   val attackGraph = AttackGraph()
   Neo4J.addObserver(attackGraph)
-  attackGraph.addObserver(Metric)
+  Neo4J.addObserver(Metric)
 
   route("/test") {
     get {

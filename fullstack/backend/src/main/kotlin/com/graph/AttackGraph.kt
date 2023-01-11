@@ -18,7 +18,7 @@ import org.neo4j.driver.Session
 import org.neo4j.driver.Values.parameters
 import java.util.*
 
-class AttackGraph : Updatable, Controller() {
+class AttackGraph : Updatable {
 
 	val nodes: MutableMap<Int, Node> = mutableMapOf()
 	private lateinit var attackGraph: Node
@@ -69,7 +69,7 @@ class AttackGraph : Updatable, Controller() {
 		val connections: Set<Rule> = buildRules(ruleNodeIds)
 		val node = Node(0, "start", connections)
 		nodes[0] = node
-		this.notifyObservers()
+		//this.notifyObservers()
 		return node
 	}
 
