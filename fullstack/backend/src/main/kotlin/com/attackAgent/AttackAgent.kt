@@ -7,7 +7,7 @@ import com.graph.Rule
 abstract class AttackAgent {
 
   companion object {
-    public fun getAttackResponse(attackAgent: AttackAgent): Pair<MutableList<Pair<String, String>>, Boolean> {
+    fun getAttackResponse(attackAgent: AttackAgent): Pair<MutableList<Pair<String, String>>, Boolean> {
       attackAgent.attack()
       var successful = true
       if (attackAgent is PredefinedAttackAgent) {

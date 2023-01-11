@@ -15,7 +15,7 @@ import com.metrics.assistive.MedianOfPathLengths
 import com.metrics.assistive.ModeOfPathLengths
 import com.metrics.assistive.StandardDeviationOfPathLengths
 
-object Metric : Updatable {
+object  Metric : Updatable {
     private lateinit var cache : PathCache 
     private lateinit var metrics : String
 

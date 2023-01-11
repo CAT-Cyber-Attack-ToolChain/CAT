@@ -5,6 +5,8 @@ services:
     image: mulval_git:Dockerfile
     volumes:
       - ../fullstack/backend:/fullstack/backend
+      - ../mulval:/mulval
+      - ../output:/output
     stdin_open: true # docker run -i
     tty: true # docker run -t
     ports:
