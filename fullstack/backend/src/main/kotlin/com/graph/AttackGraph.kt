@@ -103,7 +103,7 @@ class AttackGraph : Updatable {
 
 	/* id required to be id of a rule node */
 	private fun connectedPermission(id: Int): Int {
-		val session: Session = Neo4J.driver.session()
+		val session: Session = Neo4J.driver!!.session()
 		return session.writeTransaction { tx ->
 			val result: Result = tx.run(
 				"MATCH(start {node_id: $id})-[:To]->(end:Permission) RETURN end.node_id", parameters()
@@ -114,7 +114,7 @@ class AttackGraph : Updatable {
 
 	/* id required to be id of a permission node */
 	private fun connectedRules(id: Int): List<Int> {
-		val session: Session = Neo4J.driver.session()
+		val session: Session = Neo4J.driver!!.session()
 		return session.writeTransaction { tx ->
 			val result: Result = tx.run(
 				"MATCH(start {node_id: $id})-[:To]->(end:Rule) RETURN end.node_id", parameters()
@@ -125,7 +125,7 @@ class AttackGraph : Updatable {
 
 	/* id required to be id of a fact node */
 	private fun connectedRule(id: Int): List<Int> {
-		val session: Session = Neo4J.driver.session()
+		val session: Session = Neo4J.driver!!.session()
 		return session.writeTransaction { tx ->
 			val result: Result = tx.run(
 				"MATCH(start {node_id: $id})-[:To]->(end:Rule) RETURN end.node_id", parameters()
@@ -135,7 +135,7 @@ class AttackGraph : Updatable {
 	}
 
 	private fun getNodeText(id: Int): String {
-		val session: Session = Neo4J.driver.session()
+		val session: Session = Neo4J.driver!!.session()
 		return session.writeTransaction { tx ->
 			val result: Result = tx.run(
 				"MATCH(n {node_id: $id}) RETURN n.text", parameters()
@@ -145,7 +145,7 @@ class AttackGraph : Updatable {
 	}
 
 	private fun attackerLocatedNode(): Int {
-		val session: Session = Neo4J.driver.session()
+		val session: Session = Neo4J.driver!!.session()
 		return session.writeTransaction { tx ->
 			val result: Result = tx.run(
 				"MATCH(x) WHERE x.text STARTS WITH \"attackerLocated\" RETURN x.node_id",

@@ -10,7 +10,7 @@ import com.controller.Neo4J
 
 class PathCache(val filePath: String) {
     // using common driver:
-    private val driver: Driver = Neo4J.driver
+    private val driver: Driver = Neo4J.driver!!
     private var pathLengths: MutableList<Int> = mutableListOf()
     var startNodeId: Int = -1
     var goalNodeIds: List<Int> = listOf()
