@@ -50,7 +50,7 @@ fun Route.GraphGenRouting() {
 
   route("/queryConfig") {
     get {
-      call.respond(Neo4J.driver == null)
+      call.respond(Neo4J.driver != null)
     }
   }
 
