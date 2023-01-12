@@ -17,10 +17,6 @@ const Metrics = ({mets}) => {
             <div className='decision'>Number of Paths
               <p className='text'>{mets["numberofpaths"]}</p>
             </div> 
-            <div className='decision'>
-              <div> Weakest Adversary </div>
-              <p className='text'>{mets["weakestadversary"]}</p> 
-            </div>
         
             <div className='decision'>Mean Path Length
               <p className='text'>{mets["meanpathlength"]}</p> 
