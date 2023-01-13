@@ -57,7 +57,7 @@ var stylesheet = [
   {
     selector: ".highlightNode",
     style: {
-      color:"#14213d",
+      color: "#14213d",
       backgroundColor: "#414952",
     },
   },
@@ -85,7 +85,7 @@ var stylesheet = [
   },
 ];
 
-const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toHighlight}) => {
+const TopologyBuilder = ({ setAtkGraph, setReachability, setMets, setLoading, toHighlight }) => {
 
   //initialised once component renders
   var cyRef = undefined
@@ -120,9 +120,9 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
       } else {
         cyRef.$('.highlightNode').removeClass('highlightNode')
       }
-      
+
     }
-  },[toHighlight, cyRef])
+  }, [toHighlight, cyRef])
 
   function onMouseover(cy) {
     cy.removeListener("click");
@@ -212,20 +212,20 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
     let machineConf = []
     let promises = [];
     for (let machine of file.target.files) {
-        let filePromise = new Promise(resolve => {
-            let reader = new FileReader();
-            reader.readAsText(machine);
-            reader.onload = () => {
-              return resolve(reader.result)
-            };
-        });
-        promises.push(filePromise);
+      let filePromise = new Promise(resolve => {
+        let reader = new FileReader();
+        reader.readAsText(machine);
+        reader.onload = () => {
+          return resolve(reader.result)
+        };
+      });
+      promises.push(filePromise);
     }
     Promise.all(promises).then((fileContents) => {
       fileContents.forEach((configs) => {
         JSON.parse(configs).forEach((config) => machineConf.push(config))
       })
-      setMachines(prevState => [...prevState,...machineConf])
+      setMachines(prevState => [...prevState, ...machineConf])
     })
   }
 
@@ -255,18 +255,21 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
             node_id: nextId,
           },
           type: machines.filter((x) => x.label === curDevice)[0].type,
-          machine: {...machines.filter((x) => x.label === curDevice)[0]} 
+          machine: { ...machines.filter((x) => x.label === curDevice)[0] }
         },
       },
     ]);
     setNextId(nextId + 1);
     created[curDevice] = true;
     setCreated(created)
-    
+
   }
 
   function clearNetGraph() {
     setNetGraph([]);
+    setSelected(undefined);
+    setMachines([]);
+    setMets(undefined)
     setCreated({});
     setAtkGraph(undefined);
     setReachability(undefined);
@@ -289,7 +292,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   }
 
   async function submitHandler() {
-    var edges = netGraph.filter((x) => x.data.label === "edge").map((x) => {return {source: netGraph.filter((y) => y.data.id === x.data.source.toString())[0].data.label, dest: netGraph.filter((y) => y.data.id === x.data.target.toString())[0].data.label}})
+    var edges = netGraph.filter((x) => x.data.label === "edge").map((x) => { return { source: netGraph.filter((y) => y.data.id === x.data.source.toString())[0].data.label, dest: netGraph.filter((y) => y.data.id === x.data.target.toString())[0].data.label } })
     var machines = netGraph.filter((x) => x.data.type === "machine").map((x) => x.data.machine)
     var routers = netGraph.filter((x) => x.data.type === "router").map((x) => x.data.machine)
     try {
@@ -302,12 +305,12 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
       let data = JSON.parse(response.data)
       setAtkGraph(JSON.stringify(data["attackGraph"]))
       setReachability(JSON.stringify(data["reachability"]))
-      setLoading(false) 
+      setLoading(false)
       //setMets(getMetrics())
       setMets(data["metrics"])
     } catch (error) {
       console.error('Error:', error);
-      setLoading(false) 
+      setLoading(false)
     }
   }
 
@@ -320,12 +323,9 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
     const idMap = {}
     fr.addEventListener("load", (event) => {
       var obj = JSON.parse(event.target.result);
-      console.log(obj)
       const n = obj.length
       obj = obj.filter((x) => x.data.label === "edge" || !netGraph.some((y) => y.data.label === x.data.label));
-      console.log(obj)
       obj = obj.filter((x) => x.data.label !== "edge" || (obj.some((y) => y.data.id === x.data.source) && obj.some((y) => y.data.id === x.data.target)));
-      console.log(obj)
       for (var i = 0; i < obj.length; ++i) {
         idMap[obj[i].data.id] = String(nextId + i);
         obj[i].data.id = idMap[obj[i].data.id];
@@ -339,7 +339,6 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
       setNetGraph(netGraph);
       setNextId(nextId + n);
       setCreated(created);
-      console.log(netGraph);
     });
     fr.readAsText(file.target.files[0]);
   }
@@ -382,8 +381,8 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   const mockAtkGraph = `[{"data" : {"id" : "n8", "label" : "netAccess(webServer, tcp, 80)", "properties" : {"machines": ["webServer"]}}}, {"data" : {"id" : "e7", "label" : "RULE 2(remote exploit of a server program)", "properties" : {}, "source" : "n8", "target" : "n6"}}, {"data" : {"id" : "n6", "label" : "execCode(webServer, apache)", "properties" : {"machines": ["webServer"]}}}, {"data" : {"id" : "e4", "label" : "RULE 5(multi - hop access)", "properties" : {}, "source" : "n6", "target" : "n3"}}, {"data" : {"id" : "e21", "label" : "RULE 17(NFS shell)", "properties" : {}, "source" : "n6", "target" : "n20"}}, {"data" : {"id" : "n3", "label" : "netAccess(fileServer, rpc, 100005)", "properties" : {"machines": ["fileServer"]}}}, {"data" : {"id" : "e2", "label" : "RULE 2(remote exploit of a server program)", "properties" : {}, "source" : "n3", "target" : "n1"}}, {"data" : {"id" : "n1", "label" : "execCode(fileServer, root)", "properties" : {"machines": ["fileServer"]}}}, {"data" : {"id" : "n20", "label" : "accessFile(fileServer, write, '/export')", "properties" : {"machines": ["fileServer"]}}}, {"data" : {"id" : "e19", "label" : "RULE 16(NFS semantics)", "properties" : {}, "source" : "n20", "target" : "n18"}}, {"data" : {"id" : "e27", "label" : "RULE 4(Trojan horse installation)", "properties" : {}, "source" : "n20", "target" : "n1"}}, {"data" : {"id" : "n18", "label" : "accessFile(workStation, write, '/usr/local/share')", "properties" : {"machines": ["workStation"]}}}, {"data" : {"id" : "e17", "label" : "RULE 4(Trojan horse installation)", "properties" : {}, "source" : "n18", "target" : "n16"}}, {"data" : {"id" : "n16", "label" : "execCode(workStation, root)", "properties" : {"machines": ["workStation"]}}}, {"data" : {"id" : "e14", "label" : "RULE 5(multi - hop access)", "properties" : {}, "source" : "n16", "target" : "n3"}}, {"data" : {"id" : "n0", "label" : "start", "properties" : {"machines": []}}}, {"data" : {"id" : "e9", "label" : "RULE 6(direct network access)", "properties" : {}, "source" : "n0", "target" : "n8"}}]`
 
   return (
-    <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box"}}>
-      <div className="build-panel" style={{padding: "20px", width: "100%", height : `${panelHeight}px`}}>
+    <div style={{ width: "100%", position: "relative", cursor: cursor, height: "100%", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
+      <div className="build-panel" style={{ padding: "20px", width: "100%", height: `${panelHeight}px` }}>
         <div className="panel">
           <div>
             <input
@@ -396,24 +395,26 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
             <label htmlFor="add-machine" className="input-custom">New machine/router/firewall configuration</label>
           </div>
           <div>
-            <input 
-              type="file" 
-              name="merge-toppology" 
+            <input
+              type="file"
+              name="merge-topology"
               id="merge-topology"
               onChange={mergeTopology}
+              onClick={event => event.target.value = null}
+              accept=".json"
             />
             <label htmlFor="merge-topology" className="input-custom">Upload existing topology</label>
           </div>
         </div>
         <div className="device-slider-container">
-            <label style={{display: "inline-block", border: "1px", padding: "6px 12px"}}>Devices: </label>
-            <MdChevronLeft style={{cursor: "pointer"}} onClick={slideLeft} onMouseDown={slideLeftMouseDown} onMouseUp={slideLeftMouseUp} size={40} />
-            <div id="device-slider" style={{padding: "6px 12px", overflowX: "scroll", display: "flex", scrollBehavior: "smooth"}}>
-              {machines.map((machine) => {
-                return (<button className="input-custom device" draggable="true" onDrag={function(){setCurDevice(machine.label)}}>{machine.label}</button>)
-              })}
-            </div>
-            <MdChevronRight style={{cursor: "pointer"}} onClick={slideRight} onMouseDown={slideRightMouseDown} onMouseUp={slideRightMouseUp} size={40} />
+          <label style={{ display: "inline-block", border: "1px", padding: "6px 12px" }}>Devices: </label>
+          <MdChevronLeft style={{ cursor: "pointer" }} onClick={slideLeft} onMouseDown={slideLeftMouseDown} onMouseUp={slideLeftMouseUp} size={40} />
+          <div id="device-slider" style={{ padding: "6px 12px", overflowX: "scroll", display: "flex", scrollBehavior: "smooth" }}>
+            {machines.map((machine) => {
+              return (<button className="input-custom device" draggable="true" onDrag={function () { setCurDevice(machine.label) }}>{machine.label}</button>)
+            })}
+          </div>
+          <MdChevronRight style={{ cursor: "pointer" }} onClick={slideRight} onMouseDown={slideRightMouseDown} onMouseUp={slideRightMouseUp} size={40} />
         </div>
         <div className="panel">
           <button className="input-custom" onClick={printNetGraph}>Generate Attack Graph</button>
@@ -423,8 +424,8 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
           </div>
         </div>
       </div>
-      
-  
+
+
       {netGraph.length === 0 ?
         <div onDrop={(e) => addDragDropDevice(e)} onDragOver={(e) => e.preventDefault()} style={styles}> No graph displayed </div> :
         <div onDrop={(e) => addDragDropDevice(e)} onDragOver={(e) => e.preventDefault()} style={styles}>
@@ -438,7 +439,7 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
           />
         </div>
       }
-   
+
     </div>
   );
 };
