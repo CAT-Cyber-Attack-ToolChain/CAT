@@ -268,6 +268,8 @@ const TopologyBuilder = ({setAtkGraph, setReachability, setMets, setLoading, toH
   function clearNetGraph() {
     setNetGraph([]);
     setCreated({});
+    setAtkGraph(undefined);
+    setReachability(undefined);
   }
 
   function addDragDropDevice(e) {

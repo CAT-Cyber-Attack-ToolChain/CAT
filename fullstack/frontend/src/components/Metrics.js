@@ -17,24 +17,20 @@ const Metrics = ({mets}) => {
             <div className='decision'>Number of Paths
               <p className='text'>{mets["numberofpaths"]}</p>
             </div> 
-            <div className='decision'>
-              <div> Weakest Adversary </div>
-              <p className='text'>{mets["weakestadversary"]}</p> 
-            </div>
         
             <div className='decision'>Mean Path Length
-              <p className='text'>{mets["meanpathlength"]}</p> 
+            <p className='text'>{mets["meanpathlength"].toFixed(2)}</p> 
             </div> 
             <div className='decision'>Normalised Mean of Path Lengths
-              <p className='text'>{mets["normalisedmopl"]}</p> 
+            <p className='text'>{mets["normalisedmopl"].toFixed(2)}</p> 
             </div> 
             <div className='decision'>SD of Path Lengths 
-              <p className='text'>{mets["sdpathlength"]}</p>
+            <p className='text'>{mets["sdpathlength"].toFixed(2)}</p>
             </div> 
           
             
             <div className='decision'>Mode of Path Lengths
-              <p className='text'>{mets["modepathlength"]}</p> 
+            <p className='text'>{mets["modepathlength"]}</p> 
             </div> 
             <div className='decision'>
               <div> Median of Path Lengths </div>

@@ -1,14 +1,13 @@
 .DS_Store
 /.idea/
-/KotlinClient/.idea/
 mulval/mulval.iml
-KotlinClient/target/
-KotlinClient/client.iml
 /output/
 /mulval/target
+/mulval/bin
 /fullstack/frontend/node_modules/*
 /fullstack/backend/.gradle
 /fullstack/backend/.idea
+/fullstack/backend/bin
 /fullstack/backend/build
 /fullstack/frontend/build
 /fullstack/target/
